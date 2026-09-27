@@ -53,6 +53,9 @@ abstract final class Palette {
   static const shrinkToFit = Color(0xFF6A4C93);
   static const diagramWizard = Color(0xFFD1495B);
   static const diagramWizardDark = Color(0xFFA3364A);
+  static const masterTemplate = Color(0xFFC77D1A);
+  static const masterTemplateDark = Color(0xFF8F5610);
+  static const masterTemplateLight = Color(0xFFF0B45C);
 
   /// Accents.
   static const hyperlink = Color(0xFF2A6FDB);

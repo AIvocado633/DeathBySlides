@@ -2,6 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import '../audio/game_audio.dart';
+import 'projectiles.dart';
 
 /// Builds the feature a slide is fought against, from what the arena hands it.
 typedef BossBuilder = Boss Function(BossContext context);
@@ -15,6 +16,7 @@ class BossContext {
     required this.arenaSize,
     required this.aimAt,
     required this.onDefeated,
+    this.setPlayerShotRules = _keepPlayerShots,
   });
 
   /// The size of the floor the fight happens on. Bosses work in arena-local
@@ -26,6 +28,13 @@ class BossContext {
 
   /// To be called once the feature is gone and any death animation has played.
   final void Function() onDefeated;
+
+  /// Changes the rules the player's next bullet points fly by, for a feature
+  /// that changes how everyone's shots behave. The boss never touches the
+  /// player itself.
+  final void Function(ShotRules rules) setPlayerShotRules;
+
+  static void _keepPlayerShots(ShotRules rules) {}
 }
 
 /// A slide-editor feature, standing between the player and the end of the deck.

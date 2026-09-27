@@ -227,6 +227,58 @@ def applause() -> np.ndarray:
     return x * env(d, 0.15, 2.4)
 
 
+def template_hit() -> np.ndarray:
+    """A layout knocked: a papery tap."""
+    d = 0.12
+    tap = lowpass(highpass(noise(d), 700), 4000) * env(d, 0.001, 0.05)
+    tone = np.sin(2 * np.pi * 820 * t_axis(d)) * env(d, 0.001, 0.06) * 0.5
+    return tap + tone
+
+
+def template_layout_off() -> np.ndarray:
+    """A layout stripped off the master: a quick peel, then a drop."""
+    d = 0.45
+    t = t_axis(0.25)
+    peel = lowpass(noise(0.25), 1200 + 5000 * t / 0.25) * env(0.25, 0.01, 0.24)
+    drop = np.sin(sweep(500, 160, 0.2)) * env(0.2, 0.001, 0.18)
+    return mix(d, (0, peel * 0.8), (0.2, drop))
+
+
+def theme_warning() -> np.ndarray:
+    """Applying theme…: a progress bar that ticks faster as it fills."""
+    d = 1.2
+    parts = []
+    at = 0.0
+    gap = 0.2
+    i = 0
+    while at < 1.1:
+        f = 880 if i % 2 == 0 else 1175
+        parts.append((at, np.sin(2 * np.pi * f * t_axis(0.05)) * env(0.05, 0.001, 0.04) * 0.6))
+        at += gap
+        gap = max(0.06, gap * 0.82)
+        i += 1
+    return mix(d, *parts)
+
+
+def theme_applied() -> np.ndarray:
+    """The new theme landing: a shimmering chord swept in on a whoosh."""
+    d = 0.8
+    chord_ = [hz("C", 5), hz("E", 5), hz("G", 5), hz("C", 6)]
+    shimmer = sum(pluck(f, d, 1.5) for f in chord_) / 4
+    air = lowpass(noise(d), 2500) * env(d, 0.05, 0.4) * 0.5
+    return shimmer + air
+
+
+def template_closed() -> np.ndarray:
+    """The template closing for good: three notes down, and a lid shut."""
+    d = 1.1
+    notes = [hz("G", 4), hz("E", 4), hz("C", 4)]
+    parts = [(i * 0.16, pluck(f, 0.4, 2.0)) for i, f in enumerate(notes)]
+    thump = np.sin(sweep(120, 45, 0.3)) * env(0.3, 0.002, 0.28)
+    parts.append((0.5, thump * 1.5))
+    return mix(d, *parts)
+
+
 # --- Music -------------------------------------------------------------------
 
 NOTE = {n: i for i, n in enumerate("C C# D D# E F F# G G# A A# B".split())}
@@ -361,6 +413,19 @@ def main() -> None:
         write(name, build())
     write_loop("menu_loop.wav", menu_loop())
     write_loop("fight_loop.wav", fight_loop())
+
+    # Added with later bosses. Kept after everything above, because every
+    # sound draws from one seeded random sequence: appending leaves the older
+    # files byte for byte the same.
+    later = {
+        "template_hit.wav": template_hit,
+        "template_layout_off.wav": template_layout_off,
+        "theme_warning.wav": theme_warning,
+        "theme_applied.wav": theme_applied,
+        "template_closed.wav": template_closed,
+    }
+    for name, build in later.items():
+        write(name, build())
 
 
 if __name__ == "__main__":

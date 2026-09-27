@@ -1,6 +1,7 @@
 import 'combat/shrink_to_fit_boss.dart';
 import 'combat/boss.dart';
 import 'combat/diagram_wizard_boss.dart';
+import 'combat/master_template_boss.dart';
 
 /// The deck the player has to get through.
 ///
@@ -66,6 +67,7 @@ const List<LevelDefinition> kLevels = [
     tagline: 'Changes everything at once',
     winLine: 'The Master Template has been overruled.',
     lossLine: 'The Master Template changed you, along with everything else.',
+    buildBoss: MasterTemplateBoss.new,
   ),
   LevelDefinition(
     number: 4,

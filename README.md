@@ -20,15 +20,15 @@ Built with Flutter and the [Flame](https://flame-engine.org) engine.
 
 ## Status
 
-Slides 1 and 2 are playable end to end. The other four bosses are named but
+Slides 1 to 3 are playable end to end. The other three bosses are named but
 not built.
 
 - **Start menu** — a title slide in the editor's normal view, with toolbar,
   status bar, dashed placeholders and staggered fly-in entrances.
 - **Light Table** — level select, showing all six slides (see *Progression*
   below).
-- **Slide show** — two fights so far, Shrink-to-Fit and the Diagram Wizard,
-  with twin-stick controls (see below).
+- **Slide show** — three fights so far, Shrink-to-Fit, the Diagram Wizard and
+  the Master Template, with twin-stick controls (see below).
 - **Tweaks** — settings for controls, motion and sound, and **Pep Talk**, the
   optional assists (see below).
 - **Sound** — effects for every shot, hit and win, and music for menus and
@@ -193,11 +193,39 @@ Where Shrink-to-Fit is one target that gets smaller, the Diagram Wizard is
 many targets that
 keep moving: same controls, a completely different problem.
 
+### Slide 3 — Master Template
+
+Change the template and every slide built on it changes too, whether you
+wanted that or not. The Master Template is one fight whose rules keep
+changing — and they change for you as much as for it.
+
+Every seven seconds it applies a new theme to the whole slide. *Applying
+theme…* and a filling bar across the top of the arena give a second and a half
+of warning; then, in the same frame, the floor changes, its shots change, your
+shots change, and every shot already in the air on both sides converts on the
+spot. Each theme is a trade-off for both sides:
+
+| Theme | Your bullet points | Its swatches |
+| --- | --- | --- |
+| **Plain** | as tuned | as tuned |
+| **Rebound** | bounce off one wall | bounce off one wall |
+| **Sleek** | faster, thinner | curve |
+| **Chunky** | big and slow: easy to land | big and slow: hard to dodge |
+
+Its health is its five layouts, hanging off the master (`5 layouts`). Each
+takes three hits and is stripped off; the master is locked until the last one
+is gone — shots meant for it fly straight past — and then takes four more.
+Closing it puts the slide back to Plain.
+
+The rules reach the player through `BossContext.setPlayerShotRules`, and shots
+in flight through `Projectile.applyRules`, so the boss never touches the player
+and no shot is ever respawned.
+
 ### How a hit feels
 
 A hit is never just a number going down. Whatever was hit flashes and squashes,
 the board shakes when the player takes one, and what the hit cost floats off it
-in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−13%`
+in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−13%`
 off the player. Health is never a bar in this game, so the numbers say what the
 readouts say.
 
