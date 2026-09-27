@@ -99,7 +99,7 @@ class ShrinkToFitBoss extends Boss with BulletTarget {
         strokeColor: Palette.shrinkToFit,
       ),
       _actor = ShapeActor(
-        artPrefix: 'shrink_to_fit_idle_',
+        actor: 'shrink_to_fit',
         tint: Palette.shrinkToFit,
         position: Vector2(width / 2, 68),
         size: Vector2.all(104),
@@ -189,6 +189,11 @@ class ShrinkToFitBoss extends Boss with BulletTarget {
     // ladder.
     Impact.hit(_actor);
     audio.play(Cue.shrinkToFitHit);
+    if (health.isDead) {
+      _actor.die();
+    } else {
+      _actor.hit();
+    }
     final floor = parent;
     if (floor != null && before > pointSize) {
       Impact.damage(

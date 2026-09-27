@@ -30,16 +30,55 @@ assets/images/hero_idle_001.png
 assets/images/hero_idle_002.png
 ```
 
-`ShapeArt.loadAnimation('hero_idle_')` loads `000`, `001`, … and stops at the
-first missing number. A single still is just a one-frame sequence.
+Each sequence loads `000`, `001`, … and stops at the first missing number. A
+single still is just a one-frame sequence.
 
-The prefix is `<actor>_<state>_`. Actors in use so far are `hero`,
-`shrink_to_fit` and `diagram_wizard` -- the last is a single diagram shape,
-drawn once and repeated for every node in the diagram. States in use so far:
+### States
 
-- `idle` — standing still, the only one the menu needs
-- `walk` — planned, for the arena
-- `hit`, `die` — planned
+The prefix is `<actor>_<state>_`, and every state is optional except `idle`:
+
+| State | Plays | Used when |
+| --- | --- | --- |
+| `idle` | loops | standing still — the fallback for everything else |
+| `walk` | loops | moving |
+| `hit` | once, then back to `idle` or `walk` | taking a hit |
+| `die` | once, holding the last frame | beaten; the exit effects run on top |
+
+Which actors use which:
+
+| Actor | Prefix | States it plays |
+| --- | --- | --- |
+| The presenter (menu and fights) | `hero` | `idle`, `walk`, `hit`, `die` |
+| Shrink-to-Fit | `shrink_to_fit` | `idle`, `hit`, `die` |
+| Diagram Wizard — one shape, repeated for every node | `diagram_wizard` | `idle`, `hit`, `die` |
+
+### Directions
+
+Art can also be drawn per direction, as `<actor>_<state>_<dir>_`, for the five
+directions `s`, `se`, `e`, `ne` and `n`. The other three are the mirror image
+of their eastern twin (`sw` of `se`, `w` of `e`, `nw` of `ne`), so they are
+never drawn. Only the presenter turns, so only `hero` gains anything from
+directional art; bosses always face the player (`s`).
+
+```
+assets/images/hero_walk_e_000.png   walking east, and mirrored for west
+assets/images/hero_walk_n_000.png   walking north
+```
+
+### What is shown when art is missing
+
+For a state and a facing, the first of these that exists is shown:
+
+1. `<actor>_<state>_<dir>_` — that state, drawn for that direction
+2. `<actor>_<state>_` — that state, drawn once for every direction
+3. `<actor>_idle_<dir>_` — idle, drawn for that direction
+4. `<actor>_idle_` — idle
+
+An actor with only idle frames therefore looks exactly as it did before
+states existed. When `hit` falls back to idle, idle keeps looping and the hit
+simply lasts 0.3 seconds. Without any idle frames the actor draws its
+procedural stand-in throughout (see below). Every actor's frames load once and
+are shared, so switching state never touches the disk.
 
 ## Drawing rules
 
@@ -100,16 +139,21 @@ looks its frames up by prefix.
 
 ```dart
 ShapeActor(
-  artPrefix: 'hero_idle_',
+  actor: 'hero',
   size: Vector2.all(230),
 )
 ```
+
+The actor picks its frames itself from what it is doing: set `walking` and
+`facing`, and call `hit()` and `die()`.
 
 ### Until the art exists
 
 `ShapeActor` falls back to a procedural stand-in — a monster made of the same
 autoshapes the real art will be made of — so pages stay laid out and animated
-while the deck is still being drawn. You will see one line per missing actor in
+while the deck is still being drawn. It acts out the states too: a waddle to
+walk, a squash with screwed-shut eyes when hit, and crossed-out eyes when it
+dies. You will see one line per missing actor in
 the console:
 
 ```
@@ -120,9 +164,11 @@ That message disappears on its own once the frames are in place.
 
 ## Adding a new monster
 
-1. Draw it in a new deck, one pose per slide.
-2. Export as `<actor>_idle_000.png`, … into `assets/images/`.
-3. Add a `ShapeActor(artPrefix: '<actor>_idle_')` where you want it.
+1. Draw it in a new deck, one pose per slide, one deck per state.
+2. Export as `<actor>_idle_000.png`, … into `assets/images/`, and the same for
+   any of `walk`, `hit` and `die` it has.
+3. Add a `ShapeActor(actor: '<actor>')` where you want it, and call `hit()` and
+   `die()` on it where the boss takes a hit and is beaten.
 4. If it is a boss, set its slide's `buildBoss` in `kLevels`, in
    [`lib/game/levels.dart`](../lib/game/levels.dart), to its constructor. The
    arena needs no changes.

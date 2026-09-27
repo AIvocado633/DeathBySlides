@@ -344,7 +344,7 @@ class DiagramNode extends PositionComponent
   Future<void> onLoad() async {
     await add(
       _actor = ShapeActor(
-        artPrefix: 'diagram_wizard_idle_',
+        actor: 'diagram_wizard',
         tint: Palette.diagramWizard,
         position: size / 2,
         size: size * 0.72,
@@ -375,9 +375,11 @@ class DiagramNode extends PositionComponent
     scale = Vector2.all(health.scale);
     Impact.hit(_actor);
     if (!health.isDead) {
+      _actor.hit();
       audio.play(Cue.diagramHit);
       return;
     }
+    _actor.die();
     _broken = true;
     audio.play(Cue.diagramShapeBroken);
     // The Diagram Wizard counts itself in shapes, so that is what a break costs

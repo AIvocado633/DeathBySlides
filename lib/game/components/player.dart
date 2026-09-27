@@ -17,27 +17,7 @@ import '../theme/palette.dart';
 import 'arena_floor.dart';
 import 'shape_actor.dart';
 
-/// The eight directions an actor can face.
-///
-/// Declared anticlockwise from east so that the index matches the octant of
-/// `atan2(dy, dx)`, which keeps [Player.facing] a rounding away from the
-/// movement vector. Screen y grows downwards, so "south" is the bottom of the
-/// slide.
-enum Facing {
-  east,
-  southEast,
-  south,
-  southWest,
-  west,
-  northWest,
-  north,
-  northEast;
-
-  /// True for the three directions with a westward component, i.e. the ones
-  /// whose artwork is the mirror of the drawn pose.
-  bool get isWestward =>
-      this == Facing.southWest || this == Facing.west || this == Facing.northWest;
-}
+export 'shape_actor.dart' show Facing;
 
 /// The player character, armed with bullet points.
 ///
@@ -67,7 +47,7 @@ class Player extends PositionComponent
     required Vector2 position,
     required double size,
     this.speed = 320,
-    this.artPrefix = 'hero_idle_',
+    this.artName = 'hero',
     this.moveStick,
     this.aimStick,
     this.gamepad,
@@ -77,7 +57,8 @@ class Player extends PositionComponent
   /// Slide units per second at full tilt and full size.
   final double speed;
 
-  final String artPrefix;
+  /// Whose frames the player is drawn with; see `docs/art-pipeline.md`.
+  final String artName;
 
   /// The on-screen stick under the left thumb.
   final JoystickComponent? moveStick;
@@ -153,7 +134,7 @@ class Player extends PositionComponent
   /// Built eagerly rather than in [onLoad] so that facing can be applied to it
   /// from the moment the player exists.
   late final ShapeActor _art = ShapeActor(
-    artPrefix: artPrefix,
+    actor: artName,
     tint: Palette.brand,
     position: size / 2,
     size: size.clone(),
@@ -221,6 +202,8 @@ class Player extends PositionComponent
     _readAim();
     _move(dt);
     _shoot(dt);
+    // Walks while moving, idles when still; a hit plays over either.
+    _art.walking = _direction.length2 > 1e-4;
   }
 
   /// Blinks while invulnerable, which is the only sign that a hit would not
@@ -338,6 +321,7 @@ class Player extends PositionComponent
 
     Impact.hit(_art);
     if (!health.isDead) {
+      _art.hit();
       audio.play(Cue.playerHit);
     }
     final floor = parent;
@@ -364,6 +348,8 @@ class Player extends PositionComponent
   /// to say about this in #19.
   void _playExit() {
     _invulnerable = 0;
+    // The die frames hold their last pose while the spin-out runs on top.
+    _art.die();
     // Something deflating: the sound of a slide lost.
     audio.play(Cue.playerLost);
     addAll([
@@ -382,6 +368,6 @@ class Player extends PositionComponent
   void _face(Vector2 direction) {
     final octant = (math.atan2(direction.y, direction.x) / (math.pi / 4)).round();
     _facing = Facing.values[(octant + 8) % 8];
-    _art.scale.x = _facing.isWestward ? -1 : 1;
+    _art.facing = _facing;
   }
 }
