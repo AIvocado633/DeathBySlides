@@ -7,6 +7,7 @@ import 'package:flame/text.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
+import '../audio/game_audio.dart';
 import '../components/placeholder_frame.dart';
 import '../components/shape_actor.dart';
 import '../theme/palette.dart';
@@ -71,6 +72,12 @@ class ShrinkToFitBoss extends Boss {
 
   @override
   bool get isDefeated => _defeated;
+
+  @override
+  Iterable<Cue> get cues => const [
+    Cue.shrinkToFitHit,
+    Cue.shrinkToFitDefeated,
+  ];
   bool _defeated = false;
 
   double _sinceLastShot = 0;
@@ -178,6 +185,7 @@ class ShrinkToFitBoss extends Boss {
     // What the hit cost, in Shrink-to-Fit's own units: point sizes off the
     // ladder.
     Impact.hit(_actor);
+    audio.play(Cue.shrinkToFitHit);
     final floor = parent;
     if (floor != null && before > pointSize) {
       Impact.damage(
@@ -195,6 +203,7 @@ class ShrinkToFitBoss extends Boss {
 
   /// Shrink-to-Fit's own medicine: shrink until there is nothing left to read.
   void _shrinkAway() {
+    audio.play(Cue.shrinkToFitDefeated);
     add(
       ScaleEffect.to(
         Vector2.zero(),

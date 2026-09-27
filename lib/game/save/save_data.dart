@@ -86,7 +86,14 @@ class Settings {
     this.deadzone = defaultDeadzone,
     this.stickSize = 1,
     this.reduceMotion,
+    this.musicVolume = defaultMusicVolume,
+    this.effectsVolume = defaultEffectsVolume,
   });
+
+  /// Where the Sound sliders start. Music sits under the effects, so a shot
+  /// is always heard over the hold music.
+  static const double defaultMusicVolume = 0.5;
+  static const double defaultEffectsVolume = 0.8;
 
   /// The controller dead zone before anyone touches the slider, and the
   /// range the slider offers. Below 5% a worn stick drifts; above 40% a push
@@ -113,16 +120,25 @@ class Settings {
   /// means following the device's own accessibility setting.
   final bool? reduceMotion;
 
+  /// Music and effects volume, 0–1. Zero is off: nothing of that side is
+  /// loaded or played.
+  final double musicVolume;
+  final double effectsVolume;
+
   Settings copyWith({
     bool? swapSticks,
     double? deadzone,
     double? stickSize,
     bool? reduceMotion,
+    double? musicVolume,
+    double? effectsVolume,
   }) => Settings(
     swapSticks: swapSticks ?? this.swapSticks,
     deadzone: deadzone ?? this.deadzone,
     stickSize: stickSize ?? this.stickSize,
     reduceMotion: reduceMotion ?? this.reduceMotion,
+    musicVolume: musicVolume ?? this.musicVolume,
+    effectsVolume: effectsVolume ?? this.effectsVolume,
   );
 
   Map<String, Object?> toJson() => {
@@ -130,6 +146,8 @@ class Settings {
     'deadzone': deadzone,
     'stickSize': stickSize,
     'reduceMotion': ?reduceMotion,
+    'musicVolume': musicVolume,
+    'effectsVolume': effectsVolume,
   };
 
   /// Reads what [toJson] wrote. A missing section, or a missing setting, is
@@ -160,6 +178,12 @@ class Settings {
         maxStickSize,
       ),
       reduceMotion: read<bool>('reduceMotion'),
+      musicVolume: (read<num>('musicVolume') ?? defaultMusicVolume)
+          .toDouble()
+          .clamp(0, 1),
+      effectsVolume: (read<num>('effectsVolume') ?? defaultEffectsVolume)
+          .toDouble()
+          .clamp(0, 1),
     );
   }
 }

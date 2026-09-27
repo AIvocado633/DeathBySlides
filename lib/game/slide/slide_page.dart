@@ -3,11 +3,13 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
+import '../audio/game_audio.dart';
 import '../input/menu_input.dart';
 import '../death_by_slides_game.dart';
 import '../save/save_data.dart';
 import '../theme/palette.dart';
 import 'focusable.dart';
+import 'motion.dart';
 import 'slide_metrics.dart';
 
 /// Base class for every screen in the game.
@@ -31,6 +33,24 @@ abstract class SlidePage extends PositionComponent
   final Paint _shadowPaint = Paint()
     ..color = Palette.slideShadow
     ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
+
+  /// The music this page plays while it is on top, or null for silence.
+  Track? get music => Track.menu;
+
+  /// The effects this page may play, loaded as it opens so the first one
+  /// sounds without a delay.
+  Iterable<Cue> get cues => const [Cue.whoosh];
+
+  @override
+  void onMount() {
+    super.onMount();
+    final audio = game.audio..preload(cues);
+    // Pages fly in as they open; with Reduce Motion they simply appear, and
+    // there is nothing to whoosh.
+    if (!Motion.reduced) {
+      audio.play(Cue.whoosh);
+    }
+  }
 
   /// Called when the app stops being in front -- backgrounded on a phone, or
   /// the window losing focus on a desktop. A running fight pauses here.

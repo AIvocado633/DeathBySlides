@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
+import '../audio/game_audio.dart';
 import '../components/chip_button.dart';
 import '../components/placeholder_frame.dart';
 import '../components/toolbar.dart';
@@ -33,7 +34,13 @@ class TweaksPage extends SlidePage {
   late final SettingSlider deadzone;
   late final SettingSlider stickSize;
   late final SettingCheckbox reduceMotion;
+  late final SettingSlider musicVolume;
+  late final SettingSlider effectsVolume;
   late final TextComponent _motionSource;
+
+  /// The effects slider previews itself with a bullet point.
+  @override
+  Iterable<Cue> get cues => [...super.cues, Cue.bulletPoint];
 
   /// Rows sit in two columns, so arrows move by position on the slide.
   @override
@@ -129,14 +136,40 @@ class TweaksPage extends SlidePage {
     final sound = _card(
       title: 'Sound',
       position: Vector2(_sideLeft, _cardsTop + 250),
-      size: Vector2(_sideWidth, 130),
+      size: Vector2(_sideWidth, 190),
     );
-    await sound.add(
-      _caption(
-        'Music and effect volume, once there is sound.',
-        Vector2(_inset, 80),
+    final soundRowWidth = _sideWidth - _inset * 2;
+    await sound.addAll([
+      musicVolume = SettingSlider(
+        label: 'Music',
+        value: settings.musicVolume,
+        min: 0,
+        max: 1,
+        step: 0.1,
+        mark: Settings.defaultMusicVolume,
+        format: _volume,
+        width: soundRowWidth,
+        position: Vector2(_inset - 6, 58),
+        onChanged: (value) => _change((s) => s.copyWith(musicVolume: value)),
       ),
-    );
+      effectsVolume = SettingSlider(
+        label: 'Effects',
+        value: settings.effectsVolume,
+        min: 0,
+        max: 1,
+        step: 0.1,
+        mark: Settings.defaultEffectsVolume,
+        format: _volume,
+        width: soundRowWidth,
+        position: Vector2(_inset - 6, 106),
+        onChanged: (value) {
+          _change((s) => s.copyWith(effectsVolume: value));
+          // A bullet point at the new level, so the slider can be set by ear.
+          game.audio.play(Cue.bulletPoint);
+        },
+      ),
+      _caption('Off loads and plays nothing at all.', Vector2(_inset, 172)),
+    ]);
 
     for (final (index, card) in [controls, motion, sound].indexed) {
       await add(card..flyIn(delay: 0.16 + index * 0.07));
@@ -179,6 +212,8 @@ class TweaksPage extends SlidePage {
   );
 
   static String _percent(double value) => '${(value * 100).round()}%';
+
+  static String _volume(double value) => value == 0 ? 'Off' : _percent(value);
 
   String get _motionSourceText => game.settings.reduceMotion == null
       ? "Following your device's setting."

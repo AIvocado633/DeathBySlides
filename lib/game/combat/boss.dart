@@ -1,6 +1,8 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
+import '../audio/game_audio.dart';
+
 /// Builds the feature a slide is fought against, from what the arena hands it.
 typedef BossBuilder = Boss Function(BossContext context);
 
@@ -32,7 +34,7 @@ class BossContext {
 /// in order to run a slide: where the fight stands, and how to end it. How a
 /// boss is laid out, what it throws and how damage is distributed inside it are
 /// entirely the boss's business.
-abstract class Boss extends PositionComponent with CollisionCallbacks {
+abstract class Boss extends PositionComponent with CollisionCallbacks, HasAudio {
   Boss(this.context, {required Vector2 position, required Vector2 size})
     : super(position: position, size: size, anchor: Anchor.center);
 
@@ -57,6 +59,10 @@ abstract class Boss extends PositionComponent with CollisionCallbacks {
   String get readout;
 
   bool get isDefeated;
+
+  /// Every effect this feature plays, so the arena can load them before the
+  /// fight starts. Each boss brings sounds of its own.
+  Iterable<Cue> get cues;
 
   /// Applies [amount] hits. Exposed so a fight can be driven from tests
   /// without synthesising collisions.

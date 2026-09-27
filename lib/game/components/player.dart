@@ -7,6 +7,7 @@ import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/services.dart';
 
+import '../audio/game_audio.dart';
 import '../combat/health.dart';
 import '../combat/impact.dart';
 import '../combat/projectiles.dart';
@@ -59,7 +60,8 @@ enum Facing {
 /// anything that does not fit. Being small is not purely a penalty -- a smaller
 /// player is a faster and narrower target -- but running out of size loses the
 /// slide.
-class Player extends PositionComponent with KeyboardHandler, CollisionCallbacks {
+class Player extends PositionComponent
+    with KeyboardHandler, CollisionCallbacks, HasAudio {
   Player({
     required Vector2 position,
     required double size,
@@ -286,6 +288,7 @@ class Player extends PositionComponent with KeyboardHandler, CollisionCallbacks 
   /// Sends a bullet point along [aimDirection]. Public so the fight can be
   /// driven from tests without synthesising input.
   void fire() {
+    audio.play(Cue.bulletPoint);
     parent?.add(
       BulletPoint(
         position: position.clone(),
@@ -323,6 +326,9 @@ class Player extends PositionComponent with KeyboardHandler, CollisionCallbacks 
     scale = Vector2.all(health.scale);
 
     Impact.hit(_art);
+    if (!health.isDead) {
+      audio.play(Cue.playerHit);
+    }
     final floor = parent;
     if (floor is ArenaFloor) {
       Impact.shake(floor);
@@ -347,6 +353,8 @@ class Player extends PositionComponent with KeyboardHandler, CollisionCallbacks 
   /// to say about this in #19.
   void _playExit() {
     _invulnerable = 0;
+    // Something deflating: the sound of a slide lost.
+    audio.play(Cue.playerLost);
     addAll([
       ScaleEffect.to(
         Vector2.zero(),
