@@ -68,6 +68,22 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
+    - assets/fonts/OFL.txt
+
+  # Atkinson Hyperlegible, from the Braille Institute, under the SIL Open Font
+  # License (assets/fonts/OFL.txt). It only comes in regular and bold, so
+  # w600 and w800 resolve to bold.
+  fonts:
+    - family: Atkinson Hyperlegible
+      fonts:
+        - asset: assets/fonts/AtkinsonHyperlegible-Regular.ttf
+        - asset: assets/fonts/AtkinsonHyperlegible-Italic.ttf
+          style: italic
+        - asset: assets/fonts/AtkinsonHyperlegible-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/AtkinsonHyperlegible-BoldItalic.ttf
+          weight: 700
+          style: italic
 
   # To add assets to your application, add an assets section, like this:
   # assets:

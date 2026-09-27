@@ -10,7 +10,9 @@ Wizard, the Master Template, the Build Order. You fight them from a top-down
 view inside the slide, with a character built out of autoshapes.
 
 The game takes place inside a made-up slide editor with a look of its own —
-ink-navy chrome, warm paper slides, a teal accent — so it is about slideware in
+ink-navy chrome, warm paper slides, a teal accent, and the Braille Institute's
+[Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/) typeface
+(SIL Open Font License, see `assets/fonts/OFL.txt`) — so it is about slideware in
 general, not a homage to any one product. It is not affiliated with or endorsed
 by the makers of any presentation software.
 
@@ -251,6 +253,7 @@ lib/
     save/                    Progress and settings, kept as one JSON document
     theme/                   The made-up editor's colours and text styles
 assets/images/               Exported artwork (see docs/)
+assets/fonts/                Atkinson Hyperlegible, bundled, with its licence
 ```
 
 Two conventions carry most of the weight:
