@@ -1,20 +1,20 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/components/chip_button.dart';
-import 'package:pptx_monsters/game/components/menu_bullet_button.dart';
-import 'package:pptx_monsters/game/components/result_panel.dart';
-import 'package:pptx_monsters/game/components/status_bar.dart';
-import 'package:pptx_monsters/game/deck.dart';
-import 'package:pptx_monsters/game/levels.dart';
-import 'package:pptx_monsters/game/pages/arena_page.dart';
-import 'package:pptx_monsters/game/pages/main_menu_page.dart';
-import 'package:pptx_monsters/game/pages/slide_sorter_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/routes.dart';
-import 'package:pptx_monsters/game/save/save_data.dart';
-import 'package:pptx_monsters/game/save/save_store.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/components/chip_button.dart';
+import 'package:death_by_slides/game/components/menu_bullet_button.dart';
+import 'package:death_by_slides/game/components/result_panel.dart';
+import 'package:death_by_slides/game/components/status_bar.dart';
+import 'package:death_by_slides/game/deck.dart';
+import 'package:death_by_slides/game/levels.dart';
+import 'package:death_by_slides/game/pages/arena_page.dart';
+import 'package:death_by_slides/game/pages/main_menu_page.dart';
+import 'package:death_by_slides/game/pages/light_table_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/routes.dart';
+import 'package:death_by_slides/game/save/save_data.dart';
+import 'package:death_by_slides/game/save/save_store.dart';
 
 import 'arena_harness.dart';
 
@@ -130,9 +130,9 @@ void main() {
 
   group('the slide show', () {
     final store = InMemorySaveStore();
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'beating a slide unlocks the next one, and keeps it unlocked',
-      () => PptxMonstersGame(saveStore: store),
+      () => DeathBySlidesGame(saveStore: store),
       (game) async {
         await _started(game);
         expect(game.deck.isPlayable(2), isFalse);
@@ -149,9 +149,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a win offers Next Slide first, which opens the next slide afresh',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await _win(game, await openArena(game));
 
@@ -176,9 +176,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a loss is unchanged: no Next Slide',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         arena.player.takeHit(arena.player.health.max);
@@ -189,9 +189,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'beating the last built slide shows the normal win panel',
-      () => PptxMonstersGame(saveStore: _saved({1})),
+      () => DeathBySlidesGame(saveStore: _saved({1})),
       (game) async {
         final last = kLevels.lastWhere((level) => level.isBuilt).number;
         await _win(game, await openArena(game, level: last));
@@ -203,42 +203,42 @@ void main() {
     );
   });
 
-  group('slide sorter', () {
-    testWithGame<PptxMonstersGame>(
+  group('light table', () {
+    testWithGame<DeathBySlidesGame>(
       'does not open a locked slide',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final sorter = await _openSorter(game);
+        final table = await _openLightTable(game);
 
-        final second = _thumbnail(sorter, 2);
+        final second = _thumbnail(table, 2);
         expect(second.state, SlideState.locked);
         second.select();
         await game.ready();
 
-        expect(game.router.currentRoute.name, Routes.slideSorter);
+        expect(game.router.currentRoute.name, Routes.lightTable);
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'shows each slide in its state',
-      () => PptxMonstersGame(saveStore: _saved({1})),
+      () => DeathBySlidesGame(saveStore: _saved({1})),
       (game) async {
-        final sorter = await _openSorter(game);
+        final table = await _openLightTable(game);
 
-        expect(_thumbnail(sorter, 1).state, SlideState.beaten);
-        expect(_thumbnail(sorter, 2).state, SlideState.unlocked);
+        expect(_thumbnail(table, 1).state, SlideState.beaten);
+        expect(_thumbnail(table, 2).state, SlideState.unlocked);
         for (final level in kLevels.where((level) => !level.isBuilt)) {
-          expect(_thumbnail(sorter, level.number).state, SlideState.notBuilt);
+          expect(_thumbnail(table, level.number).state, SlideState.notBuilt);
         }
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'marks a slide won from it as soon as the player comes back',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final sorter = await _openSorter(game);
-        _thumbnail(sorter, 1).select();
+        final table = await _openLightTable(game);
+        _thumbnail(table, 1).select();
         await game.ready();
 
         await _win(game, _arena(game));
@@ -246,19 +246,19 @@ void main() {
         await game.ready();
         advance(game, 1 / 60);
 
-        expect(game.router.currentRoute.name, Routes.slideSorter);
-        expect(_thumbnail(sorter, 1).state, SlideState.beaten);
-        expect(_thumbnail(sorter, 2).state, SlideState.unlocked);
+        expect(game.router.currentRoute.name, Routes.lightTable);
+        expect(_thumbnail(table, 1).state, SlideState.beaten);
+        expect(_thumbnail(table, 2).state, SlideState.unlocked);
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'the unlock-all switch opens every built slide',
-      () => PptxMonstersGame(unlockAll: true),
+      () => DeathBySlidesGame(unlockAll: true),
       (game) async {
-        final sorter = await _openSorter(game);
+        final table = await _openLightTable(game);
 
-        _thumbnail(sorter, 2).select();
+        _thumbnail(table, 2).select();
         await game.ready();
 
         expect(_arena(game).level.number, 2);
@@ -267,9 +267,9 @@ void main() {
   });
 
   group('start menu', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'continues from the first unbeaten slide',
-      () => PptxMonstersGame(saveStore: _saved({1})),
+      () => DeathBySlidesGame(saveStore: _saved({1})),
       (game) async {
         final menu = await _started(game);
 
@@ -284,9 +284,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'starts from the beginning once every built slide is won',
-      () => PptxMonstersGame(
+      () => DeathBySlidesGame(
         saveStore: _saved({
           for (final level in kLevels.where((level) => level.isBuilt))
             level.number,
@@ -303,9 +303,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'catches up with a win when the player comes back',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final menu = await _started(game);
         expect(_startButton(menu).label, 'Start Presenting');
@@ -331,19 +331,19 @@ void main() {
 InMemorySaveStore _saved(Set<int> beaten) =>
     InMemorySaveStore(SaveData(progress: Progress(beaten: beaten)).encode());
 
-Future<MainMenuPage> _started(PptxMonstersGame game) async {
+Future<MainMenuPage> _started(DeathBySlidesGame game) async {
   await game.ready();
   return game.descendants().whereType<MainMenuPage>().single;
 }
 
-Future<SlideSorterPage> _openSorter(PptxMonstersGame game) async {
+Future<LightTablePage> _openLightTable(DeathBySlidesGame game) async {
   await game.ready();
-  game.router.pushNamed(Routes.slideSorter);
+  game.router.pushNamed(Routes.lightTable);
   await game.ready();
-  return game.descendants().whereType<SlideSorterPage>().single;
+  return game.descendants().whereType<LightTablePage>().single;
 }
 
-Future<void> _win(PptxMonstersGame game, ArenaPage arena) async {
+Future<void> _win(DeathBySlidesGame game, ArenaPage arena) async {
   arena.boss.takeHit(arena.boss.totalHits);
   // The boss plays its exit before the dialog appears.
   advance(game, 0.6);
@@ -351,10 +351,10 @@ Future<void> _win(PptxMonstersGame game, ArenaPage arena) async {
   expect(arena.isResolved, isTrue);
 }
 
-ArenaPage _arena(PptxMonstersGame game) =>
+ArenaPage _arena(DeathBySlidesGame game) =>
     game.router.currentRoute.children.whereType<ArenaPage>().single;
 
-ResultPanel _panel(PptxMonstersGame game) =>
+ResultPanel _panel(DeathBySlidesGame game) =>
     _arena(game).children.whereType<ResultPanel>().single;
 
 List<String> _labels(ResultPanel panel) =>
@@ -364,7 +364,7 @@ ChipButton _button(ResultPanel panel, String label) => panel.children
     .whereType<ChipButton>()
     .singleWhere((button) => button.label == label);
 
-SlideThumbnail _thumbnail(SlideSorterPage sorter, int slide) => sorter.children
+SlideThumbnail _thumbnail(LightTablePage table, int slide) => table.children
     .whereType<SlideThumbnail>()
     .singleWhere((thumbnail) => thumbnail.level.number == slide);
 

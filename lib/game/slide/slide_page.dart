@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 
 import '../input/menu_input.dart';
-import '../pptx_monsters_game.dart';
+import '../death_by_slides_game.dart';
 import '../save/save_data.dart';
 import '../theme/palette.dart';
 import 'focusable.dart';
@@ -17,7 +17,7 @@ import 'slide_metrics.dart';
 /// screens that are not 16:9. Subclasses lay out their children in slide units
 /// and never have to deal with the real screen size.
 abstract class SlidePage extends PositionComponent
-    with HasGameReference<PptxMonstersGame> {
+    with HasGameReference<DeathBySlidesGame> {
   SlidePage() : super(size: slideSize);
 
   /// Colour of the slide surface. Override for e.g. the projector-black used

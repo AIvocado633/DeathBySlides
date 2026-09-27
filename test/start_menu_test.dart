@@ -1,21 +1,21 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/components/menu_bullet_button.dart';
-import 'package:pptx_monsters/game/pages/design_ideas_page.dart';
-import 'package:pptx_monsters/game/pages/main_menu_page.dart';
-import 'package:pptx_monsters/game/pages/slide_sorter_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/routes.dart';
-import 'package:pptx_monsters/game/slide/slide_metrics.dart';
+import 'package:death_by_slides/game/components/menu_bullet_button.dart';
+import 'package:death_by_slides/game/pages/tweaks_page.dart';
+import 'package:death_by_slides/game/pages/main_menu_page.dart';
+import 'package:death_by_slides/game/pages/light_table_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/routes.dart';
+import 'package:death_by_slides/game/slide/slide_metrics.dart';
 
 import 'arena_harness.dart';
 
 void main() {
   group('start menu', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'opens on the main menu slide',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
 
@@ -24,9 +24,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'lists the menu entries in order',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
 
@@ -39,9 +39,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'letterboxes the 16:9 slide inside a 4:3 window',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
 
@@ -59,9 +59,9 @@ void main() {
   });
 
   group('entrance animation', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'settles every menu element at its designed slide position',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
         // Three seconds is comfortably past the last staggered fly-in.
@@ -78,9 +78,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'leaves nothing hanging off the edge of the slide',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
         advance(game, 3);
@@ -105,16 +105,16 @@ void main() {
   });
 
   group('navigation', () {
-    testWithGame<PptxMonstersGame>(
-      'pushes the slide sorter and pops back to the menu',
-      PptxMonstersGame.new,
+    testWithGame<DeathBySlidesGame>(
+      'pushes the light table and pops back to the menu',
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
 
-        game.router.pushNamed(Routes.slideSorter);
+        game.router.pushNamed(Routes.lightTable);
         await game.ready();
-        expect(game.router.currentRoute.name, Routes.slideSorter);
-        expect(game.descendants().whereType<SlideSorterPage>().length, 1);
+        expect(game.router.currentRoute.name, Routes.lightTable);
+        expect(game.descendants().whereType<LightTablePage>().length, 1);
 
         game.router.pop();
         await game.ready();
@@ -122,15 +122,15 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
-      'pushes the design ideas pane',
-      PptxMonstersGame.new,
+    testWithGame<DeathBySlidesGame>(
+      'pushes the tweaks panel',
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
 
-        game.router.pushNamed(Routes.designIdeas);
+        game.router.pushNamed(Routes.tweaks);
         await game.ready();
-        expect(game.descendants().whereType<DesignIdeasPage>().length, 1);
+        expect(game.descendants().whereType<TweaksPage>().length, 1);
       },
     );
   });

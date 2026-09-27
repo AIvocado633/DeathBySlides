@@ -117,7 +117,7 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
-# --- PPTX Monsters ------------------------------------------------------
+# --- Death by Slides ----------------------------------------------------
 # The list above is Flutter's SDK-repo ignore file; an app needs a few edits.
 
 # An app pins its dependency versions, so the lockfile is committed.

@@ -1,4 +1,4 @@
-name: pptx_monsters
+name: death_by_slides
 description: "A mobile game about defeating the presentation-software features that defeated you."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -64,7 +64,7 @@ flutter:
   uses-material-design: true
 
   # Artwork exported from PowerPoint, plus audio. See
-  # docs/powerpoint-art-pipeline.md for the export conventions.
+  # docs/art-pipeline.md for the export conventions.
   assets:
     - assets/images/
     - assets/audio/

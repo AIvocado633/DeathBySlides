@@ -13,7 +13,7 @@ import '../combat/projectiles.dart';
 import '../input/gamepad_input.dart';
 import '../theme/palette.dart';
 import 'arena_floor.dart';
-import 'pptx_actor.dart';
+import 'shape_actor.dart';
 
 /// The eight directions an actor can face.
 ///
@@ -139,7 +139,7 @@ class Player extends PositionComponent with KeyboardHandler, CollisionCallbacks 
 
   /// Built eagerly rather than in [onLoad] so that facing can be applied to it
   /// from the moment the player exists.
-  late final PptxActor _art = PptxActor(
+  late final ShapeActor _art = ShapeActor(
     artPrefix: artPrefix,
     tint: Palette.brand,
     position: size / 2,

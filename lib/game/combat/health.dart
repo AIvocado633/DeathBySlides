@@ -2,9 +2,10 @@ import 'dart:math' as math;
 
 /// Hit points for a combatant.
 ///
-/// In this fight health is not a bar, it is a size: Shrink-to-Fit shrinks whatever
-/// does not fit, so both sides of the fight literally get smaller as they lose.
-/// [scale] is the mapping from remaining points to how big the owner is drawn.
+/// In this fight health is not a bar, it is a size: Shrink-to-Fit shrinks
+/// whatever does not fit, so both sides of the fight literally get smaller as
+/// they lose. [scale] is the mapping from remaining points to how big the owner
+/// is drawn.
 class Health {
   Health({required this.max, this.minScale = 0.4})
     : assert(max > 0, 'A combatant needs at least one hit point'),

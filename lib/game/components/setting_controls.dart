@@ -10,8 +10,8 @@ import 'placeholder_frame.dart';
 
 /// A checkbox like the ones in any editor's dialogs, with its label beside it.
 ///
-/// The whole row is the hit target, as in most desktop software, where clicking the label
-/// ticks the box.
+/// The whole row is the hit target, as in most desktop software, where clicking
+/// the label ticks the box.
 class SettingCheckbox extends PositionComponent
     with TapCallbacks, HoverCallbacks, Focusable {
   SettingCheckbox({

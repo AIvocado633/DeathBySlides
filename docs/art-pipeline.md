@@ -17,8 +17,8 @@ This document is the contract between the deck and the code.
 | --- | --- |
 | Source decks | `art/*.pptx` (not created yet — add them as you draw) |
 | Exported frames | `assets/images/` |
-| Loader | [`lib/game/art/pptx_art.dart`](../lib/game/art/pptx_art.dart) |
-| Component that draws an actor | [`lib/game/components/pptx_actor.dart`](../lib/game/components/pptx_actor.dart) |
+| Loader | [`lib/game/art/shape_art.dart`](../lib/game/art/shape_art.dart) |
+| Component that draws an actor | [`lib/game/components/shape_actor.dart`](../lib/game/components/shape_actor.dart) |
 
 ## Naming
 
@@ -30,12 +30,12 @@ assets/images/hero_idle_001.png
 assets/images/hero_idle_002.png
 ```
 
-`PptxArt.loadAnimation('hero_idle_')` loads `000`, `001`, … and stops at the
+`ShapeArt.loadAnimation('hero_idle_')` loads `000`, `001`, … and stops at the
 first missing number. A single still is just a one-frame sequence.
 
 The prefix is `<actor>_<state>_`. Actors in use so far are `hero`,
-`autofit` and `smartart` -- the last is a single SmartArt shape, drawn once
-and repeated for every node in the diagram. States in use so far:
+`shrink_to_fit` and `diagram_wizard` -- the last is a single diagram shape,
+drawn once and repeated for every node in the diagram. States in use so far:
 
 - `idle` — standing still, the only one the menu needs
 - `walk` — planned, for the arena
@@ -77,7 +77,7 @@ press <kbd>Alt</kbd>+<kbd>F11</kbd>, insert a module and adapt:
 ' Assumes exactly one (grouped) shape per slide.
 Sub ExportFrames()
     Const Prefix As String = "hero_idle_"
-    Const Folder As String = "C:\path\to\PPTXmonsters\assets\images\"
+    Const Folder As String = "C:\path\to\DeathBySlides\assets\images\"
     Dim sld As Slide
     For Each sld In ActivePresentation.Slides
         sld.Shapes(1).Export _
@@ -95,11 +95,11 @@ saved as `.pptm` for the macro to persist.
 
 Drop the PNGs into `assets/images/` and restart the app (a hot *reload* will not
 pick up new assets; hot *restart* or a full run will). Nothing else is needed:
-`assets/images/` is registered wholesale in `pubspec.yaml`, and `PptxActor`
+`assets/images/` is registered wholesale in `pubspec.yaml`, and `ShapeActor`
 looks its frames up by prefix.
 
 ```dart
-PptxActor(
+ShapeActor(
   artPrefix: 'hero_idle_',
   size: Vector2.all(230),
 )
@@ -107,13 +107,13 @@ PptxActor(
 
 ### Until the art exists
 
-`PptxActor` falls back to a procedural stand-in — a monster made of the same
+`ShapeActor` falls back to a procedural stand-in — a monster made of the same
 autoshapes the real art will be made of — so pages stay laid out and animated
 while the deck is still being drawn. You will see one line per missing actor in
 the console:
 
 ```
-PptxArt: no frames named "hero_idle_000.png" in assets/images/ - falling back to placeholder art.
+ShapeArt: no frames named "hero_idle_000.png" in assets/images/ - falling back to placeholder art.
 ```
 
 That message disappears on its own once the frames are in place.
@@ -122,7 +122,7 @@ That message disappears on its own once the frames are in place.
 
 1. Draw it in a new deck, one pose per slide.
 2. Export as `<actor>_idle_000.png`, … into `assets/images/`.
-3. Add a `PptxActor(artPrefix: '<actor>_idle_')` where you want it.
+3. Add a `ShapeActor(artPrefix: '<actor>_idle_')` where you want it.
 4. If it is a boss, set its slide's `buildBoss` in `kLevels`, in
    [`lib/game/levels.dart`](../lib/game/levels.dart), to its constructor. The
    arena needs no changes.

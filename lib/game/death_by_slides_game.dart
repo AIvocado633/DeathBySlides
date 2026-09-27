@@ -12,9 +12,9 @@ import 'input/gamepad_input.dart';
 import 'input/menu_input.dart';
 
 import 'pages/arena_page.dart';
-import 'pages/design_ideas_page.dart';
+import 'pages/tweaks_page.dart';
 import 'pages/main_menu_page.dart';
-import 'pages/slide_sorter_page.dart';
+import 'pages/light_table_page.dart';
 import 'levels.dart';
 import 'routes.dart';
 import 'save/save_data.dart';
@@ -32,9 +32,9 @@ import 'theme/palette.dart';
 ///
 /// [HasKeyboardHandlerComponents] lets components opt into key events, which is
 /// what makes the game playable on desktop without a touch stick.
-class PptxMonstersGame extends FlameGame
+class DeathBySlidesGame extends FlameGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
-  PptxMonstersGame({
+  DeathBySlidesGame({
     Stream<NormalizedGamepadEvent>? gamepadEvents,
     SaveStore? saveStore,
     this.unlockAll = kUnlockAll,
@@ -122,8 +122,8 @@ class PptxMonstersGame extends FlameGame
         },
         routes: {
           Routes.normalView: Route(MainMenuPage.new),
-          Routes.slideSorter: Route(SlideSorterPage.new),
-          Routes.designIdeas: Route(DesignIdeasPage.new),
+          Routes.lightTable: Route(LightTablePage.new),
+          Routes.tweaks: Route(TweaksPage.new),
         },
       ),
     );

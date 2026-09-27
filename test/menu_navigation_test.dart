@@ -3,19 +3,19 @@ import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gamepads/gamepads.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/components/chip_button.dart';
-import 'package:pptx_monsters/game/components/menu_bullet_button.dart';
-import 'package:pptx_monsters/game/components/result_panel.dart';
-import 'package:pptx_monsters/game/input/gamepad_input.dart';
-import 'package:pptx_monsters/game/input/menu_input.dart';
-import 'package:pptx_monsters/game/pages/arena_page.dart';
-import 'package:pptx_monsters/game/pages/slide_sorter_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/routes.dart';
-import 'package:pptx_monsters/game/save/save_data.dart';
-import 'package:pptx_monsters/game/save/save_store.dart';
-import 'package:pptx_monsters/game/slide/slide_page.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/components/chip_button.dart';
+import 'package:death_by_slides/game/components/menu_bullet_button.dart';
+import 'package:death_by_slides/game/components/result_panel.dart';
+import 'package:death_by_slides/game/input/gamepad_input.dart';
+import 'package:death_by_slides/game/input/menu_input.dart';
+import 'package:death_by_slides/game/pages/arena_page.dart';
+import 'package:death_by_slides/game/pages/light_table_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/routes.dart';
+import 'package:death_by_slides/game/save/save_data.dart';
+import 'package:death_by_slides/game/save/save_store.dart';
+import 'package:death_by_slides/game/slide/slide_page.dart';
 
 import 'arena_harness.dart';
 
@@ -128,9 +128,9 @@ void main() {
   });
 
   group('title slide', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'shows focus on the first press, then moves it in order',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final page = await _settled(game);
         expect(page.focusVisible, isFalse);
@@ -153,9 +153,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'activates the focused entry',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await _settled(game);
 
@@ -164,13 +164,13 @@ void main() {
         game.handleMenuAction(MenuAction.activate);
         await game.ready();
 
-        expect(game.router.currentRoute.name, Routes.slideSorter);
+        expect(game.router.currentRoute.name, Routes.lightTable);
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'F5 starts the show from the beginning',
-      () => PptxMonstersGame(saveStore: _saved({1})),
+      () => DeathBySlidesGame(saveStore: _saved({1})),
       (game) async {
         await _settled(game);
 
@@ -181,9 +181,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'Shift+F5 starts it from the current slide',
-      () => PptxMonstersGame(saveStore: _saved({1})),
+      () => DeathBySlidesGame(saveStore: _saved({1})),
       (game) async {
         await _settled(game);
 
@@ -194,9 +194,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'back stays on the title slide, and tells Android to leave',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await _settled(game);
 
@@ -209,15 +209,15 @@ void main() {
     );
   });
 
-  group('slide sorter', () {
-    testWithGame<PptxMonstersGame>(
+  group('light table', () {
+    testWithGame<DeathBySlidesGame>(
       'starts focus on the current slide and moves across the grid',
-      () => PptxMonstersGame(saveStore: _saved({1})),
+      () => DeathBySlidesGame(saveStore: _saved({1})),
       (game) async {
-        final sorter = await _settled(game, Routes.slideSorter);
+        final table = await _settled(game, Routes.lightTable);
 
         game.handleMenuAction(MenuAction.right);
-        expect(_slide(sorter.focused), 2, reason: 'the first press only shows');
+        expect(_slide(table.focused), 2, reason: 'the first press only shows');
 
         final path = <int?>[];
         for (final step in [
@@ -228,33 +228,33 @@ void main() {
           MenuAction.left,
         ]) {
           game.handleMenuAction(step);
-          path.add(_slide(sorter.focused));
+          path.add(_slide(table.focused));
         }
         expect(path, [5, 6, 3, 2, 1]);
 
         game.handleMenuAction(MenuAction.up);
         expect(
-          (sorter.focused! as ChipButton).label,
+          (table.focused! as ChipButton).label,
           'Back to Editing',
           reason: 'the only thing above the grid',
         );
         game.handleMenuAction(MenuAction.down);
-        expect(_slide(sorter.focused), 3, reason: 'the nearest slide below');
+        expect(_slide(table.focused), 3, reason: 'the nearest slide below');
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'opens the focused slide, but not a locked one',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final sorter = await _settled(game, Routes.slideSorter);
+        final table = await _settled(game, Routes.lightTable);
 
         game.handleMenuAction(MenuAction.right);
         game.handleMenuAction(MenuAction.right);
-        expect(_slide(sorter.focused), 2);
+        expect(_slide(table.focused), 2);
         game.handleMenuAction(MenuAction.activate);
         await game.ready();
-        expect(game.router.currentRoute.name, Routes.slideSorter);
+        expect(game.router.currentRoute.name, Routes.lightTable);
 
         game.handleMenuAction(MenuAction.left);
         game.handleMenuAction(MenuAction.activate);
@@ -263,11 +263,11 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'Esc goes back to the title slide',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        await _settled(game, Routes.slideSorter);
+        await _settled(game, Routes.lightTable);
 
         _press(game, LogicalKeyboardKey.escape);
         await game.ready();
@@ -276,11 +276,11 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'controller B goes back too',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        await _settled(game, Routes.slideSorter);
+        await _settled(game, Routes.lightTable);
 
         game.gamepad.handle(buttonEvent(GamepadButton.b));
         advance(game, 1 / 60);
@@ -290,11 +290,11 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'Android back goes back within the game',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        await _settled(game, Routes.slideSorter);
+        await _settled(game, Routes.lightTable);
 
         expect(game.goBack(), isTrue);
         await game.ready();
@@ -305,9 +305,9 @@ void main() {
   });
 
   group('slide show', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'Esc asks first, and a second Esc ends the show',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -322,9 +322,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'ignores menu keys mid-fight, so Space and the arrows stay weapons',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -337,9 +337,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'selects the result dialog\'s primary action once the slide is decided',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         await _win(game, arena);
@@ -351,9 +351,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'ignores a press that lands as the dialog appears',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         arena.player.takeHit(arena.player.health.max);
@@ -371,9 +371,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'Android back pauses the fight rather than leaving it',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -386,9 +386,9 @@ void main() {
     );
   });
 
-  testWithGame<PptxMonstersGame>(
+  testWithGame<DeathBySlidesGame>(
     'the whole run can be played with only a controller',
-    PptxMonstersGame.new,
+    DeathBySlidesGame.new,
     (game) async {
       await _settled(game);
       void press(GamepadButton button) {
@@ -439,7 +439,7 @@ InMemorySaveStore _saved(Set<int> beaten) =>
 
 /// Opens [route], lets its entrance animations finish, and returns its page.
 Future<SlidePage> _settled(
-  PptxMonstersGame game, [
+  DeathBySlidesGame game, [
   String route = Routes.normalView,
 ]) async {
   await game.ready();
@@ -452,7 +452,7 @@ Future<SlidePage> _settled(
   return game.currentPage!;
 }
 
-void _press(PptxMonstersGame game, LogicalKeyboardKey key) {
+void _press(DeathBySlidesGame game, LogicalKeyboardKey key) {
   game.onKeyEvent(
     KeyDownEvent(
       physicalKey: PhysicalKeyboardKey.keyA,
@@ -463,7 +463,7 @@ void _press(PptxMonstersGame game, LogicalKeyboardKey key) {
   );
 }
 
-Future<void> _win(PptxMonstersGame game, ArenaPage arena) async {
+Future<void> _win(DeathBySlidesGame game, ArenaPage arena) async {
   arena.boss.takeHit(arena.boss.totalHits);
   advance(game, 0.6);
   await game.ready();
@@ -472,7 +472,7 @@ Future<void> _win(PptxMonstersGame game, ArenaPage arena) async {
   expect(arena.children.whereType<ResultPanel>(), hasLength(1));
 }
 
-ArenaPage _arena(PptxMonstersGame game) =>
+ArenaPage _arena(DeathBySlidesGame game) =>
     game.router.currentRoute.children.whereType<ArenaPage>().single;
 
 String? _label(Object? focused) => switch (focused) {

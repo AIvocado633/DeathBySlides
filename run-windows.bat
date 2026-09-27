@@ -14,7 +14,7 @@ rem ===========================================================================
 setlocal
 pushd "%~dp0"
 
-set "BINARY=pptx_monsters"
+set "BINARY=death_by_slides"
 
 rem --- Pick the build configuration ------------------------------------------
 set "MODE=%~1"

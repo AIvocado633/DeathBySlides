@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('MainActivity forwards controller input to the gamepads plugin', () {
     final activity = File(
-      'android/app/src/main/kotlin/com/pptxmonsters/pptx_monsters/'
+      'android/app/src/main/kotlin/com/deathbyslides/death_by_slides/'
       'MainActivity.kt',
     ).readAsStringSync();
 

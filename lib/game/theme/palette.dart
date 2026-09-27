@@ -26,8 +26,8 @@ abstract final class Palette {
   static const highlight = Color(0xFFF4B942);
 
   /// The editor's chrome: toolbar and status bar, dark so the slide glows.
-  static const ribbon = Color(0xFF1E2638);
-  static const ribbonEdge = Color(0xFF2E3850);
+  static const toolbar = Color(0xFF1E2638);
+  static const toolbarEdge = Color(0xFF2E3850);
   static const statusBar = Color(0xFF1E2638);
 
   /// Text and marks drawn on the dark chrome.
@@ -50,9 +50,9 @@ abstract final class Palette {
   static const placeholderText = Color(0xFFA8A194);
 
   /// Boss colours, one family per feature so two fights never read alike.
-  static const autoFit = Color(0xFF6A4C93);
-  static const smartArt = Color(0xFFD1495B);
-  static const smartArtDark = Color(0xFFA3364A);
+  static const shrinkToFit = Color(0xFF6A4C93);
+  static const diagramWizard = Color(0xFFD1495B);
+  static const diagramWizardDark = Color(0xFFA3364A);
 
   /// Accents.
   static const hyperlink = Color(0xFF2A6FDB);

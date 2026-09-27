@@ -19,7 +19,7 @@ class StatusBar extends PositionComponent {
   final String detailLabel;
 
   final Paint _backgroundPaint = Paint()..color = Palette.statusBar;
-  final Paint _edgePaint = Paint()..color = Palette.ribbonEdge;
+  final Paint _edgePaint = Paint()..color = Palette.toolbarEdge;
   final Paint _trackPaint = Paint()
     ..color = Palette.chromeInkSoft
     ..strokeWidth = 2

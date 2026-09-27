@@ -110,16 +110,16 @@ abstract final class SlideText {
     style: _style(size: 22, weight: FontWeight.w600),
   );
 
-  static final ribbonTab = TextPaint(
+  static final toolbarTab = TextPaint(
     style: _style(size: 16, color: Palette.chromeInkSoft),
   );
 
-  static final ribbonTabActive = TextPaint(
+  static final toolbarTabActive = TextPaint(
     style: _style(size: 16, weight: FontWeight.w700, color: Palette.highlight),
   );
 
   /// The open file's name at the end of the toolbar.
-  static final ribbonFileTab = TextPaint(
+  static final toolbarFileName = TextPaint(
     style: _style(size: 14, color: Palette.chromeInkSoft, fontStyle: FontStyle.italic),
   );
 
