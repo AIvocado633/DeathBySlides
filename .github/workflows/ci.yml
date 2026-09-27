@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  FLUTTER_VERSION: 3.41.6
+  FLUTTER_VERSION: 3.47.5
 
 jobs:
   test:
@@ -62,14 +62,11 @@ jobs:
 
   windows:
     # Windows is the everyday target through run-windows.bat, and the gamepads
-    # plugin brings native code of its own to compile.
-    #
-    # Pinned to Visual Studio 2022, the toolchain the project is built with.
-    # windows-latest ships Visual Studio 2026, which audioplayers_windows (under
-    # flame_audio) only compiles with from 4.4.1 -- and that needs Flutter 3.44.
-    # Move back to windows-latest once the SDK upgrade lands.
+    # plugin brings native code of its own to compile. windows-latest ships
+    # Visual Studio 2026, which audioplayers_windows (under flame_audio) needs
+    # 4.4.1 or newer for.
     name: Windows debug build
-    runs-on: windows-2022
+    runs-on: windows-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
