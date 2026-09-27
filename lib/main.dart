@@ -8,11 +8,17 @@ import 'package:gamepads/gamepads.dart';
 import 'game/death_by_slides_game.dart';
 import 'game/save/save_store.dart';
 import 'game/theme/palette.dart';
+import 'game/theme/slide_text.dart';
 
 const Set<TargetPlatform> _mobile = {TargetPlatform.android, TargetPlatform.iOS};
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // The bundled font's licence asks to travel with it.
+  LicenseRegistry.addLicense(() async* {
+    final licence = await rootBundle.loadString('assets/fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks([kFontFamily], licence);
+  });
   if (_mobile.contains(defaultTargetPlatform)) {
     // The game is laid out on a 16:9 slide, so it wants the screen the same way
     // round as a projector. Orientation and system UI are mobile-only concerns;
@@ -45,6 +51,7 @@ class _DeathBySlidesAppState extends State<DeathBySlidesApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        fontFamily: kFontFamily,
         colorScheme: ColorScheme.fromSeed(
           seedColor: Palette.brand,
           brightness: Brightness.dark,

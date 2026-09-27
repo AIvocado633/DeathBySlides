@@ -3,8 +3,12 @@ import 'package:flutter/painting.dart';
 
 import 'palette.dart';
 
-/// Plain system sans-serifs, deliberately not any one office suite's face:
-/// Android resolves Roboto, iOS Helvetica Neue, Windows falls back to Arial.
+/// The game's typeface, bundled so every platform draws the same letters:
+/// Atkinson Hyperlegible, designed by the Braille Institute to keep easily
+/// confused characters apart -- welcome at slide-show distances.
+const String kFontFamily = 'Atkinson Hyperlegible';
+
+/// Plain system sans-serifs, used only for glyphs the bundled face lacks.
 const List<String> kFontStack = ['Roboto', 'Helvetica Neue', 'Helvetica', 'Arial'];
 
 TextStyle _style({
@@ -20,6 +24,7 @@ TextStyle _style({
     color: color,
     letterSpacing: letterSpacing,
     fontStyle: fontStyle,
+    fontFamily: kFontFamily,
     fontFamilyFallback: kFontStack,
     height: 1.1,
   );

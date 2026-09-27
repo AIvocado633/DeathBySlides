@@ -112,6 +112,7 @@ class ShrinkToFitBoss extends Boss {
         fontSize: 10 + points * 0.34,
         fontWeight: FontWeight.w700,
         color: Palette.slide,
+        fontFamily: kFontFamily,
         fontFamilyFallback: kFontStack,
       ),
     );
