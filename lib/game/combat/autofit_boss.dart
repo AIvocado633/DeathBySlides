@@ -10,6 +10,7 @@ import 'package:flutter/painting.dart';
 import '../components/placeholder_frame.dart';
 import '../components/pptx_actor.dart';
 import '../theme/palette.dart';
+import '../theme/slide_text.dart';
 import 'boss.dart';
 import 'health.dart';
 import 'impact.dart';
@@ -18,7 +19,8 @@ import 'projectiles.dart';
 /// The first boss: the feature that shrinks your text because it did not fit.
 ///
 /// Its health *is* a font size. Every bullet point that lands steps it down the
-/// same ladder of point sizes PowerPoint walks when AutoFit kicks in, and the
+/// same ladder of point sizes a slide editor walks when Shrink-to-Fit kicks in,
+/// and the
 /// boss is drawn smaller each time. Run it down to nothing and the feature has
 /// shrunk itself out of existence.
 class AutoFitBoss extends Boss {
@@ -29,7 +31,7 @@ class AutoFitBoss extends Boss {
         size: Vector2(220, 170),
       );
 
-  /// The point sizes AutoFit steps through, longest-standing first. One step
+  /// The point sizes Shrink-to-Fit steps through, longest-standing first. One step
   /// per hit, so the ladder's length is the boss's hit points.
   static const List<int> pointLadder = [
     54,
@@ -110,7 +112,7 @@ class AutoFitBoss extends Boss {
         fontSize: 10 + points * 0.34,
         fontWeight: FontWeight.w700,
         color: Palette.slide,
-        fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Arial'],
+        fontFamilyFallback: kFontStack,
       ),
     );
   }
@@ -172,7 +174,7 @@ class AutoFitBoss extends Boss {
       ..text = '$pointSize pt'
       ..textRenderer = _labelRenderer(pointSize);
 
-    // What the hit cost, in AutoFit's own units: point sizes off the ladder.
+    // What the hit cost, in Shrink-to-Fit's own units: point sizes off the ladder.
     Impact.hit(_actor);
     final floor = parent;
     if (floor != null && before > pointSize) {
@@ -189,7 +191,7 @@ class AutoFitBoss extends Boss {
     }
   }
 
-  /// AutoFit's own medicine: shrink until there is nothing left to read.
+  /// Shrink-to-Fit's own medicine: shrink until there is nothing left to read.
   void _shrinkAway() {
     add(
       ScaleEffect.to(

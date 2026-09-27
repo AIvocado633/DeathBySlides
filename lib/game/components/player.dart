@@ -55,7 +55,7 @@ enum Facing {
 /// Expects to be a child of an [ArenaFloor]: it moves in arena-local
 /// coordinates and clamps itself to the floor every frame.
 ///
-/// Taking a hit shrinks the player, because that is what AutoFit does to
+/// Taking a hit shrinks the player, because that is what Shrink-to-Fit does to
 /// anything that does not fit. Being small is not purely a penalty -- a smaller
 /// player is a faster and narrower target -- but running out of size loses the
 /// slide.
@@ -342,8 +342,8 @@ class Player extends PositionComponent with KeyboardHandler, CollisionCallbacks 
     }
   }
 
-  /// PowerPoint's Shrink & Turn, as an exit: the player spins away to nothing
-  /// before the slide is called lost. The Animation Pane will have something
+  /// A spin-out exit animation: the player spins away to nothing before the
+  /// slide is called lost. The Build Order will have something
   /// to say about this in #19.
   void _playExit() {
     _invulnerable = 0;

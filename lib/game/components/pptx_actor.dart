@@ -9,7 +9,7 @@ import '../art/pptx_art.dart';
 import '../slide/motion.dart';
 import '../theme/palette.dart';
 
-/// A character in the game -- the player, or one of the PowerPoint features
+/// A character in the game -- the player, or one of the slide-editor features
 /// they are trying to defeat.
 ///
 /// Artwork comes from PNG frames exported out of PowerPoint (see
@@ -105,7 +105,7 @@ Color _darken(Color colour, [double amount = 0.16]) {
   return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
 }
 
-/// A monster assembled from PowerPoint autoshapes: an oval body, two circle
+/// A monster assembled from plain autoshapes: an oval body, two circle
 /// eyes and a bullet point for an antenna.
 class _PlaceholderCreature extends PositionComponent {
   _PlaceholderCreature({required Vector2 size, required this.tint})

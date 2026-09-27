@@ -1,49 +1,64 @@
 import 'dart:ui';
 
-/// Colours lifted straight from the PowerPoint UI.
+/// The colours of the made-up slide editor the game takes place in.
 ///
 /// Every screen in this game is dressed as a slide, so the whole palette is
-/// deliberately "Office" rather than "game": the fun comes from the contrast.
+/// deliberately "office software" rather than "game": the fun comes from the
+/// contrast. The editor is nobody's in particular -- ink-navy chrome, warm
+/// paper slides and a teal accent -- so it reads as slideware in general.
 abstract final class Palette {
   /// The grey desk the slide sits on (visible as letterbox bars).
-  static const workspace = Color(0xFF2B2B2B);
-  static const workspaceEdge = Color(0xFF1C1C1C);
+  static const workspace = Color(0xFF121826);
+  static const workspaceEdge = Color(0xFF0A0E17);
 
   /// The slide surface itself.
-  static const slide = Color(0xFFFFFFFF);
+  static const slide = Color(0xFFFFFCF5);
   static const slideShadow = Color(0x66000000);
 
-  /// PowerPoint's signature orange-red, plus shades for hover/press states.
-  static const brand = Color(0xFFC43E1C);
-  static const brandDark = Color(0xFFA23214);
-  static const brandLight = Color(0xFFE8664A);
-  static const brandWash = Color(0x14C43E1C);
-  static const brandWashStrong = Color(0x29C43E1C);
+  /// The editor's own teal, plus shades for hover/press states.
+  static const brand = Color(0xFF0E7C7B);
+  static const brandDark = Color(0xFF095C5B);
+  static const brandLight = Color(0xFF2FA3A1);
+  static const brandWash = Color(0x140E7C7B);
+  static const brandWashStrong = Color(0x290E7C7B);
 
-  /// Ribbon / chrome greys.
-  static const ribbon = Color(0xFFF3F2F1);
-  static const ribbonEdge = Color(0xFFE1DFDD);
-  static const statusBar = Color(0xFFF3F2F1);
+  /// Warm yellow, for whatever the chrome is pointing at.
+  static const highlight = Color(0xFFF4B942);
+
+  /// The editor's chrome: toolbar and status bar, dark so the slide glows.
+  static const ribbon = Color(0xFF1E2638);
+  static const ribbonEdge = Color(0xFF2E3850);
+  static const statusBar = Color(0xFF1E2638);
+
+  /// Text and marks drawn on the dark chrome.
+  static const chromeInk = Color(0xFFE8ECF4);
+  static const chromeInkSoft = Color(0xFF98A3BA);
+
+  /// Panels and cards laid on the slide, a shade warmer than the slide.
+  static const card = Color(0xFFF7F2E8);
+
+  /// Hairlines drawn on the slide itself, such as an unselected thumbnail.
+  static const rule = Color(0xFFE4DED2);
 
   /// Text.
-  static const ink = Color(0xFF1B1B1B);
-  static const inkSoft = Color(0xFF605E5C);
-  static const inkFaint = Color(0xFF8A8886);
+  static const ink = Color(0xFF1A2233);
+  static const inkSoft = Color(0xFF55607A);
+  static const inkFaint = Color(0xFF8A93A6);
 
   /// Empty-placeholder chrome (the dashed boxes on a blank slide).
-  static const placeholderStroke = Color(0xFFBFBFBF);
-  static const placeholderText = Color(0xFFA6A6A6);
+  static const placeholderStroke = Color(0xFFC4BDB0);
+  static const placeholderText = Color(0xFFA8A194);
 
   /// Boss colours, one family per feature so two fights never read alike.
-  static const autoFit = Color(0xFF2B579A);
-  static const smartArt = Color(0xFF3F8F4F);
-  static const smartArtDark = Color(0xFF2E6B3A);
+  static const autoFit = Color(0xFF6A4C93);
+  static const smartArt = Color(0xFFD1495B);
+  static const smartArtDark = Color(0xFFA3364A);
 
   /// Accents.
-  static const hyperlink = Color(0xFF0563C1);
-  static const selection = Color(0xFF2B579A);
-  static const locked = Color(0xFFD6D6D6);
+  static const hyperlink = Color(0xFF2A6FDB);
+  static const selection = Color(0xFF2A6FDB);
+  static const locked = Color(0xFFD9D3C7);
 
   /// Presenting mode: the projector-black behind a running slide show.
-  static const showBlack = Color(0xFF0D0D0D);
+  static const showBlack = Color(0xFF0B0F18);
 }

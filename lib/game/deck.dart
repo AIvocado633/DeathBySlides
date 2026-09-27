@@ -7,7 +7,7 @@ import 'save/save_data.dart';
 /// Read once, here, as the game's default; tests pass their own value instead.
 const bool kUnlockAll = bool.fromEnvironment('UNLOCK_ALL');
 
-/// Where a slide stands, in the slide sorter's own vocabulary.
+/// Where a slide stands, in the light table's own vocabulary.
 enum SlideState {
   /// Won at least once. Still playable.
   beaten,

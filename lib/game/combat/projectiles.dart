@@ -81,7 +81,7 @@ class BulletPoint extends Projectile {
   }
 }
 
-/// The boss's shot: one of the little white squares PowerPoint puts around a
+/// The boss's shot: one of the little white squares an editor puts around a
 /// selected shape, thrown at you so it can resize you down.
 class ResizeHandle extends EnemyShot {
   ResizeHandle({required super.position, required super.velocity})
@@ -109,7 +109,7 @@ class ResizeHandle extends EnemyShot {
   }
 }
 
-/// SmartArt's shot: one of the connector arrows it draws between shapes,
+/// The Diagram Wizard's shot: one of the connector arrows it draws between shapes,
 /// sent at the player instead of at the next bullet in the list.
 class ConnectorArrow extends EnemyShot {
   ConnectorArrow({required super.position, required super.velocity})

@@ -4,7 +4,7 @@ import 'package:flutter/animation.dart';
 
 import 'motion.dart';
 
-/// PowerPoint's "Fly In" entrance animation, applied to any component.
+/// A slide editor's fly-in entrance animation, applied to any component.
 ///
 /// Call this *after* the component's final position has been set: the helper
 /// remembers that position, shifts the component out of frame and animates it

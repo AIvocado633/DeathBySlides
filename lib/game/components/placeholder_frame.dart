@@ -5,7 +5,7 @@ import 'package:flame/components.dart';
 import '../theme/palette.dart';
 import 'slide_painting.dart';
 
-/// The dashed outline PowerPoint draws around an empty content placeholder.
+/// The dashed outline a slide editor draws around an empty content placeholder.
 ///
 /// Used as the frame for the game title and for the side panel, so the start
 /// menu reads as a half-finished deck.
@@ -41,7 +41,7 @@ class PlaceholderFrame extends PositionComponent {
   }
 }
 
-/// The eight white resize handles PowerPoint puts around a selected shape.
+/// The eight white resize handles an editor puts around a selected shape.
 class SelectionHandles extends PositionComponent {
   SelectionHandles({super.position, super.size, this.handleSize = 11});
 
@@ -68,7 +68,7 @@ final Paint _selectionOutlinePaint = Paint()
   ..style = PaintingStyle.stroke
   ..strokeWidth = 1.2;
 
-/// Draws PowerPoint's selection around [rect]: a thin outline with a resize
+/// Draws an editor's selection around [rect]: a thin outline with a resize
 /// handle at each corner and edge, and optionally the rotation handle above.
 ///
 /// Also how keyboard and controller focus is shown, since choosing something

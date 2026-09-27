@@ -8,9 +8,9 @@ import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 import 'placeholder_frame.dart';
 
-/// A checkbox like the ones in PowerPoint's dialogs, with its label beside it.
+/// A checkbox like the ones in any editor's dialogs, with its label beside it.
 ///
-/// The whole row is the hit target, as in Office, where clicking the label
+/// The whole row is the hit target, as in most desktop software, where clicking the label
 /// ticks the box.
 class SettingCheckbox extends PositionComponent
     with TapCallbacks, HoverCallbacks, Focusable {
@@ -92,7 +92,7 @@ class SettingCheckbox extends PositionComponent
   }
 }
 
-/// A slider modelled on the zoom slider in PowerPoint's status bar -- minus,
+/// A slider modelled on the zoom slider in the editor's status bar -- minus,
 /// track, knob, plus -- which finally gets to do something.
 ///
 /// Tap the minus or plus to step, tap or drag along the track to jump, or

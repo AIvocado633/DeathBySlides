@@ -1,9 +1,13 @@
-# Drawing the monsters in PowerPoint
+# Drawing the monsters
 
 Every character in this game — the player and the features they are fighting —
-is drawn in PowerPoint and exported as PNG. That is the joke, and it is also a
-hard constraint: if a sprite could not have been built out of autoshapes, it
-does not belong in the game.
+is built out of plain autoshapes in a slide editor and exported as PNG. That is
+a hard constraint: if a sprite could not have been built out of rectangles,
+ovals and arrows, it does not belong in the game.
+
+Any slide or vector editor will do (LibreOffice Impress, Keynote, Inkscape, …).
+The steps below happen to use PowerPoint, because that is what the first
+sprites were drawn in; the game itself is not tied to any one editor.
 
 This document is the contract between the deck and the code.
 

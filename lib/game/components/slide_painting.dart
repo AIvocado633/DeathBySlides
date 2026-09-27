@@ -3,7 +3,7 @@ import 'dart:ui';
 
 /// Small canvas helpers shared by the slide chrome components.
 ///
-/// Flutter's [Canvas] has no dashed-stroke API, and PowerPoint's empty
+/// Flutter's [Canvas] has no dashed-stroke API, and a slide editor's empty
 /// placeholders are the most recognisable dashed rectangles in software, so we
 /// roll our own.
 void drawDashedRRect(
@@ -34,7 +34,7 @@ Path trianglePath(Offset centre, double size) {
     ..close();
 }
 
-/// A classic five-pointed PowerPoint autoshape star.
+/// A classic five-pointed autoshape star.
 Path starPath(Offset centre, double radius, {int points = 5}) {
   final path = Path();
   final innerRadius = radius * 0.42;

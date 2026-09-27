@@ -8,7 +8,7 @@ import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 import 'chip_button.dart';
 
-/// The pause screen, which is PowerPoint's blanked slide show.
+/// The pause screen, which is a blanked slide show.
 ///
 /// Pressing B during a real presentation blacks the screen out until you press
 /// it again, so that is what pausing looks like here: the fight disappears
@@ -37,21 +37,21 @@ class PauseMenu extends PositionComponent with TapCallbacks {
     final actions = [
       (label: 'Resume', onSelected: onResume),
       (label: 'Retry Slide', onSelected: onRetry),
-      (label: 'End Show', onSelected: onLeave),
+      (label: 'Walk Off', onSelected: onLeave),
     ];
     const rowWidth = 3 * _buttonWidth + 2 * _gap;
     final left = (kSlideWidth - rowWidth) / 2 + _buttonWidth / 2;
 
     await addAll([
       TextComponent(
-        text: 'Slide show paused',
+        text: 'Presentation paused',
         textRenderer: SlideText.showHeading,
         position: Vector2(kSlideWidth / 2, 280),
         anchor: Anchor.center,
       ),
       TextComponent(
         text:
-            'The screen is blank, the way B blanks a slide show. '
+            'The screen is blank, the way B blanks a presentation. '
             'B, Start or Resume picks the fight back up.',
         textRenderer: SlideText.showBody,
         position: Vector2(kSlideWidth / 2, 340),

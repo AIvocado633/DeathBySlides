@@ -4,8 +4,8 @@ import 'combat/smartart_boss.dart';
 
 /// The deck the player has to get through.
 ///
-/// Each level is one slide, and each boss is a PowerPoint feature that has
-/// personally wronged someone.
+/// Each level is one slide, and each boss is a presentation-software feature
+/// that has personally wronged someone.
 class LevelDefinition {
   const LevelDefinition({
     required this.number,
@@ -18,10 +18,10 @@ class LevelDefinition {
 
   final int number;
 
-  /// The feature's name, as the slide sorter and the arena show it.
+  /// The feature's name, as the light table and the arena show it.
   final String boss;
 
-  /// One line on the slide sorter thumbnail.
+  /// One line on the light table thumbnail.
   final String tagline;
 
   /// How the feature goes out, shown when the slide is won.
@@ -46,32 +46,32 @@ LevelDefinition levelNumbered(int number) =>
 const List<LevelDefinition> kLevels = [
   LevelDefinition(
     number: 1,
-    boss: 'AutoFit',
+    boss: 'Shrink-to-Fit',
     tagline: 'Shrinks your text on sight',
-    winLine: 'AutoFit shrank itself out of the deck. One feature down.',
-    lossLine: 'AutoFit shrank you until you no longer fit on the slide.',
+    winLine: 'Shrink-to-Fit shrank itself out of the deck. One feature down.',
+    lossLine: 'Shrink-to-Fit shrank you until you no longer fit on the slide.',
     buildBoss: AutoFitBoss.new,
   ),
   LevelDefinition(
     number: 2,
-    boss: 'SmartArt',
-    tagline: 'Neither smart nor art',
-    winLine: 'SmartArt ran out of shapes to rearrange. Two features down.',
-    lossLine: 'SmartArt rearranged the slide until there was no room for you.',
+    boss: 'Diagram Wizard',
+    tagline: 'No diagram, no wizardry',
+    winLine: 'The Diagram Wizard ran out of shapes to shuffle. Two down.',
+    lossLine: 'The Diagram Wizard rearranged you right off the slide.',
     buildBoss: SmartArtBoss.new,
   ),
   LevelDefinition(
     number: 3,
-    boss: 'Slide Master',
+    boss: 'Master Template',
     tagline: 'Changes everything at once',
-    winLine: 'The Slide Master has been overruled.',
-    lossLine: 'The Slide Master changed you, along with everything else.',
+    winLine: 'The Master Template has been overruled.',
+    lossLine: 'The Master Template changed you, along with everything else.',
   ),
   LevelDefinition(
     number: 4,
-    boss: 'Animation Pane',
+    boss: 'Build Order',
     tagline: 'Seventeen triggers, no order',
-    winLine: 'The Animation Pane is finally empty.',
+    winLine: 'The Build Order is finally empty.',
     lossLine: 'Your exit animation was set to On Click. Someone clicked.',
   ),
   LevelDefinition(
@@ -83,9 +83,9 @@ const List<LevelDefinition> kLevels = [
   ),
   LevelDefinition(
     number: 6,
-    boss: 'Compatibility Mode',
-    tagline: 'Saved as .ppt in 2003',
-    winLine: 'Saved as .pptx at last.',
-    lossLine: 'Some features are not available in this file format. You were one.',
+    boss: 'Legacy Format',
+    tagline: 'Last saved in 2003',
+    winLine: 'Saved in a format from this century at last.',
+    lossLine: 'The old file format could not keep you. Nothing personal.',
   ),
 ];

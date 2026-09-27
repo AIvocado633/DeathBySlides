@@ -90,7 +90,7 @@ class AutoshapeBackdrop extends Component {
   static const List<Color> _tints = [
     Palette.brandWash,
     Color(0x12000000),
-    Color(0x140563C1),
+    Color(0x24F4B942),
   ];
 
   @override

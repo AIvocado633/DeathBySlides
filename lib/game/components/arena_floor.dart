@@ -18,9 +18,9 @@ class ArenaFloor extends PositionComponent with HasTimeScale {
 
   static const double _tile = 60;
 
-  final Paint _floorPaint = Paint()..color = const Color(0xFF1A1A1A);
+  final Paint _floorPaint = Paint()..color = const Color(0xFF161D2B);
   final Paint _gridPaint = Paint()
-    ..color = const Color(0xFF2E2E2E)
+    ..color = const Color(0xFF263048)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1;
   final Paint _borderPaint = Paint()

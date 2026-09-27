@@ -58,7 +58,7 @@ class ResultPanel extends PositionComponent {
     final actions = [
       if (next != null) (label: 'Next Slide', onSelected: next),
       (label: 'Retry Slide', onSelected: onRetry),
-      (label: 'End Show', onSelected: onLeave),
+      (label: 'Walk Off', onSelected: onLeave),
     ];
     // Buttons share the width evenly, centred, with the first one filled.
     final buttonWidth = actions.length == 3 ? 166.0 : 180.0;
