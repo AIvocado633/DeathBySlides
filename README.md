@@ -21,7 +21,8 @@ not built.
   below).
 - **Slide show** — two fights so far, AutoFit and SmartArt, with twin-stick
   controls (see below).
-- **Design Ideas** — a settings pane with nothing wired up yet.
+- **Design Ideas** — settings for controls and motion (see below). Sound
+  settings follow once the game has sound.
 
 ### Progression
 
@@ -90,6 +91,26 @@ events map every platform's pad onto the same Xbox-style layout.
 Each fight is built out of the feature's own behaviour rather than out of a
 health bar with a new sprite on it.
 
+### Design Ideas
+
+Settings live in PowerPoint's Design Ideas pane, built from its own controls:
+dialog checkboxes, and sliders borrowed from the status bar's zoom slider,
+which finally does something. Everything can be reached with arrows, the D-pad
+or the left stick — left and right move a focused slider — and every change is
+saved and applied the moment it is made.
+
+- **Swap sticks** moves on the right thumb and aims on the left, for
+  left-handed players. Touch only: keys and controller sticks stay put.
+- **Controller dead zone**, 5–40%, 20% by default: how far a stick must travel
+  before it counts. Raise it if a worn stick walks the player on its own.
+- **Thumb stick size**, 80–125%, for small phones or big thumbs.
+- **Reduce Motion** stills everything that is only decoration: Fly In
+  entrances (things simply appear), the drifting autoshapes on the title
+  slide, the actors' idle bob, and every hit flash, squash and shake. The
+  fight itself — walking, shots, bosses moving — is untouched. Until the
+  player chooses, it follows the device's own setting (Android's *Remove
+  animations*), checked again whenever the app comes back.
+
 ### Slide 1 — AutoFit
 
 AutoFit shrinks whatever does not fit, so the fight turns that on both sides.
@@ -131,7 +152,7 @@ dialog waits for it to finish. A boss beaten during those last moments does
 not steal the win.
 
 Every flash, squash and shake goes through `lib/game/combat/impact.dart`, so
-Reduce Motion (#13) can turn them all off from one switch. Damage numbers stay:
+Reduce Motion turns them all off from one switch. Damage numbers stay:
 they are what happened, not decoration.
 
 ## Running it
@@ -214,11 +235,12 @@ lib/
       slide_page.dart        Base page: scales and letterboxes the slide
       fly_in.dart            PowerPoint's entrance animation, as an extension
       focusable.dart         What keyboard and controller focus can land on
+      motion.dart            The one Reduce Motion switch decoration obeys
     input/                   Controller state, and keys and buttons as menu actions
     pages/                   One file per screen
     components/              Ribbon, status bar, placeholders, buttons, actors
     art/pptx_art.dart        Loads PNG frames exported from PowerPoint
-    save/                    Progress kept between runs, as one JSON document
+    save/                    Progress and settings, kept as one JSON document
     theme/                   Colours and text styles, lifted from the Office UI
 assets/images/               Exported artwork (see docs/)
 ```

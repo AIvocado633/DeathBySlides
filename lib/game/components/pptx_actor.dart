@@ -6,6 +6,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
 import '../art/pptx_art.dart';
+import '../slide/motion.dart';
 import '../theme/palette.dart';
 
 /// A character in the game -- the player, or one of the PowerPoint features
@@ -33,7 +34,13 @@ class PptxActor extends PositionComponent {
   final Color tint;
 
   final double stepTime;
+
+  /// Whether the actor bobs gently while idle. Decoration, so it stops with
+  /// [Motion.reduced] -- and starts again if that is turned back off.
   final bool bobbing;
+
+  PositionComponent? _art;
+  MoveEffect? _bob;
 
   /// True once real PowerPoint artwork was found and mounted.
   bool get hasArtwork => _hasArtwork;
@@ -41,7 +48,10 @@ class PptxActor extends PositionComponent {
 
   @override
   Future<void> onLoad() async {
-    final animation = await PptxArt.loadAnimation(artPrefix, stepTime: stepTime);
+    final animation = await PptxArt.loadAnimation(
+      artPrefix,
+      stepTime: stepTime,
+    );
     final Component art;
     if (animation != null) {
       _hasArtwork = true;
@@ -57,10 +67,26 @@ class PptxActor extends PositionComponent {
         ..anchor = Anchor.center;
     }
     await add(art);
+    if (art is PositionComponent) {
+      _art = art;
+    }
+  }
 
-    if (bobbing && art is PositionComponent) {
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final art = _art;
+    if (!bobbing || art == null) {
+      return;
+    }
+    final bob = _bob;
+    if (Motion.reduced && bob != null) {
+      bob.removeFromParent();
+      _bob = null;
+      art.position = size / 2;
+    } else if (!Motion.reduced && bob == null) {
       art.add(
-        MoveEffect.by(
+        _bob = MoveEffect.by(
           Vector2(0, -10),
           EffectController(
             duration: 1.3,
@@ -88,8 +114,7 @@ class _PlaceholderCreature extends PositionComponent {
   final Color tint;
 
   late final Paint _bodyPaint = Paint()..color = tint;
-  late final Paint _bodyHighlight = Paint()
-    ..color = const Color(0x33FFFFFF);
+  late final Paint _bodyHighlight = Paint()..color = const Color(0x33FFFFFF);
   late final Color _shade = _darken(tint);
   late final Paint _outlinePaint = Paint()
     ..color = _shade

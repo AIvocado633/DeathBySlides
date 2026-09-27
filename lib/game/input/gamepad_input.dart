@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:gamepads/gamepads.dart';
 
+import '../save/save_data.dart';
+
 /// The latest stick positions and buttons from a connected controller, in
 /// screen terms.
 ///
@@ -21,8 +23,8 @@ import 'package:gamepads/gamepads.dart';
 /// this class free of platform channels and trivially testable.
 class GamepadInput {
   /// How far a stick has to travel, as a fraction of full tilt, before it
-  /// counts as pushed.
-  static const double deadzone = 0.2;
+  /// counts as pushed. Set from Design Ideas.
+  double deadzone = Settings.defaultDeadzone;
 
   final Vector2 _left = Vector2.zero();
   final Vector2 _right = Vector2.zero();
@@ -92,7 +94,7 @@ class GamepadInput {
   /// Returns [raw] with the deadzone cut out and the remaining travel stretched
   /// back over 0..1, so a push starts slow just outside the deadzone instead
   /// of jumping straight to a fifth of full speed.
-  static Vector2 _deadzoned(Vector2 raw) {
+  Vector2 _deadzoned(Vector2 raw) {
     final length = raw.length;
     if (length < deadzone) {
       return Vector2.zero();

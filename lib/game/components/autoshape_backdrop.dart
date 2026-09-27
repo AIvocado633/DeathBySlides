@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
+import '../slide/motion.dart';
 import '../slide/slide_metrics.dart';
 import '../theme/palette.dart';
 import 'slide_painting.dart';
@@ -10,7 +11,8 @@ import 'slide_painting.dart';
 /// The autoshapes everyone has dropped onto a slide at 2am.
 enum Autoshape { star, arrow, bolt, roundedRect, oval }
 
-/// A single decorative shape drifting slowly across the slide.
+/// A single decorative shape drifting slowly across the slide, or holding
+/// still with [Motion.reduced].
 class FloatingAutoshape extends PositionComponent {
   FloatingAutoshape({
     required this.shape,
@@ -33,6 +35,9 @@ class FloatingAutoshape extends PositionComponent {
   @override
   void update(double dt) {
     super.update(dt);
+    if (Motion.reduced) {
+      return;
+    }
     position += velocity * dt;
     angle += spin * dt;
 

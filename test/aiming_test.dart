@@ -11,6 +11,7 @@ import 'package:pptx_monsters/game/components/player.dart';
 import 'package:pptx_monsters/game/components/pptx_actor.dart';
 import 'package:pptx_monsters/game/input/gamepad_input.dart';
 import 'package:pptx_monsters/game/pptx_monsters_game.dart';
+import 'package:pptx_monsters/game/save/save_data.dart';
 
 import 'arena_harness.dart';
 
@@ -37,14 +38,14 @@ void main() {
 
     test('aims at full strength the moment the stick leaves the deadzone', () {
       final pad = GamepadInput()
-        ..handle(stickEvent(GamepadAxis.rightStickX, GamepadInput.deadzone + 0.01));
+        ..handle(stickEvent(GamepadAxis.rightStickX, Settings.defaultDeadzone + 0.01));
 
       expect(pad.aim, closeToVector(Vector2(1, 0), 1e-9));
     });
 
     test('moves gradually from the edge of the deadzone up to full speed', () {
       final pad = GamepadInput()
-        ..handle(stickEvent(GamepadAxis.leftStickX, GamepadInput.deadzone + 0.08));
+        ..handle(stickEvent(GamepadAxis.leftStickX, Settings.defaultDeadzone + 0.08));
       expect(pad.move.x, closeTo(0.1, 1e-6));
 
       pad.handle(stickEvent(GamepadAxis.leftStickX, 1));

@@ -105,6 +105,11 @@ abstract final class SlideText {
     style: _style(size: 18, color: Palette.inkSoft),
   );
 
+  /// A checkbox's or slider's label in Design Ideas.
+  static final settingLabel = TextPaint(
+    style: _style(size: 22, weight: FontWeight.w600),
+  );
+
   static final ribbonTab = TextPaint(
     style: _style(size: 16, color: Palette.inkSoft),
   );

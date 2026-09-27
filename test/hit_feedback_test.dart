@@ -10,11 +10,12 @@ import 'package:pptx_monsters/game/components/player.dart';
 import 'package:pptx_monsters/game/components/result_panel.dart';
 import 'package:pptx_monsters/game/pages/arena_page.dart';
 import 'package:pptx_monsters/game/pptx_monsters_game.dart';
+import 'package:pptx_monsters/game/slide/motion.dart';
 
 import 'arena_harness.dart';
 
 void main() {
-  tearDown(() => Impact.reduceMotion = false);
+  tearDown(() => Motion.reduced = false);
 
   group('invulnerability', () {
     testWithGame<PptxMonstersGame>(
@@ -162,7 +163,7 @@ void main() {
       PptxMonstersGame.new,
       (game) async {
         final arena = await openArena(game);
-        Impact.reduceMotion = true;
+        Motion.reduced = true;
 
         arena.player.takeHit();
         (arena.boss as AutoFitBoss).takeHit();

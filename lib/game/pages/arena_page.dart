@@ -49,7 +49,8 @@ class ArenaPage extends SlidePage {
 
   late final ArenaFloor floor;
 
-  /// Twin sticks: the left thumb moves, the right thumb aims and fires.
+  /// Twin sticks: the left thumb moves, the right thumb aims and fires --
+  /// or the other way round, with Swap sticks on in Design Ideas.
   late final ControlStick moveStick;
   late final ControlStick aimStick;
 
@@ -72,8 +73,15 @@ class ArenaPage extends SlidePage {
       position: Vector2((kSlideWidth - _arenaWidth) / 2, _arenaTop),
       size: Vector2(_arenaWidth, _arenaHeight),
     );
-    moveStick = ControlStick(position: Vector2(120, 612));
-    aimStick = ControlStick.aim(position: Vector2(1160, 612));
+    final settings = game.settings;
+    final underLeftThumb = Vector2(120, 612);
+    final underRightThumb = Vector2(1160, 612);
+    moveStick = ControlStick(
+      position: settings.swapSticks ? underRightThumb : underLeftThumb,
+    )..scale = Vector2.all(settings.stickSize);
+    aimStick = ControlStick.aim(
+      position: settings.swapSticks ? underLeftThumb : underRightThumb,
+    )..scale = Vector2.all(settings.stickSize);
     player = Player(
       position: Vector2(_arenaWidth / 2, _arenaHeight - 90),
       size: _playerSize,

@@ -43,6 +43,10 @@ class SaveFile {
     return _save(_data.copyWith(progress: _data.progress.withBeaten(slide)));
   }
 
+  /// Replaces the settings with [settings], and saves.
+  Future<void> updateSettings(Settings settings) =>
+      _save(_data.copyWith(settings: settings));
+
   Future<void> _save(SaveData data) {
     _data = data;
     final document = data.encode();

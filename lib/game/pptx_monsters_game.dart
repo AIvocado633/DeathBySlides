@@ -17,8 +17,10 @@ import 'pages/main_menu_page.dart';
 import 'pages/slide_sorter_page.dart';
 import 'levels.dart';
 import 'routes.dart';
+import 'save/save_data.dart';
 import 'save/save_file.dart';
 import 'save/save_store.dart';
+import 'slide/motion.dart';
 import 'slide/slide_page.dart';
 import 'theme/palette.dart';
 
@@ -36,8 +38,10 @@ class PptxMonstersGame extends FlameGame
     Stream<NormalizedGamepadEvent>? gamepadEvents,
     SaveStore? saveStore,
     this.unlockAll = kUnlockAll,
+    bool Function()? deviceReducesMotion,
   }) : _gamepadEvents = gamepadEvents,
-       _saveStore = saveStore ?? InMemorySaveStore();
+       _saveStore = saveStore ?? InMemorySaveStore(),
+       _deviceReducesMotion = deviceReducesMotion ?? _platformReducesMotion;
 
   /// Opens every built slide, whatever has been won. See [kUnlockAll].
   final bool unlockAll;
@@ -53,6 +57,35 @@ class PptxMonstersGame extends FlameGame
 
   /// What the player has done so far, loaded before the first page is shown.
   late final SaveFile save;
+
+  /// What the player chose in Design Ideas.
+  Settings get settings => save.data.settings;
+
+  /// Whether the device asks apps to keep animation down. Read afresh each
+  /// time, since it can change while the game is in the background. Tests
+  /// pass their own.
+  final bool Function() _deviceReducesMotion;
+
+  static bool _platformReducesMotion() =>
+      PlatformDispatcher.instance.accessibilityFeatures.disableAnimations;
+
+  /// Whether decoration stays still: the player's choice, or the device's
+  /// until they make one.
+  bool get reducesMotion => settings.reduceMotion ?? _deviceReducesMotion();
+
+  /// Saves [settings] and puts them into effect straight away.
+  void changeSettings(Settings settings) {
+    unawaited(save.updateSettings(settings));
+    _applySettings();
+  }
+
+  /// Hands the settings to the parts of the game that read them every frame.
+  /// The thumb sticks are read as a fight is built, and Design Ideas cannot
+  /// be opened mid-fight.
+  void _applySettings() {
+    gamepad.deadzone = settings.deadzone;
+    Motion.reduced = reducesMotion;
+  }
 
   /// Which slides can be opened, as of the latest save.
   Deck get deck => Deck(progress: save.data.progress, unlockAll: unlockAll);
@@ -74,6 +107,7 @@ class PptxMonstersGame extends FlameGame
     );
     // Before any page exists, so none renders with defaults and then flips.
     save = await SaveFile.load(_saveStore);
+    _applySettings();
     await add(
       router = RouterComponent(
         initialRoute: Routes.normalView,
@@ -161,8 +195,11 @@ class PptxMonstersGame extends FlameGame
       case AppLifecycleState.hidden:
       case AppLifecycleState.detached:
         currentPage?.onAppBackgrounded();
+      // The device's own setting may have changed while it was away.
       case AppLifecycleState.resumed:
-        break;
+        if (isLoaded) {
+          _applySettings();
+        }
     }
   }
 

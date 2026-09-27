@@ -3,20 +3,17 @@ import 'package:flame/effects.dart';
 import 'package:flame/rendering.dart';
 import 'package:flutter/animation.dart';
 
+import '../slide/motion.dart';
 import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 
 /// Everything a hit does beyond changing a number: the tint, the squash, the
 /// shake and the damage that floats off.
 ///
-/// One place on purpose. Reduce Motion (#13) sets [reduceMotion] here and
-/// every flash and shake in the game stops at once, rather than each fight
-/// having to remember to ask.
+/// One place on purpose. With [Motion.reduced] every flash and shake in the
+/// game stops at once, rather than each fight having to remember to ask.
+/// Damage numbers stay: they are what happened, not decoration.
 abstract final class Impact {
-  /// Turns off the flashes, squashes and shakes. Damage numbers stay: they
-  /// are what happened, not decoration.
-  static bool reduceMotion = false;
-
   /// How long a hit tint lasts. Short, and never repeated faster than three
   /// times a second, which is the photosensitivity guideline.
   static const double flashDuration = 0.14;
@@ -27,7 +24,7 @@ abstract final class Impact {
   /// anything whose scale or position the fight is already driving, so the
   /// reaction cannot fight the fight for control of them.
   static void hit(PositionComponent visual, {Color colour = Palette.slide}) {
-    if (reduceMotion) {
+    if (Motion.reduced) {
       return;
     }
     visual.decorator.addLast(
@@ -48,7 +45,7 @@ abstract final class Impact {
 
   /// Shakes [board] briefly, for a hit the player felt themselves.
   static void shake(PositionComponent board, {double distance = 7}) {
-    if (reduceMotion) {
+    if (Motion.reduced) {
       return;
     }
     board.add(
