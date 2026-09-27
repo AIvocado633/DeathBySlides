@@ -24,7 +24,7 @@ import 'projectiles.dart';
 /// and the
 /// boss is drawn smaller each time. Run it down to nothing and the feature has
 /// shrunk itself out of existence.
-class ShrinkToFitBoss extends Boss {
+class ShrinkToFitBoss extends Boss with BulletTarget {
   /// Stands centred near the top of the arena and patrols from there.
   ShrinkToFitBoss(super.context)
     : super(
@@ -72,6 +72,9 @@ class ShrinkToFitBoss extends Boss {
 
   @override
   bool get isDefeated => _defeated;
+
+  @override
+  bool get isTargetable => !_defeated;
 
   @override
   Iterable<Cue> get cues => const [

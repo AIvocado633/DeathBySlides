@@ -9,6 +9,7 @@ import '../components/toolbar.dart';
 import '../components/setting_controls.dart';
 import '../components/status_bar.dart';
 import '../input/menu_input.dart';
+import '../routes.dart';
 import '../save/save_data.dart';
 import '../slide/fly_in.dart';
 import '../slide/slide_metrics.dart';
@@ -142,6 +143,7 @@ class TweaksPage extends SlidePage {
     await sound.addAll([
       musicVolume = SettingSlider(
         label: 'Music',
+        trackWidth: 120,
         value: settings.musicVolume,
         min: 0,
         max: 1,
@@ -154,6 +156,7 @@ class TweaksPage extends SlidePage {
       ),
       effectsVolume = SettingSlider(
         label: 'Effects',
+        trackWidth: 120,
         value: settings.effectsVolume,
         min: 0,
         max: 1,
@@ -175,14 +178,20 @@ class TweaksPage extends SlidePage {
       await add(card..flyIn(delay: 0.16 + index * 0.07));
     }
 
-    await add(
+    await addAll([
       ChipButton(
         label: 'Back to Editing',
         position: Vector2(kSlideMargin, 596),
         width: 250,
         onSelected: game.router.pop,
       )..flyIn(delay: 0.42),
-    );
+      ChipButton(
+        label: 'Pep Talk…',
+        position: Vector2(kSlideMargin + 270, 596),
+        width: 200,
+        onSelected: () => game.router.pushNamed(Routes.pepTalk),
+      )..flyIn(delay: 0.46),
+    ]);
   }
 
   PlaceholderFrame _card({

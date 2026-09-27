@@ -20,4 +20,7 @@ abstract final class Routes {
 
   /// Settings, presented as the "Tweaks" side panel.
   static const tweaks = 'tweaks';
+
+  /// The assists, opened from Tweaks.
+  static const pepTalk = 'pep-talk';
 }

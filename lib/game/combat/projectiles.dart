@@ -7,6 +7,7 @@ import 'package:flame/components.dart';
 import '../components/arena_floor.dart';
 import '../components/slide_painting.dart';
 import '../theme/palette.dart';
+import 'pep_talk.dart';
 
 /// Shared behaviour for everything that flies across the arena.
 ///
@@ -59,11 +60,22 @@ abstract class Projectile extends PositionComponent with CollisionCallbacks {
 /// ammunition, so each new feature can bring its own without touching the
 /// player.
 abstract class EnemyShot extends Projectile {
+  /// Pep Talk's slower shots are applied here, once, for every feature's
+  /// ammunition: bosses throw at their own speed and never need to know.
   EnemyShot({
     required super.position,
     required super.velocity,
     required super.size,
-  });
+  }) {
+    velocity.scale(PepTalk.current.shotSpeedScale);
+  }
+}
+
+/// Something a bullet point can be aimed at. Bosses mark whatever the player
+/// is meant to hit, so aim assist finds it without knowing the boss.
+mixin BulletTarget on PositionComponent {
+  /// Whether it is still worth aiming at: false once broken or beaten.
+  bool get isTargetable;
 }
 
 /// The player's shot: a bullet point, fired at the feature responsible.
@@ -73,7 +85,55 @@ class BulletPoint extends Projectile {
 
   static const double speed = 640;
 
+  /// How fast aim assist may turn a bullet point, in radians a second, and
+  /// how far off its heading a target may be for it to try. Gentle on
+  /// purpose: it rescues a near miss, it does not aim for you.
+  static const double assistTurnRate = math.pi / 2;
+  static const double assistCone = math.pi / 6;
+
   final Paint _paint = Paint()..color = Palette.brand;
+
+  @override
+  void update(double dt) {
+    if (PepTalk.current.aimAssist) {
+      _bendTowardsTarget(dt);
+    }
+    super.update(dt);
+  }
+
+  /// Turns towards the nearest target inside [assistCone], by at most
+  /// [assistTurnRate] this frame.
+  void _bendTowardsTarget(double dt) {
+    final board = parent;
+    if (board == null) {
+      return;
+    }
+    final here = absolutePosition;
+    final heading = math.atan2(velocity.y, velocity.x);
+    double? best;
+    var bestDistance = double.infinity;
+    for (final target in board.descendants().whereType<BulletTarget>()) {
+      if (!target.isTargetable) {
+        continue;
+      }
+      final toTarget = target.absoluteCenter - here;
+      final off = _wrap(math.atan2(toTarget.y, toTarget.x) - heading);
+      final distance = toTarget.length;
+      if (off.abs() <= assistCone && distance < bestDistance) {
+        best = off;
+        bestDistance = distance;
+      }
+    }
+    if (best == null) {
+      return;
+    }
+    final turn = best.clamp(-assistTurnRate * dt, assistTurnRate * dt);
+    velocity.rotate(turn);
+    angle = math.atan2(velocity.y, velocity.x);
+  }
+
+  static double _wrap(double radians) =>
+      math.atan2(math.sin(radians), math.cos(radians));
 
   @override
   void render(Canvas canvas) {
