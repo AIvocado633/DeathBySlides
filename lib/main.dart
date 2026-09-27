@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gamepads/gamepads.dart';
 
+import 'game/audio/audio_backend.dart';
 import 'game/death_by_slides_game.dart';
 import 'game/save/save_store.dart';
 import 'game/theme/palette.dart';
@@ -42,6 +43,7 @@ class _DeathBySlidesAppState extends State<DeathBySlidesApp> {
   late final DeathBySlidesGame _game = DeathBySlidesGame(
     gamepadEvents: Gamepads.normalizedEvents,
     saveStore: SharedPreferencesSaveStore(),
+    audioBackend: FlameAudioBackend(),
   );
 
   @override

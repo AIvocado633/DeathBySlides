@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 
+import '../audio/game_audio.dart';
 import '../components/shape_actor.dart';
 import '../theme/palette.dart';
 import 'boss.dart';
@@ -69,6 +70,14 @@ class DiagramWizardBoss extends Boss {
 
   @override
   bool get isDefeated => _defeated;
+
+  @override
+  Iterable<Cue> get cues => const [
+    Cue.diagramHit,
+    Cue.diagramShapeBroken,
+    Cue.diagramReflow,
+    Cue.diagramDefeated,
+  ];
   bool _defeated = false;
 
   double _sinceLastShot = 0;
@@ -130,6 +139,7 @@ class DiagramWizardBoss extends Boss {
   /// Advances to the next layout and slides every surviving shape into its new
   /// place. This is the fight: the board you were aiming at is gone.
   void reflow() {
+    audio.play(Cue.diagramReflow);
     _layout = DiagramLayout
         .values[(_layout.index + 1) % DiagramLayout.values.length];
     final shapes = livingShapes;
@@ -148,6 +158,7 @@ class DiagramWizardBoss extends Boss {
   }
 
   void _collapse() {
+    audio.play(Cue.diagramDefeated);
     add(
       ScaleEffect.to(
         Vector2.zero(),
@@ -301,7 +312,7 @@ class DiagramWizardBoss extends Boss {
 }
 
 /// One shape in the diagram: a rounded rectangle with something living in it.
-class DiagramNode extends PositionComponent with CollisionCallbacks {
+class DiagramNode extends PositionComponent with CollisionCallbacks, HasAudio {
   DiagramNode({required Vector2 position, required this.onBroken})
     : super(
         position: position,
@@ -360,9 +371,11 @@ class DiagramNode extends PositionComponent with CollisionCallbacks {
     scale = Vector2.all(health.scale);
     Impact.hit(_actor);
     if (!health.isDead) {
+      audio.play(Cue.diagramHit);
       return;
     }
     _broken = true;
+    audio.play(Cue.diagramShapeBroken);
     // The Diagram Wizard counts itself in shapes, so that is what a break costs
     // it.
     final diagram = parent;

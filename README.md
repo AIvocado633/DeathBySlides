@@ -29,8 +29,9 @@ not built.
   below).
 - **Slide show** — two fights so far, Shrink-to-Fit and the Diagram Wizard,
   with twin-stick controls (see below).
-- **Tweaks** — settings for controls and motion (see below). Sound settings
-  follow once the game has sound.
+- **Tweaks** — settings for controls, motion and sound (see below).
+- **Sound** — effects for every shot, hit and win, and music for menus and
+  fights (see *Sound* below).
 
 ### Progression
 
@@ -118,6 +119,30 @@ saved and applied the moment it is made.
   fight itself — walking, shots, bosses moving — is untouched. Until the
   player chooses, it follows the device's own setting (Android's *Remove
   animations*), checked again whenever the app comes back.
+- **Music** and **Effects**, 0–100%, 50% and 80% by default. *Off* really is
+  off: nothing of that side is loaded or played. The effects slider plays a
+  shot at the new level, so it can be set by ear.
+
+### Sound
+
+The game borrows the idea of the stock animation sounds every slide editor
+once shipped with — a click for each bullet point fired, a whoosh as a page
+flies in, a drum roll into a fight, applause for a win and something
+deflating for a loss — and each boss brings its own hits and defeat. Music is
+a hold-music loop for the menus and the same slightly too cheerful template,
+faster, for fights.
+
+Every file is original: `tool/make_sounds.py` synthesises them all, and
+[`assets/audio/CREDITS.md`](assets/audio/CREDITS.md) lists each one with its
+licence (CC0). Rebuild them with `python tool/make_sounds.py` (needs numpy).
+
+- Music pauses with the fight, and whenever the app is in the background.
+- A fight loads its sounds as the slide opens, so the first shot is heard
+  without a delay.
+- Each cue has a cap on how many copies sound at once, so a stream of shots
+  stays a rhythm rather than a roar.
+- Everything goes through `lib/game/audio/game_audio.dart`; the platform sits
+  behind `AudioBackend`, and tests swap in a fake that records what played.
 
 ### Slide 1 — Shrink-to-Fit
 
@@ -246,6 +271,7 @@ lib/
       fly_in.dart            The fly-in entrance animation, as an extension
       focusable.dart         What keyboard and controller focus can land on
       motion.dart            The one Reduce Motion switch decoration obeys
+    audio/                   Cues, music and the rules for playing them
     input/                   Controller state, and keys and buttons as menu actions
     pages/                   One file per screen
     components/              Toolbar, status bar, placeholders, buttons, actors
@@ -254,6 +280,8 @@ lib/
     theme/                   The made-up editor's colours and text styles
 assets/images/               Exported artwork (see docs/)
 assets/fonts/                Atkinson Hyperlegible, bundled, with its licence
+assets/audio/                Synthesised effects and music (see CREDITS.md)
+tool/make_sounds.py          Rebuilds every file in assets/audio/
 ```
 
 Two conventions carry most of the weight:

@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleState, KeyEventResult;
 import 'package:gamepads/gamepads.dart';
 
+import 'audio/audio_backend.dart';
+import 'audio/game_audio.dart';
 import 'deck.dart';
 import 'input/gamepad_input.dart';
 import 'input/menu_input.dart';
@@ -33,15 +35,23 @@ import 'theme/palette.dart';
 /// [HasKeyboardHandlerComponents] lets components opt into key events, which is
 /// what makes the game playable on desktop without a touch stick.
 class DeathBySlidesGame extends FlameGame
-    with HasKeyboardHandlerComponents, HasCollisionDetection {
+    with HasKeyboardHandlerComponents, HasCollisionDetection
+    implements AudioHost {
   DeathBySlidesGame({
     Stream<NormalizedGamepadEvent>? gamepadEvents,
     SaveStore? saveStore,
+    AudioBackend? audioBackend,
     this.unlockAll = kUnlockAll,
     bool Function()? deviceReducesMotion,
   }) : _gamepadEvents = gamepadEvents,
        _saveStore = saveStore ?? InMemorySaveStore(),
+       audio = GameAudio(audioBackend ?? const SilentAudioBackend()),
        _deviceReducesMotion = deviceReducesMotion ?? _platformReducesMotion;
+
+  /// The game's sound. The app hands in the platform's audio; tests leave it
+  /// out and get silence, or pass a fake that records what played.
+  @override
+  final GameAudio audio;
 
   /// Opens every built slide, whatever has been won. See [kUnlockAll].
   final bool unlockAll;
@@ -85,6 +95,10 @@ class DeathBySlidesGame extends FlameGame
   void _applySettings() {
     gamepad.deadzone = settings.deadzone;
     Motion.reduced = reducesMotion;
+    audio.setVolumes(
+      music: settings.musicVolume,
+      effects: settings.effectsVolume,
+    );
   }
 
   /// Which slides can be opened, as of the latest save.
@@ -168,9 +182,13 @@ class DeathBySlidesGame extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
+    audio.update(dt);
     if (!isLoaded) {
       return;
     }
+    // Music follows whichever page is on top, so going back to a menu brings
+    // its music back without the page having to know it was covered.
+    audio.track = currentPage?.music;
     for (final button in gamepad.takePresses()) {
       final action = menuActionForButton(button);
       if (action != null) {
@@ -194,9 +212,11 @@ class DeathBySlidesGame extends FlameGame
       case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
       case AppLifecycleState.detached:
+        audio.away = true;
         currentPage?.onAppBackgrounded();
       // The device's own setting may have changed while it was away.
       case AppLifecycleState.resumed:
+        audio.away = false;
         if (isLoaded) {
           _applySettings();
         }

@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
+import '../audio/game_audio.dart';
 import '../combat/boss.dart';
 import '../components/arena_floor.dart';
 import '../components/chip_button.dart';
@@ -46,6 +47,37 @@ class ArenaPage extends SlidePage {
 
   @override
   bool get castsShadow => false;
+
+  /// Fight music until the slide is decided; then the room goes quiet for
+  /// the applause, or for the deflating.
+  @override
+  Track? get music => _resolved ? null : Track.fight;
+
+  /// Everything the fight can play, loaded as the slide opens so the first
+  /// shot is heard the moment it is fired.
+  @override
+  Iterable<Cue> get cues => [
+    ...super.cues,
+    Cue.drumRoll,
+    Cue.bulletPoint,
+    Cue.playerHit,
+    Cue.playerLost,
+    Cue.applause,
+    ...boss.cues,
+  ];
+
+  @override
+  void onMount() {
+    super.onMount();
+    game.audio.play(Cue.drumRoll);
+  }
+
+  /// A fight left while paused must not leave the menu music held.
+  @override
+  void onRemove() {
+    game.audio.fightPaused = false;
+    super.onRemove();
+  }
 
   late final ArenaFloor floor;
 
@@ -185,6 +217,7 @@ class ArenaPage extends SlidePage {
     // Everything that fights lives on the floor, so one time scale stops the
     // board: movement, shot cooldowns, boss timers and projectiles alike.
     floor.pause();
+    game.audio.fightPaused = true;
     // The thumb sticks and the chips would otherwise sit under a blank
     // screen, live.
     moveStick.removeFromParent();
@@ -221,6 +254,7 @@ class ArenaPage extends SlidePage {
     // out as a shot the moment the board moves again.
     player.stopFiring();
     floor.resume();
+    game.audio.fightPaused = false;
     addAll([moveStick, aimStick, _pauseChip, _endShowChip]);
   }
 
@@ -330,6 +364,7 @@ class ArenaPage extends SlidePage {
     if (won) {
       // Saved the moment it is won, so leaving from the dialog keeps it.
       unawaited(game.save.recordWin(level.number));
+      game.audio.play(Cue.applause);
     }
     // Only after a win, and only onto a slide that has been built: beating
     // the last built slide ends on the normal dialog.
