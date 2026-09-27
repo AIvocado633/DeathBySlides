@@ -184,7 +184,7 @@ class MainMenuPage extends SlidePage {
         anchor: Anchor.center,
       ),
       ShapeActor(
-        artPrefix: 'hero_idle_',
+        actor: 'hero',
         position: actorTopLeft,
         size: Vector2.all(actorSize),
       ),

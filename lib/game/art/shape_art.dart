@@ -3,6 +3,8 @@ import 'package:flame/flame.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'actor_art.dart';
+
 /// Loader for artwork that was drawn in PowerPoint and exported to PNG.
 ///
 /// The whole art pipeline for this game is: build the character out of
@@ -21,13 +23,35 @@ abstract final class ShapeArt {
   static Set<String>? _manifestEntries;
   static Future<Set<String>>? _manifestLoad;
 
+  static final Map<String, Future<ActorFrames>> _actors = {};
+
+  /// Every state and direction exported for [actor] -- `hero`,
+  /// `shrink_to_fit`, ... -- loaded once and then shared by every copy of the
+  /// actor, so changing state never reads the manifest again.
+  static Future<ActorFrames> loadActor(String actor) =>
+      _actors[actor] ??= _loadActor(actor);
+
+  static Future<ActorFrames> _loadActor(String actor) async {
+    final frames = <String, List<Sprite>>{};
+    for (final prefix in ActorFrames.candidatePrefixes(actor)) {
+      final sprites = await _loadSprites(prefix);
+      if (sprites.isNotEmpty) {
+        frames[prefix] = sprites;
+      }
+    }
+    final loaded = ActorFrames(actor, frames);
+    if (!loaded.hasArtwork) {
+      debugPrint(
+        'ShapeArt: no frames named "${actor}_idle_000.png" in $_imageFolder '
+        '- falling back to placeholder art.',
+      );
+    }
+    return loaded;
+  }
+
   /// Loads `<prefix>000.png`, `<prefix>001.png`, ... until a frame is missing.
-  ///
-  /// [prefix] is relative to `assets/images/`.
-  static Future<SpriteAnimation?> loadAnimation(
+  static Future<List<Sprite>> _loadSprites(
     String prefix, {
-    double stepTime = 0.12,
-    bool loop = true,
     int maxFrames = 64,
   }) async {
     final sprites = <Sprite>[];
@@ -40,6 +64,19 @@ abstract final class ShapeArt {
       }
       sprites.add(sprite);
     }
+    return sprites;
+  }
+
+  /// Loads `<prefix>000.png`, `<prefix>001.png`, ... until a frame is missing.
+  ///
+  /// [prefix] is relative to `assets/images/`.
+  static Future<SpriteAnimation?> loadAnimation(
+    String prefix, {
+    double stepTime = 0.12,
+    bool loop = true,
+    int maxFrames = 64,
+  }) async {
+    final sprites = await _loadSprites(prefix, maxFrames: maxFrames);
     if (sprites.isEmpty) {
       debugPrint(
         'ShapeArt: no frames named "${prefix}000.png" in $_imageFolder '
@@ -64,12 +101,30 @@ abstract final class ShapeArt {
     return entries.contains('$_imageFolder$fileName');
   }
 
-  /// Forgets the cached manifest. Only needed if assets change at runtime.
+  /// Forgets the cached manifest and every actor loaded from it. Only needed
+  /// if assets change at runtime.
   @visibleForTesting
   static void resetManifestCache() {
     _manifestEntries = null;
     _manifestLoad = null;
+    _actors.clear();
   }
+
+  /// Pretends the bundle holds exactly [assets] (full paths, e.g.
+  /// `assets/images/hero_idle_000.png`), so tests can check which art is
+  /// chosen without shipping any. The images themselves must be put into
+  /// `Flame.images` by the test.
+  @visibleForTesting
+  static void debugUseManifest(Set<String> assets) {
+    resetManifestCache();
+    _manifestEntries = assets;
+  }
+
+  /// How many times the real manifest has been read, for tests that check it
+  /// is read once.
+  @visibleForTesting
+  static int get debugManifestReads => _manifestReads;
+  static int _manifestReads = 0;
 
   static Future<Set<String>> _manifest() {
     final cached = _manifestEntries;
@@ -80,6 +135,7 @@ abstract final class ShapeArt {
   }
 
   static Future<Set<String>> _loadManifest() async {
+    _manifestReads++;
     try {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       return _manifestEntries = manifest.listAssets().toSet();
