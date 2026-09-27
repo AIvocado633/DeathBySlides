@@ -69,7 +69,7 @@ void main() {
         arena.resume();
         await game.ready();
         expect(arena.children.whereType<ControlStick>(), hasLength(2));
-        expect(_chipLabels(arena), containsAll(['Pause', 'End Show']));
+        expect(_chipLabels(arena), containsAll(['Pause', 'Walk Off']));
         expect(arena.children.whereType<PauseMenu>(), isEmpty);
       },
     );
@@ -175,7 +175,7 @@ void main() {
     );
 
     testWithGame<PptxMonstersGame>(
-      'chooses Resume for a pause, and End Show for a request to leave',
+      'chooses Resume for a pause, and Walk Off for a request to leave',
       PptxMonstersGame.new,
       (game) async {
         final arena = await openArena(game);
@@ -188,7 +188,7 @@ void main() {
 
         _press(game, LogicalKeyboardKey.escape);
         await game.ready();
-        expect(_focusedLabel(arena), 'End Show');
+        expect(_focusedLabel(arena), 'Walk Off');
       },
     );
 
@@ -210,19 +210,19 @@ void main() {
 
         retried.pause();
         await game.ready();
-        _chip(retried, 'End Show').onSelected();
+        _chip(retried, 'Walk Off').onSelected();
         await game.ready();
         expect(game.router.currentRoute.name, Routes.normalView);
       },
     );
 
     testWithGame<PptxMonstersGame>(
-      'the End Show chip asks rather than leaving at once',
+      'the Walk Off chip asks rather than leaving at once',
       PptxMonstersGame.new,
       (game) async {
         final arena = await openArena(game);
 
-        _chip(arena, 'End Show').onSelected();
+        _chip(arena, 'Walk Off').onSelected();
         await game.ready();
 
         expect(arena.isPaused, isTrue);

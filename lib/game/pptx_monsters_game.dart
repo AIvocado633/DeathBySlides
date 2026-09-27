@@ -58,7 +58,7 @@ class PptxMonstersGame extends FlameGame
   /// What the player has done so far, loaded before the first page is shown.
   late final SaveFile save;
 
-  /// What the player chose in Design Ideas.
+  /// What the player chose in Tweaks.
   Settings get settings => save.data.settings;
 
   /// Whether the device asks apps to keep animation down. Read afresh each
@@ -80,7 +80,7 @@ class PptxMonstersGame extends FlameGame
   }
 
   /// Hands the settings to the parts of the game that read them every frame.
-  /// The thumb sticks are read as a fight is built, and Design Ideas cannot
+  /// The thumb sticks are read as a fight is built, and Tweaks cannot
   /// be opened mid-fight.
   void _applySettings() {
     gamepad.deadzone = settings.deadzone;

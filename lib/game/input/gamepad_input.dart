@@ -23,7 +23,7 @@ import '../save/save_data.dart';
 /// this class free of platform channels and trivially testable.
 class GamepadInput {
   /// How far a stick has to travel, as a fraction of full tilt, before it
-  /// counts as pushed. Set from Design Ideas.
+  /// counts as pushed. Set from Tweaks.
   double deadzone = Settings.defaultDeadzone;
 
   final Vector2 _left = Vector2.zero();

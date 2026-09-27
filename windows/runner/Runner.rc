@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.pptxmonsters" "\0"
-            VALUE "FileDescription", "pptx_monsters" "\0"
+            VALUE "FileDescription", "Death by Slides" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "pptx_monsters" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.pptxmonsters. All rights reserved." "\0"
             VALUE "OriginalFilename", "pptx_monsters.exe" "\0"
-            VALUE "ProductName", "pptx_monsters" "\0"
+            VALUE "ProductName", "Death by Slides" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -26,7 +26,7 @@ import '../theme/slide_text.dart';
 /// itself is feature-agnostic -- it owns the floor, the controls and the
 /// win/lose flow, and asks its [level] for whatever is standing in the way.
 class ArenaPage extends SlidePage {
-  /// Only a slide whose fight has been built can be opened; the slide sorter
+  /// Only a slide whose fight has been built can be opened; the light table
   /// never offers the others.
   ArenaPage({required this.level})
     : assert(
@@ -50,7 +50,7 @@ class ArenaPage extends SlidePage {
   late final ArenaFloor floor;
 
   /// Twin sticks: the left thumb moves, the right thumb aims and fires --
-  /// or the other way round, with Swap sticks on in Design Ideas.
+  /// or the other way round, with Swap sticks on in Tweaks.
   late final ControlStick moveStick;
   late final ControlStick aimStick;
 
@@ -141,7 +141,7 @@ class ArenaPage extends SlidePage {
         onSelected: pause,
       ),
       _endShowChip = ChipButton(
-        label: 'End Show',
+        label: 'Walk Off',
         filled: true,
         position: Vector2(kSlideWidth - kSlideMargin, 80),
         anchor: Anchor.centerRight,
@@ -174,7 +174,7 @@ class ArenaPage extends SlidePage {
   /// Whether the fight is frozen behind the blanked screen.
   bool get isPaused => _pauseMenu != null;
 
-  /// Freezes the fight and blanks the slide, PowerPoint style.
+  /// Freezes the fight and blanks the slide, as a presenter's clicker does.
   ///
   /// Does nothing once the slide has been decided, or while already paused,
   /// so a second B is a resume rather than a second menu.
@@ -247,7 +247,7 @@ class ArenaPage extends SlidePage {
         // B and Start pick the fight back up, the way B unblanks a slide show.
         case MenuAction.pause:
           resume();
-        // A second Esc ends the show, as it would in PowerPoint.
+        // A second Esc ends the show, as it would in any slide show.
         case MenuAction.back:
           _leave();
         default:

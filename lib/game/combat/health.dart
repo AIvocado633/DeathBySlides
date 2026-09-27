@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 /// Hit points for a combatant.
 ///
-/// In this fight health is not a bar, it is a size: AutoFit shrinks whatever
+/// In this fight health is not a bar, it is a size: Shrink-to-Fit shrinks whatever
 /// does not fit, so both sides of the fight literally get smaller as they lose.
 /// [scale] is the mapping from remaining points to how big the owner is drawn.
 class Health {

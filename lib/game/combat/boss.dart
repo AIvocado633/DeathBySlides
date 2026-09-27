@@ -26,7 +26,7 @@ class BossContext {
   final void Function() onDefeated;
 }
 
-/// A PowerPoint feature, standing between the player and the end of the deck.
+/// A slide-editor feature, standing between the player and the end of the deck.
 ///
 /// Every feature fights in its own way, so this holds only what the arena needs
 /// in order to run a slide: where the fight stands, and how to end it. How a

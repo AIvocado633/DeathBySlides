@@ -137,19 +137,19 @@ void main() {
 
         game.handleMenuAction(MenuAction.down);
         expect(page.focusVisible, isTrue);
-        expect(_label(page.focused), 'Start Slide Show');
+        expect(_label(page.focused), 'Start Presenting');
 
         game.handleMenuAction(MenuAction.down);
-        expect(_label(page.focused), 'Slide Sorter');
+        expect(_label(page.focused), 'Light Table');
         game.handleMenuAction(MenuAction.down);
         game.handleMenuAction(MenuAction.down);
         expect(
           _label(page.focused),
-          'Design Ideas',
+          'Tweaks',
           reason: 'stops at the end',
         );
         game.handleMenuAction(MenuAction.up);
-        expect(_label(page.focused), 'Slide Sorter');
+        expect(_label(page.focused), 'Light Table');
       },
     );
 
@@ -235,7 +235,7 @@ void main() {
         game.handleMenuAction(MenuAction.up);
         expect(
           (sorter.focused! as ChipButton).label,
-          'Back to Normal View',
+          'Back to Editing',
           reason: 'the only thing above the grid',
         );
         game.handleMenuAction(MenuAction.down);
@@ -423,7 +423,7 @@ void main() {
       expect(retried, isNot(same(second)));
 
       // B asks before it ends the show, so it takes two: the first blanks the
-      // screen with End Show chosen, the second leaves.
+      // screen with Walk Off chosen, the second leaves.
       press(GamepadButton.b);
       await game.ready();
       expect(retried.isPaused, isTrue);

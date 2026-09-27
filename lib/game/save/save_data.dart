@@ -79,7 +79,7 @@ class Progress {
   };
 }
 
-/// What the player chose in Design Ideas.
+/// What the player chose in Tweaks.
 class Settings {
   const Settings({
     this.swapSticks = false,

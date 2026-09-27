@@ -41,7 +41,7 @@ class _PptxMonstersAppState extends State<PptxMonstersApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PPTX Monsters',
+      title: 'Death by Slides',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,

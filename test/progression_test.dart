@@ -156,7 +156,7 @@ void main() {
         await _win(game, await openArena(game));
 
         final panel = _panel(game);
-        expect(_labels(panel), ['Next Slide', 'Retry Slide', 'End Show']);
+        expect(_labels(panel), ['Next Slide', 'Retry Slide', 'Walk Off']);
         expect(_button(panel, 'Next Slide').filled, isTrue);
 
         _button(panel, 'Next Slide').onSelected();
@@ -185,7 +185,7 @@ void main() {
         advance(game, Player.exitDuration + 0.1);
         await game.ready();
 
-        expect(_labels(_panel(game)), ['Retry Slide', 'End Show']);
+        expect(_labels(_panel(game)), ['Retry Slide', 'Walk Off']);
       },
     );
 
@@ -198,7 +198,7 @@ void main() {
 
         final panel = _panel(game);
         expect(panel.won, isTrue);
-        expect(_labels(panel), ['Retry Slide', 'End Show']);
+        expect(_labels(panel), ['Retry Slide', 'Walk Off']);
       },
     );
   });
@@ -242,7 +242,7 @@ void main() {
         await game.ready();
 
         await _win(game, _arena(game));
-        _button(_panel(game), 'End Show').onSelected();
+        _button(_panel(game), 'Walk Off').onSelected();
         await game.ready();
         advance(game, 1 / 60);
 
@@ -274,7 +274,7 @@ void main() {
         final menu = await _started(game);
 
         final start = _startButton(menu);
-        expect(start.label, 'From Current Slide');
+        expect(start.label, 'Carry On');
         expect(start.hint, 'Shift+F5');
         expect(_statusLabel(menu), 'Slide 2 of ${kLevels.length}');
 
@@ -296,7 +296,7 @@ void main() {
         final menu = await _started(game);
 
         final start = _startButton(menu);
-        expect(start.label, 'From Beginning');
+        expect(start.label, 'From the Top');
         start.onSelected();
         await game.ready();
         expect(_arena(game).level.number, 1);
@@ -308,16 +308,16 @@ void main() {
       PptxMonstersGame.new,
       (game) async {
         final menu = await _started(game);
-        expect(_startButton(menu).label, 'Start Slide Show');
+        expect(_startButton(menu).label, 'Start Presenting');
         expect(_statusLabel(menu), 'Slide 1 of ${kLevels.length}');
 
         await _win(game, await openArena(game));
-        _button(_panel(game), 'End Show').onSelected();
+        _button(_panel(game), 'Walk Off').onSelected();
         await game.ready();
         advance(game, 1 / 60);
         await game.ready();
 
-        expect(_startButton(menu).label, 'From Current Slide');
+        expect(_startButton(menu).label, 'Carry On');
         expect(_statusLabel(menu), 'Slide 2 of ${kLevels.length}');
         expect(
           menu.children.whereType<TextComponent>().map((text) => text.text),

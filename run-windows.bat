@@ -1,6 +1,6 @@
 @echo off
 rem ===========================================================================
-rem  PPTX Monsters - build the Windows app and play it.
+rem  Death by Slides - build the Windows app and play it.
 rem
 rem    run-windows.bat            release build (default)
 rem    run-windows.bat debug      debug build, builds quicker
@@ -57,7 +57,7 @@ echo.
 echo  Launching %EXE_FULL%
 rem Start detached and from the bundle directory, so the game keeps running
 rem after this window closes and finds its `data` folder.
-start "PPTX Monsters" /d "%EXE_DIR%" "%EXE_FULL%"
+start "Death by Slides" /d "%EXE_DIR%" "%EXE_FULL%"
 
 popd
 endlocal

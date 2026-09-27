@@ -18,7 +18,7 @@ enum MenuAction {
   /// Esc, controller B, Android back.
   back,
 
-  /// B or `.`, controller Start: PowerPoint's blank-screen keys, which pause
+  /// B or `.`, controller Start: the usual blank-screen keys, which pause
   /// a fight and let it go again.
   pause,
 
@@ -58,7 +58,7 @@ MenuAction? menuActionForKey(
     LogicalKeyboardKey.numpadEnter ||
     LogicalKeyboardKey.space => MenuAction.activate,
     LogicalKeyboardKey.escape => MenuAction.back,
-    // PowerPoint blanks the screen on B, and on the period key beside it.
+    // Presenting software blanks the screen on B, and on the period key beside it.
     LogicalKeyboardKey.keyB || LogicalKeyboardKey.period => MenuAction.pause,
     LogicalKeyboardKey.f5 =>
       keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||

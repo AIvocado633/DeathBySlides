@@ -3,9 +3,9 @@ import 'package:flutter/painting.dart';
 
 import 'palette.dart';
 
-/// Font stack chosen to look like Office on every platform we ship to.
-/// Windows resolves Segoe UI, Android falls back to Roboto, iOS to Helvetica.
-const List<String> _officeStack = ['Segoe UI', 'Roboto', 'Helvetica', 'Arial'];
+/// Plain system sans-serifs, deliberately not any one office suite's face:
+/// Android resolves Roboto, iOS Helvetica Neue, Windows falls back to Arial.
+const List<String> kFontStack = ['Roboto', 'Helvetica Neue', 'Helvetica', 'Arial'];
 
 TextStyle _style({
   required double size,
@@ -20,7 +20,7 @@ TextStyle _style({
     color: color,
     letterSpacing: letterSpacing,
     fontStyle: fontStyle,
-    fontFamilyFallback: _officeStack,
+    fontFamilyFallback: kFontStack,
     height: 1.1,
   );
 }
@@ -105,25 +105,26 @@ abstract final class SlideText {
     style: _style(size: 18, color: Palette.inkSoft),
   );
 
-  /// A checkbox's or slider's label in Design Ideas.
+  /// A checkbox's or slider's label in Tweaks.
   static final settingLabel = TextPaint(
     style: _style(size: 22, weight: FontWeight.w600),
   );
 
   static final ribbonTab = TextPaint(
-    style: _style(size: 16, color: Palette.inkSoft),
+    style: _style(size: 16, color: Palette.chromeInkSoft),
   );
 
   static final ribbonTabActive = TextPaint(
-    style: _style(size: 16, weight: FontWeight.w600, color: Palette.brand),
+    style: _style(size: 16, weight: FontWeight.w700, color: Palette.highlight),
   );
 
+  /// The open file's name at the end of the toolbar.
   static final ribbonFileTab = TextPaint(
-    style: _style(size: 16, weight: FontWeight.w600, color: Palette.slide),
+    style: _style(size: 14, color: Palette.chromeInkSoft, fontStyle: FontStyle.italic),
   );
 
   static final status = TextPaint(
-    style: _style(size: 14, color: Palette.inkSoft),
+    style: _style(size: 14, color: Palette.chromeInkSoft),
   );
 
   static final thumbnailNumber = TextPaint(
@@ -148,7 +149,7 @@ abstract final class SlideText {
   );
 
   static final showBody = TextPaint(
-    style: _style(size: 22, color: Color(0xFFBDBDBD)),
+    style: _style(size: 22, color: Color(0xFFB8C0D0)),
   );
 
   /// What a hit cost, floating off whatever was hit. Takes its colour from

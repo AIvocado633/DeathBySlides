@@ -13,7 +13,7 @@ import 'health.dart';
 import 'impact.dart';
 import 'projectiles.dart';
 
-/// The layouts SmartArt cycles through. Picking one has never been the hard
+/// The layouts the Diagram Wizard cycles through. Picking one has never been the hard
 /// part; living with the one it picks for you is.
 enum SmartArtLayout { cycle, process, hierarchy, pyramid }
 
@@ -22,7 +22,7 @@ enum SmartArtLayout { cycle, process, hierarchy, pyramid }
 ///
 /// It is not one target but six connected shapes. Break one and the survivors
 /// immediately re-lay themselves out into the next layout, closing ranks and
-/// throwing your aim away -- which is precisely what SmartArt does to a slide
+/// throwing your aim away -- which is precisely what the Diagram Wizard does to a slide
 /// the moment you add or remove a line.
 class SmartArtBoss extends Boss {
   /// Spreads across the top of the arena, centred.
@@ -363,7 +363,7 @@ class SmartArtNode extends PositionComponent with CollisionCallbacks {
       return;
     }
     _broken = true;
-    // SmartArt counts itself in shapes, so that is what a break costs it.
+    // The Diagram Wizard counts itself in shapes, so that is what a break costs it.
     final diagram = parent;
     if (diagram is SmartArtBoss) {
       final board = diagram.parent;

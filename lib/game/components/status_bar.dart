@@ -6,25 +6,25 @@ import '../slide/slide_metrics.dart';
 import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 
-/// The status bar along the bottom of a slide, complete with a zoom slider
-/// nobody has ever intentionally used.
+/// The status bar along the bottom of a slide: where you are, a reassuring
+/// autosave notice, and a zoom slider nobody has ever intentionally used.
 class StatusBar extends PositionComponent {
-  StatusBar({this.slideLabel = 'Slide 1 of 1', this.languageLabel = 'English (Deck)'})
+  StatusBar({this.slideLabel = 'Slide 1 of 1', this.detailLabel = 'Autosaved just now'})
     : super(
         position: Vector2(0, kContentBottom),
         size: Vector2(kSlideWidth, kStatusBarHeight),
       );
 
   final String slideLabel;
-  final String languageLabel;
+  final String detailLabel;
 
   final Paint _backgroundPaint = Paint()..color = Palette.statusBar;
   final Paint _edgePaint = Paint()..color = Palette.ribbonEdge;
   final Paint _trackPaint = Paint()
-    ..color = Palette.inkFaint
+    ..color = Palette.chromeInkSoft
     ..strokeWidth = 2
     ..strokeCap = StrokeCap.round;
-  final Paint _knobPaint = Paint()..color = Palette.inkSoft;
+  final Paint _knobPaint = Paint()..color = Palette.highlight;
 
   static const double _trackLeft = 1080;
   static const double _trackRight = 1180;
@@ -45,18 +45,12 @@ class StatusBar extends PositionComponent {
         anchor: Anchor.centerLeft,
       ),
       TextComponent(
-        text: languageLabel,
+        text: detailLabel,
         textRenderer: SlideText.status,
         position: Vector2(
           _leftInset + slideLabelWidth + _labelGap,
           centreY,
         ),
-        anchor: Anchor.centerLeft,
-      ),
-      TextComponent(
-        text: 'Notes',
-        textRenderer: SlideText.status,
-        position: Vector2(1000, centreY),
         anchor: Anchor.centerLeft,
       ),
       TextComponent(

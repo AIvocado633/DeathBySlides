@@ -9,7 +9,7 @@ import '../theme/slide_text.dart';
 import 'placeholder_frame.dart';
 
 /// A compact pill button, used for secondary actions such as going back to
-/// normal view. Styled after the buttons in PowerPoint's task panes.
+/// normal view. Styled after the buttons in the editor's side panels.
 class ChipButton extends PositionComponent
     with TapCallbacks, HoverCallbacks, Focusable {
   ChipButton({

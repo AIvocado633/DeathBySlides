@@ -35,7 +35,7 @@ void main() {
             .whereType<MenuBulletButton>()
             .map((button) => button.label)
             .toList();
-        expect(labels, ['Start Slide Show', 'Slide Sorter', 'Design Ideas']);
+        expect(labels, ['Start Presenting', 'Light Table', 'Tweaks']);
       },
     );
 

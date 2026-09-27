@@ -33,14 +33,14 @@ class MainMenuPage extends SlidePage {
   Future<void> onLoad() async {
     await addAll([
       AutoshapeBackdrop(seed: 7),
-      RibbonBar(activeTab: 'Slide Show'),
+      RibbonBar(activeTab: 'Present'),
       _statusBar = _buildStatusBar(),
     ]);
 
     await add(_buildTitle());
     await add(_buildSubtitle());
     await addAll(_buildMenu());
-    await add(_buildDesignIdeasPanel());
+    await add(_buildOnStagePanel());
     await add((_footer = _buildFooter())..flyIn(delay: 0.5));
   }
 
@@ -58,8 +58,8 @@ class MainMenuPage extends SlidePage {
     ]);
   }
 
-  /// PowerPoint's own shortcuts: F5 shows from the beginning, Shift+F5 from
-  /// the current slide.
+  /// The usual presenting shortcuts: F5 shows from the beginning, Shift+F5
+  /// from the current slide.
   @override
   void onMenuAction(MenuAction action) {
     switch (action) {
@@ -84,9 +84,9 @@ class MainMenuPage extends SlidePage {
   PositionComponent _buildTitle() {
     final frame = PlaceholderFrame(
       position: Vector2(_titleLeft, _titleTop),
-      size: Vector2(700, 150),
+      size: Vector2(730, 150),
     );
-    const brandWord = 'PPTX ';
+    const brandWord = 'DEATH BY ';
     final brandWidth = SlideText.titleBrand.getLineMetrics(brandWord).width;
     frame.addAll([
       TextComponent(
@@ -96,18 +96,18 @@ class MainMenuPage extends SlidePage {
         anchor: Anchor.centerLeft,
       ),
       TextComponent(
-        text: 'MONSTERS',
+        text: 'SLIDES',
         textRenderer: SlideText.titleInk,
         position: Vector2(28 + brandWidth, 75),
         anchor: Anchor.centerLeft,
       ),
-      _Caret(position: Vector2(28 + brandWidth + _monstersWidth + 10, 75)),
+      _Caret(position: Vector2(28 + brandWidth + _slidesWidth + 10, 75)),
     ]);
     return frame..flyIn(delay: 0.05);
   }
 
-  static final double _monstersWidth =
-      SlideText.titleInk.getLineMetrics('MONSTERS').width;
+  static final double _slidesWidth =
+      SlideText.titleInk.getLineMetrics('SLIDES').width;
 
   PositionComponent _buildSubtitle() {
     return TextComponent(
@@ -121,12 +121,12 @@ class MainMenuPage extends SlidePage {
   List<PositionComponent> _buildMenu() {
     final entries = <({String label, String? hint, String route})>[
       (
-        label: 'Slide Sorter',
+        label: 'Light Table',
         hint: 'Levels',
         route: Routes.slideSorter,
       ),
       (
-        label: 'Design Ideas',
+        label: 'Tweaks',
         hint: 'Settings',
         route: Routes.designIdeas,
       ),
@@ -147,17 +147,17 @@ class MainMenuPage extends SlidePage {
   static Vector2 _menuEntryPosition(int index) =>
       Vector2(_titleLeft - 4, 336 + index * 78);
 
-  /// Starts the show where PowerPoint would: from the beginning until there
+  /// Starts the show where a presenter would: from the beginning until there
   /// is progress, then from the first slide not won yet, and from the
   /// beginning again once every built slide has been.
   MenuBulletButton _buildStartButton() {
     final deck = game.deck;
     final resume = deck.resumeSlide;
     final entry = !deck.hasProgress
-        ? (label: 'Start Slide Show', hint: 'F5', slide: kLevels.first.number)
+        ? (label: 'Start Presenting', hint: 'F5', slide: kLevels.first.number)
         : resume == null
-        ? (label: 'From Beginning', hint: 'F5', slide: kLevels.first.number)
-        : (label: 'From Current Slide', hint: 'Shift+F5', slide: resume);
+        ? (label: 'From the Top', hint: 'F5', slide: kLevels.first.number)
+        : (label: 'Carry On', hint: 'Shift+F5', slide: resume);
     return MenuBulletButton(
       label: entry.label,
       hint: entry.hint,
@@ -166,11 +166,11 @@ class MainMenuPage extends SlidePage {
     );
   }
 
-  PositionComponent _buildDesignIdeasPanel() {
+  PositionComponent _buildOnStagePanel() {
     final panel = PlaceholderFrame(
       position: Vector2(_panelLeft, _titleTop),
       size: Vector2(_panelWidth, 470),
-      fillColor: const Color(0xFFFBFAF9),
+      fillColor: Palette.card,
     );
 
     const actorSize = 230.0;
@@ -178,7 +178,7 @@ class MainMenuPage extends SlidePage {
 
     panel.addAll([
       TextComponent(
-        text: 'DESIGN IDEAS',
+        text: 'ON STAGE',
         textRenderer: SlideText.panelHeading,
         position: Vector2(_panelWidth / 2, 34),
         anchor: Anchor.center,
@@ -199,7 +199,7 @@ class MainMenuPage extends SlidePage {
         anchor: Anchor.center,
       ),
       TextComponent(
-        text: 'Shape 1 · drawn in PowerPoint',
+        text: 'Shape 1 · rectangles and hope',
         textRenderer: SlideText.caption,
         position: Vector2(_panelWidth / 2, 420),
         anchor: Anchor.center,

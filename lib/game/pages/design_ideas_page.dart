@@ -12,15 +12,16 @@ import '../save/save_data.dart';
 import '../slide/fly_in.dart';
 import '../slide/slide_metrics.dart';
 import '../slide/slide_page.dart';
+import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 
-/// Settings, dressed as PowerPoint's "Design Ideas" task pane.
+/// Settings, dressed as the editor's "Tweaks" side panel.
 ///
 /// Every change is saved the moment it is made and applies straight away;
-/// there is no OK button, as there is none on a task pane.
+/// there is no OK button, as there is none on a side panel.
 class DesignIdeasPage extends SlidePage {
   static const double _cardsTop = 190;
-  static const Color _cardFill = Color(0xFFFBFAF9);
+  static const Color _cardFill = Palette.card;
   static const double _columnGap = 30;
   static const double _controlsWidth = 640;
   static const double _sideWidth =
@@ -42,10 +43,10 @@ class DesignIdeasPage extends SlidePage {
   Future<void> onLoad() async {
     final settings = game.settings;
     await addAll([
-      RibbonBar(activeTab: 'Design'),
-      StatusBar(slideLabel: 'Design Ideas'),
+      RibbonBar(activeTab: 'Tweak'),
+      StatusBar(slideLabel: 'Tweaks'),
       TextComponent(
-        text: 'Design Ideas',
+        text: 'Tweaks',
         textRenderer: SlideText.sectionTitle,
         position: Vector2(kSlideMargin, 110),
         anchor: Anchor.centerLeft,
@@ -143,7 +144,7 @@ class DesignIdeasPage extends SlidePage {
 
     await add(
       ChipButton(
-        label: 'Back to Normal View',
+        label: 'Back to Editing',
         position: Vector2(kSlideMargin, 596),
         width: 250,
         onSelected: game.router.pop,

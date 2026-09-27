@@ -17,7 +17,7 @@ import '../slide/slide_page.dart';
 import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 
-/// Level select, dressed as PowerPoint's slide sorter view.
+/// Level select, dressed as the editor's light table: every slide at once.
 class SlideSorterPage extends SlidePage {
   static const double _thumbWidth = 280;
   static const double _thumbHeight = 158;
@@ -32,10 +32,10 @@ class SlideSorterPage extends SlidePage {
   @override
   Future<void> onLoad() async {
     await addAll([
-      RibbonBar(activeTab: 'Design'),
-      StatusBar(slideLabel: 'Slide sorter · ${kLevels.length} slides'),
+      RibbonBar(activeTab: 'Arrange'),
+      StatusBar(slideLabel: 'Light table · ${kLevels.length} slides'),
       TextComponent(
-        text: 'Slide Sorter',
+        text: 'Light Table',
         textRenderer: SlideText.sectionTitle,
         position: Vector2(kSlideMargin, 100),
         anchor: Anchor.centerLeft,
@@ -73,7 +73,7 @@ class SlideSorterPage extends SlidePage {
     // Top-right, so it stays clear of the second row's captions.
     await add(
       ChipButton(
-        label: 'Back to Normal View',
+        label: 'Back to Editing',
         position: Vector2(kSlideWidth - kSlideMargin - 250, 92),
         width: 250,
         onSelected: game.router.pop,
@@ -106,10 +106,10 @@ class SlideSorterPage extends SlidePage {
   }
 }
 
-/// One slide thumbnail in the sorter grid, marked the way PowerPoint's sorter
-/// marks slides:
+/// One slide thumbnail on the light table, marked the way slide overviews
+/// mark slides:
 ///
-///  * beaten: the small star PowerPoint puts by slides that have animations;
+///  * beaten: a small star, as editors put by slides that have animations;
 ///  * unlocked: a plain slide;
 ///  * locked: greyed out, with a bolt;
 ///  * not built yet: a hidden slide, faded, with its number struck through.
@@ -149,13 +149,13 @@ class SlideThumbnail extends PositionComponent
   late final double _numberWidth;
 
   final Paint _surfacePaint = Paint()..color = Palette.slide;
-  final Paint _lockedSurfacePaint = Paint()..color = const Color(0xFFF6F6F6);
+  final Paint _lockedSurfacePaint = Paint()..color = const Color(0xFFF1ECE2);
   final Paint _borderPaint = Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2;
   final Paint _bulletPaint = Paint()..color = Palette.brand;
   final Paint _lockedBulletPaint = Paint()..color = Palette.locked;
-  final Paint _linePaint = Paint()..color = const Color(0xFFE3E3E3);
+  final Paint _linePaint = Paint()..color = Palette.rule;
   final Paint _strikePaint = Paint()
     ..color = Palette.inkSoft
     ..strokeWidth = 2;
@@ -238,7 +238,7 @@ class SlideThumbnail extends PositionComponent
         break;
     }
 
-    // Selected the way PowerPoint's sorter selects a slide: a thick border in
+    // Selected the way an overview selects a slide: a thick border in
     // the brand colour, rather than the resize handles used for shapes.
     if (isHighlighted) {
       _borderPaint
@@ -247,7 +247,7 @@ class SlideThumbnail extends PositionComponent
       canvas.drawRect(rect.inflate(1.5), _borderPaint);
     } else {
       _borderPaint
-        ..color = Palette.ribbonEdge
+        ..color = Palette.rule
         ..strokeWidth = 2;
       canvas.drawRect(rect, _borderPaint);
     }
