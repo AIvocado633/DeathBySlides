@@ -1,4 +1,4 @@
-package com.pptxmonsters.pptx_monsters
+package com.deathbyslides.death_by_slides
 
 import android.hardware.input.InputManager
 import android.os.Handler

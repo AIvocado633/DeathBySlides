@@ -3,22 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gamepads/gamepads.dart';
-import 'package:pptx_monsters/game/combat/projectiles.dart';
-import 'package:pptx_monsters/game/components/chip_button.dart';
-import 'package:pptx_monsters/game/components/control_stick.dart';
-import 'package:pptx_monsters/game/components/pause_menu.dart';
-import 'package:pptx_monsters/game/components/result_panel.dart';
-import 'package:pptx_monsters/game/pages/arena_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/routes.dart';
+import 'package:death_by_slides/game/combat/projectiles.dart';
+import 'package:death_by_slides/game/components/chip_button.dart';
+import 'package:death_by_slides/game/components/control_stick.dart';
+import 'package:death_by_slides/game/components/pause_menu.dart';
+import 'package:death_by_slides/game/components/result_panel.dart';
+import 'package:death_by_slides/game/pages/arena_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/routes.dart';
 
 import 'arena_harness.dart';
 
 void main() {
   group('pausing', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'B blanks the screen and freezes the board',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         // Something of everything in flight: the player walking, a shot of
@@ -55,9 +55,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'takes the controls away, and gives them back on resume',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -74,9 +74,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'carries on from exactly where it stopped',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         hold(arena.player, {LogicalKeyboardKey.keyD});
@@ -100,9 +100,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'does not fire a shot queued while paused',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         advance(game, 0.5);
@@ -125,9 +125,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'the slide cannot be decided while it is paused',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         arena.pause();
@@ -143,9 +143,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a second B picks the fight back up',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -159,9 +159,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'controller Start pauses and resumes',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -174,9 +174,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'chooses Resume for a pause, and Walk Off for a request to leave',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -192,9 +192,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'the pause menu retries and leaves',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         arena.pause();
@@ -216,9 +216,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'the Walk Off chip asks rather than leaving at once',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -230,9 +230,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'leaving the app pauses, and coming back leaves it paused',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -251,9 +251,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a menu ignores the app going away, and B',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         await game.ready();
 
@@ -266,9 +266,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a decided slide stays decided: no pausing the result',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         arena.boss.takeHit(arena.boss.totalHits);
@@ -286,7 +286,7 @@ void main() {
   });
 }
 
-void _press(PptxMonstersGame game, LogicalKeyboardKey key) {
+void _press(DeathBySlidesGame game, LogicalKeyboardKey key) {
   game.onKeyEvent(
     KeyDownEvent(
       physicalKey: PhysicalKeyboardKey.keyA,
@@ -297,7 +297,7 @@ void _press(PptxMonstersGame game, LogicalKeyboardKey key) {
   );
 }
 
-void _pressButton(PptxMonstersGame game, GamepadButton button) {
+void _pressButton(DeathBySlidesGame game, GamepadButton button) {
   game.gamepad
     ..handle(buttonEvent(button))
     ..handle(buttonEvent(button, down: false));

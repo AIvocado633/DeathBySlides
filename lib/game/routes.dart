@@ -7,7 +7,7 @@ abstract final class Routes {
   static const normalView = 'normal-view';
 
   /// Level select, presented as the editor's light table of slides.
-  static const slideSorter = 'slide-sorter';
+  static const lightTable = 'light-table';
 
   /// Gameplay: the top-down arena, presented as a running slide show.
   ///
@@ -19,5 +19,5 @@ abstract final class Routes {
   static String slideShowFor(int levelNumber) => '$slideShow/$levelNumber';
 
   /// Settings, presented as the "Tweaks" side panel.
-  static const designIdeas = 'design-ideas';
+  static const tweaks = 'tweaks';
 }

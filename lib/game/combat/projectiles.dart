@@ -109,15 +109,15 @@ class ResizeHandle extends EnemyShot {
   }
 }
 
-/// The Diagram Wizard's shot: one of the connector arrows it draws between shapes,
-/// sent at the player instead of at the next bullet in the list.
+/// The Diagram Wizard's shot: one of the connector arrows it draws between
+/// shapes, sent at the player instead of at the next bullet in the list.
 class ConnectorArrow extends EnemyShot {
   ConnectorArrow({required super.position, required super.velocity})
     : super(size: 30);
 
   static const double speed = 340;
 
-  final Paint _paint = Paint()..color = Palette.smartArt;
+  final Paint _paint = Paint()..color = Palette.diagramWizard;
 
   @override
   void render(Canvas canvas) {

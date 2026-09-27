@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 
 import '../components/chip_button.dart';
 import '../components/placeholder_frame.dart';
-import '../components/ribbon_bar.dart';
+import '../components/toolbar.dart';
 import '../components/setting_controls.dart';
 import '../components/status_bar.dart';
 import '../input/menu_input.dart';
@@ -19,7 +19,7 @@ import '../theme/slide_text.dart';
 ///
 /// Every change is saved the moment it is made and applies straight away;
 /// there is no OK button, as there is none on a side panel.
-class DesignIdeasPage extends SlidePage {
+class TweaksPage extends SlidePage {
   static const double _cardsTop = 190;
   static const Color _cardFill = Palette.card;
   static const double _columnGap = 30;
@@ -43,7 +43,7 @@ class DesignIdeasPage extends SlidePage {
   Future<void> onLoad() async {
     final settings = game.settings;
     await addAll([
-      RibbonBar(activeTab: 'Tweak'),
+      Toolbar(activeTab: 'Tweak'),
       StatusBar(slideLabel: 'Tweaks'),
       TextComponent(
         text: 'Tweaks',

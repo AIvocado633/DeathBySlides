@@ -1,24 +1,24 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/combat/projectiles.dart';
-import 'package:pptx_monsters/game/combat/smartart_boss.dart';
-import 'package:pptx_monsters/game/components/result_panel.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
+import 'package:death_by_slides/game/combat/projectiles.dart';
+import 'package:death_by_slides/game/combat/diagram_wizard_boss.dart';
+import 'package:death_by_slides/game/components/result_panel.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
 
 import 'arena_harness.dart';
 
-const int _smartArtLevel = 2;
+const int _diagramWizardLevel = 2;
 
 void main() {
   group('layouts', () {
     test('keep every shape inside the diagram, at any shape count', () {
       final box = Vector2(460, 230);
-      const half = SmartArtBoss.nodeSize / 2;
+      const half = DiagramWizardBoss.nodeSize / 2;
 
-      for (final layout in SmartArtLayout.values) {
+      for (final layout in DiagramLayout.values) {
         for (var count = 1; count <= 6; count++) {
-          final places = SmartArtBoss.positionsFor(layout, count, box);
+          final places = DiagramWizardBoss.positionsFor(layout, count, box);
 
           expect(places.length, count, reason: '$layout with $count shapes');
           for (final place in places) {
@@ -40,9 +40,9 @@ void main() {
     test('never stack two shapes on the same spot', () {
       final box = Vector2(460, 230);
 
-      for (final layout in SmartArtLayout.values) {
+      for (final layout in DiagramLayout.values) {
         for (var count = 2; count <= 6; count++) {
-          final places = SmartArtBoss.positionsFor(layout, count, box);
+          final places = DiagramWizardBoss.positionsFor(layout, count, box);
           for (var i = 0; i < places.length; i++) {
             for (var j = i + 1; j < places.length; j++) {
               expect(
@@ -57,27 +57,27 @@ void main() {
     });
   });
 
-  group('SmartArt boss', () {
-    testWithGame<PptxMonstersGame>(
+  group('Diagram Wizard boss', () {
+    testWithGame<DeathBySlidesGame>(
       'opens as a six-shape cycle',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final boss =
-            (await openArena(game, level: _smartArtLevel)).boss as SmartArtBoss;
+            (await openArena(game, level: _diagramWizardLevel)).boss as DiagramWizardBoss;
 
         expect(boss.livingShapes.length, 6);
-        expect(boss.layout, SmartArtLayout.cycle);
+        expect(boss.layout, DiagramLayout.cycle);
         expect(boss.readout, '6 shapes');
         expect(boss.remainingHits, boss.totalHits);
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'takes two hits to break one shape',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final boss =
-            (await openArena(game, level: _smartArtLevel)).boss as SmartArtBoss;
+            (await openArena(game, level: _diagramWizardLevel)).boss as DiagramWizardBoss;
 
         boss.takeHit();
         expect(boss.livingShapes.length, 6, reason: 'one hit only dents it');
@@ -88,16 +88,16 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'rearranges itself the moment a shape is broken',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final arena = await openArena(game, level: _smartArtLevel);
-        final boss = arena.boss as SmartArtBoss;
+        final arena = await openArena(game, level: _diagramWizardLevel);
+        final boss = arena.boss as DiagramWizardBoss;
         final before = boss.livingShapes.map((s) => s.position.clone()).toList();
 
-        boss.takeHit(SmartArtBoss.hitsPerShape);
-        expect(boss.layout, SmartArtLayout.process, reason: 'next layout');
+        boss.takeHit(DiagramWizardBoss.hitsPerShape);
+        expect(boss.layout, DiagramLayout.process, reason: 'next layout');
 
         advance(game, 0.8);
         await game.ready();
@@ -111,8 +111,8 @@ void main() {
         expect(
           after,
           pairwiseCompare<Vector2, Vector2>(
-            SmartArtBoss.positionsFor(
-              SmartArtLayout.process,
+            DiagramWizardBoss.positionsFor(
+              DiagramLayout.process,
               5,
               boss.size,
             ),
@@ -123,29 +123,29 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'walks on through the layouts as it is dismantled',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final boss =
-            (await openArena(game, level: _smartArtLevel)).boss as SmartArtBoss;
+            (await openArena(game, level: _diagramWizardLevel)).boss as DiagramWizardBoss;
 
-        boss.takeHit(SmartArtBoss.hitsPerShape);
-        expect(boss.layout, SmartArtLayout.process);
-        boss.takeHit(SmartArtBoss.hitsPerShape);
-        expect(boss.layout, SmartArtLayout.hierarchy);
-        boss.takeHit(SmartArtBoss.hitsPerShape);
-        expect(boss.layout, SmartArtLayout.pyramid);
-        boss.takeHit(SmartArtBoss.hitsPerShape);
-        expect(boss.layout, SmartArtLayout.cycle, reason: 'wraps around');
+        boss.takeHit(DiagramWizardBoss.hitsPerShape);
+        expect(boss.layout, DiagramLayout.process);
+        boss.takeHit(DiagramWizardBoss.hitsPerShape);
+        expect(boss.layout, DiagramLayout.hierarchy);
+        boss.takeHit(DiagramWizardBoss.hitsPerShape);
+        expect(boss.layout, DiagramLayout.pyramid);
+        boss.takeHit(DiagramWizardBoss.hitsPerShape);
+        expect(boss.layout, DiagramLayout.cycle, reason: 'wraps around');
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'throws connector arrows at the player',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final arena = await openArena(game, level: _smartArtLevel);
+        final arena = await openArena(game, level: _diagramWizardLevel);
         expect(arena.floor.children.whereType<ConnectorArrow>(), isEmpty);
 
         advance(game, 1.3);
@@ -158,11 +158,11 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'running out of shapes wins the slide',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final arena = await openArena(game, level: _smartArtLevel);
+        final arena = await openArena(game, level: _diagramWizardLevel);
 
         arena.boss.takeHit(arena.boss.totalHits);
         expect(arena.boss.isDefeated, isTrue);
@@ -176,11 +176,11 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a bullet point that reaches a shape breaks it down',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
-        final arena = await openArena(game, level: _smartArtLevel);
+        final arena = await openArena(game, level: _diagramWizardLevel);
         final before = arena.boss.remainingHits;
 
         arena.player.fire();

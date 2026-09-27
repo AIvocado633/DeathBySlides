@@ -6,27 +6,27 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 
-import '../components/pptx_actor.dart';
+import '../components/shape_actor.dart';
 import '../theme/palette.dart';
 import 'boss.dart';
 import 'health.dart';
 import 'impact.dart';
 import 'projectiles.dart';
 
-/// The layouts the Diagram Wizard cycles through. Picking one has never been the hard
-/// part; living with the one it picks for you is.
-enum SmartArtLayout { cycle, process, hierarchy, pyramid }
+/// The layouts the Diagram Wizard cycles through. Picking one has never been
+/// the hard part; living with the one it picks for you is.
+enum DiagramLayout { cycle, process, hierarchy, pyramid }
 
 /// The second boss: the feature that turns your bullet list into a diagram and
 /// then refuses to let you place anything in it.
 ///
 /// It is not one target but six connected shapes. Break one and the survivors
 /// immediately re-lay themselves out into the next layout, closing ranks and
-/// throwing your aim away -- which is precisely what the Diagram Wizard does to a slide
-/// the moment you add or remove a line.
-class SmartArtBoss extends Boss {
+/// throwing your aim away -- which is precisely what the Diagram Wizard does to
+/// a slide the moment you add or remove a line.
+class DiagramWizardBoss extends Boss {
   /// Spreads across the top of the arena, centred.
-  SmartArtBoss(super.context, {this.shapeCount = 6, int? seed})
+  DiagramWizardBoss(super.context, {this.shapeCount = 6, int? seed})
     : _random = math.Random(seed),
       super(
         position: Vector2(context.arenaSize.x / 2, 140),
@@ -46,11 +46,11 @@ class SmartArtBoss extends Boss {
   static const double fireInterval = 1.2;
   static const double _reflowDuration = 0.55;
 
-  SmartArtLayout get layout => _layout;
-  SmartArtLayout _layout = SmartArtLayout.cycle;
+  DiagramLayout get layout => _layout;
+  DiagramLayout _layout = DiagramLayout.cycle;
 
-  List<SmartArtNode> get livingShapes => children
-      .whereType<SmartArtNode>()
+  List<DiagramNode> get livingShapes => children
+      .whereType<DiagramNode>()
       .where((node) => !node.isBroken)
       .toList();
 
@@ -78,7 +78,7 @@ class SmartArtBoss extends Boss {
     final places = positionsFor(_layout, shapeCount, size);
     await addAll([
       for (var i = 0; i < shapeCount; i++)
-        SmartArtNode(position: places[i], onBroken: _onShapeBroken),
+        DiagramNode(position: places[i], onBroken: _onShapeBroken),
     ]);
   }
 
@@ -115,7 +115,7 @@ class SmartArtBoss extends Boss {
 
   /// Where [node] sits in arena-local space. The diagram is anchored at its
   /// centre, so a child's own position is relative to the box's top-left.
-  Vector2 arenaPositionOf(SmartArtNode node) =>
+  Vector2 arenaPositionOf(DiagramNode node) =>
       position + node.position - size / 2;
 
   void _onShapeBroken() {
@@ -130,8 +130,8 @@ class SmartArtBoss extends Boss {
   /// Advances to the next layout and slides every surviving shape into its new
   /// place. This is the fight: the board you were aiming at is gone.
   void reflow() {
-    _layout = SmartArtLayout
-        .values[(_layout.index + 1) % SmartArtLayout.values.length];
+    _layout = DiagramLayout
+        .values[(_layout.index + 1) % DiagramLayout.values.length];
     final shapes = livingShapes;
     final places = positionsFor(_layout, shapes.length, size);
     for (var i = 0; i < shapes.length; i++) {
@@ -182,15 +182,15 @@ class SmartArtBoss extends Boss {
     // real one does: a ring, a chain, a parent fanning out to its children,
     // and a pyramid, which has no connectors at all.
     final paint = Paint()
-      ..color = Palette.smartArtDark
+      ..color = Palette.diagramWizardDark
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
     switch (_layout) {
-      case SmartArtLayout.cycle:
+      case DiagramLayout.cycle:
         _chain(canvas, shapes, paint, closed: true);
-      case SmartArtLayout.process:
+      case DiagramLayout.process:
         _chain(canvas, shapes, paint);
-      case SmartArtLayout.hierarchy:
+      case DiagramLayout.hierarchy:
         for (final child in shapes.skip(1)) {
           canvas.drawLine(
             shapes.first.position.toOffset(),
@@ -198,14 +198,14 @@ class SmartArtBoss extends Boss {
             paint,
           );
         }
-      case SmartArtLayout.pyramid:
+      case DiagramLayout.pyramid:
         break;
     }
   }
 
   static void _chain(
     Canvas canvas,
-    List<SmartArtNode> shapes,
+    List<DiagramNode> shapes,
     Paint paint, {
     bool closed = false,
   }) {
@@ -230,7 +230,7 @@ class SmartArtBoss extends Boss {
   /// Every layout keeps whole shapes inside [box], so the diagram never spills
   /// out of its own frame however many shapes are left in it.
   static List<Vector2> positionsFor(
-    SmartArtLayout layout,
+    DiagramLayout layout,
     int count,
     Vector2 box,
   ) {
@@ -241,7 +241,7 @@ class SmartArtBoss extends Boss {
     final centre = box / 2;
 
     switch (layout) {
-      case SmartArtLayout.cycle:
+      case DiagramLayout.cycle:
         // An ellipse rather than a circle, so the shapes use the width of a
         // 16:9 slide instead of huddling in the middle of it.
         final rx = box.x / 2 - inset;
@@ -254,13 +254,13 @@ class SmartArtBoss extends Boss {
             ),
         ];
 
-      case SmartArtLayout.process:
+      case DiagramLayout.process:
         return [
           for (var i = 0; i < count; i++)
             Vector2(_spread(i, count, box.x, inset), centre.y),
         ];
 
-      case SmartArtLayout.hierarchy:
+      case DiagramLayout.hierarchy:
         if (count == 1) {
           return [centre.clone()];
         }
@@ -270,7 +270,7 @@ class SmartArtBoss extends Boss {
             Vector2(_spread(i, count - 1, box.x, inset), box.y - inset),
         ];
 
-      case SmartArtLayout.pyramid:
+      case DiagramLayout.pyramid:
         final rows = <int>[];
         var placed = 0;
         while (placed < count) {
@@ -301,36 +301,36 @@ class SmartArtBoss extends Boss {
 }
 
 /// One shape in the diagram: a rounded rectangle with something living in it.
-class SmartArtNode extends PositionComponent with CollisionCallbacks {
-  SmartArtNode({required Vector2 position, required this.onBroken})
+class DiagramNode extends PositionComponent with CollisionCallbacks {
+  DiagramNode({required Vector2 position, required this.onBroken})
     : super(
         position: position,
-        size: Vector2.all(SmartArtBoss.nodeSize),
+        size: Vector2.all(DiagramWizardBoss.nodeSize),
         anchor: Anchor.center,
         children: [RectangleHitbox()],
       );
 
   final void Function() onBroken;
 
-  final Health health = Health(max: SmartArtBoss.hitsPerShape, minScale: 0.7);
+  final Health health = Health(max: DiagramWizardBoss.hitsPerShape, minScale: 0.7);
 
   bool get isBroken => _broken;
   bool _broken = false;
 
-  late final Paint _fillPaint = Paint()..color = Palette.smartArt;
+  late final Paint _fillPaint = Paint()..color = Palette.diagramWizard;
   late final Paint _edgePaint = Paint()
-    ..color = Palette.smartArtDark
+    ..color = Palette.diagramWizardDark
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3;
 
-  late final PptxActor _actor;
+  late final ShapeActor _actor;
 
   @override
   Future<void> onLoad() async {
     await add(
-      _actor = PptxActor(
-        artPrefix: 'smartart_idle_',
-        tint: Palette.smartArt,
+      _actor = ShapeActor(
+        artPrefix: 'diagram_wizard_idle_',
+        tint: Palette.diagramWizard,
         position: size / 2,
         size: size * 0.72,
         anchor: Anchor.center,
@@ -363,14 +363,15 @@ class SmartArtNode extends PositionComponent with CollisionCallbacks {
       return;
     }
     _broken = true;
-    // The Diagram Wizard counts itself in shapes, so that is what a break costs it.
+    // The Diagram Wizard counts itself in shapes, so that is what a break costs
+    // it.
     final diagram = parent;
-    if (diagram is SmartArtBoss) {
+    if (diagram is DiagramWizardBoss) {
       final board = diagram.parent;
       if (board != null) {
         Impact.damage(
           board,
-          diagram.arenaPositionOf(this) - Vector2(0, SmartArtBoss.nodeSize),
+          diagram.arenaPositionOf(this) - Vector2(0, DiagramWizardBoss.nodeSize),
           '−1 shape',
         );
       }

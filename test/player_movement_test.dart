@@ -2,17 +2,17 @@ import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/components/control_stick.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/components/pptx_actor.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
+import 'package:death_by_slides/game/components/control_stick.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/components/shape_actor.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
 import 'arena_harness.dart';
 
 void main() {
   group('player', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'starts centred below the boss',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -22,9 +22,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'walks in the direction the keys are held',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         final start = arena.player.position.clone();
@@ -37,9 +37,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'stops when the keys are released',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         hold(arena.player, {LogicalKeyboardKey.keyD});
@@ -53,9 +53,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'does not travel faster diagonally',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         final start = arena.player.position.clone();
@@ -70,9 +70,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'cancels out opposite keys',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         final start = arena.player.position.clone();
@@ -84,9 +84,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'cannot walk out of the arena',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         // Take the boss off the board: a hit would shrink the player and move
@@ -115,12 +115,12 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'faces the way it is walking and mirrors the art going west',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
-        final art = arena.player.children.whereType<PptxActor>().single;
+        final art = arena.player.children.whereType<ShapeActor>().single;
 
         hold(arena.player, {LogicalKeyboardKey.keyD});
         game.update(1 / 60);
@@ -161,9 +161,9 @@ void main() {
       expect(player.direction.length, closeTo(1, 1e-9));
     });
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'sits on the arena page beside the aim stick, both wired to the player',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 

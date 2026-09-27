@@ -5,13 +5,13 @@ import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gamepads/gamepads.dart';
-import 'package:pptx_monsters/game/combat/projectiles.dart';
-import 'package:pptx_monsters/game/components/arena_floor.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/components/pptx_actor.dart';
-import 'package:pptx_monsters/game/input/gamepad_input.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/save/save_data.dart';
+import 'package:death_by_slides/game/combat/projectiles.dart';
+import 'package:death_by_slides/game/components/arena_floor.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/components/shape_actor.dart';
+import 'package:death_by_slides/game/input/gamepad_input.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/save/save_data.dart';
 
 import 'arena_harness.dart';
 
@@ -52,9 +52,9 @@ void main() {
       expect(pad.move.x, closeTo(1, 1e-9));
     });
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'right stick aims and fires in the arena',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -160,7 +160,7 @@ void main() {
           moveStick: move,
           aimStick: aim,
         );
-        final art = player.children.whereType<PptxActor>().single;
+        final art = player.children.whereType<ShapeActor>().single;
 
         move.push = Vector2(1, 0);
         aim.push = Vector2(-1, 0);

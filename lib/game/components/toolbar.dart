@@ -11,9 +11,9 @@ import '../theme/slide_text.dart';
 /// Purely decorative: it exists so that the first thing a player sees is
 /// unmistakably a slide editor -- a made-up one, with its own mark, its own
 /// tabs and dark chrome, rather than any real product's.
-class RibbonBar extends PositionComponent {
-  RibbonBar({this.activeTab = 'Present'})
-    : super(position: Vector2.zero(), size: Vector2(kSlideWidth, kRibbonHeight));
+class Toolbar extends PositionComponent {
+  Toolbar({this.activeTab = 'Present'})
+    : super(position: Vector2.zero(), size: Vector2(kSlideWidth, kToolbarHeight));
 
   static const List<String> tabs = [
     'Edit',
@@ -35,8 +35,8 @@ class RibbonBar extends PositionComponent {
   static const double _tabsLeft = 78;
   static const double _tabPadding = 18;
 
-  final Paint _backgroundPaint = Paint()..color = Palette.ribbon;
-  final Paint _edgePaint = Paint()..color = Palette.ribbonEdge;
+  final Paint _backgroundPaint = Paint()..color = Palette.toolbar;
+  final Paint _edgePaint = Paint()..color = Palette.toolbarEdge;
   final Paint _markPaint = Paint()..color = Palette.brand;
   final Paint _markInkPaint = Paint()
     ..color = Palette.slide
@@ -54,8 +54,8 @@ class RibbonBar extends PositionComponent {
     var cursor = _tabsLeft + _tabPadding;
     for (final tab in tabs) {
       final renderer = tab == activeTab
-          ? SlideText.ribbonTabActive
-          : SlideText.ribbonTab;
+          ? SlideText.toolbarTabActive
+          : SlideText.toolbarTab;
       final width = renderer.getLineMetrics(tab).width;
       _tabOffsets.add(cursor);
       _tabWidths.add(width);
@@ -67,12 +67,12 @@ class RibbonBar extends PositionComponent {
   void render(Canvas canvas) {
     canvas.drawRect(size.toRect(), _backgroundPaint);
     canvas.drawRect(
-      Rect.fromLTWH(0, kRibbonHeight - 1.5, kSlideWidth, 1.5),
+      Rect.fromLTWH(0, kToolbarHeight - 1.5, kSlideWidth, 1.5),
       _edgePaint,
     );
     _renderMark(canvas);
 
-    final centreY = kRibbonHeight / 2;
+    final centreY = kToolbarHeight / 2;
     for (var i = 0; i < tabs.length; i++) {
       final tab = tabs[i];
       final isActive = tab == activeTab;
@@ -91,13 +91,13 @@ class RibbonBar extends PositionComponent {
         );
         canvas.drawRRect(
           RRect.fromRectAndRadius(
-            Rect.fromLTWH(_tabOffsets[i], kRibbonHeight - 5, _tabWidths[i], 3),
+            Rect.fromLTWH(_tabOffsets[i], kToolbarHeight - 5, _tabWidths[i], 3),
             const Radius.circular(1.5),
           ),
           _underlinePaint,
         );
       }
-      (isActive ? SlideText.ribbonTabActive : SlideText.ribbonTab).render(
+      (isActive ? SlideText.toolbarTabActive : SlideText.toolbarTab).render(
         canvas,
         tab,
         Vector2(_tabOffsets[i], centreY),
@@ -105,7 +105,7 @@ class RibbonBar extends PositionComponent {
       );
     }
 
-    SlideText.ribbonFileTab.render(
+    SlideText.toolbarFileName.render(
       canvas,
       documentName,
       Vector2(kSlideWidth - 24, centreY),
@@ -115,7 +115,7 @@ class RibbonBar extends PositionComponent {
 
   /// The editor's mark: a teal tile holding a tiny slide with two bullets.
   void _renderMark(Canvas canvas) {
-    final top = (kRibbonHeight - _markSize) / 2;
+    final top = (kToolbarHeight - _markSize) / 2;
     final tile = Rect.fromLTWH(_markLeft, top, _markSize, _markSize);
     canvas.drawRRect(
       RRect.fromRectAndRadius(tile, const Radius.circular(8)),

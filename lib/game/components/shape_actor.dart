@@ -5,7 +5,7 @@ import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
-import '../art/pptx_art.dart';
+import '../art/shape_art.dart';
 import '../slide/motion.dart';
 import '../theme/palette.dart';
 
@@ -13,11 +13,11 @@ import '../theme/palette.dart';
 /// they are trying to defeat.
 ///
 /// Artwork comes from PNG frames exported out of PowerPoint (see
-/// [PptxArt]). Until those frames exist, the actor draws a procedural
+/// [ShapeArt]). Until those frames exist, the actor draws a procedural
 /// stand-in built from the same autoshapes the real art will be made of, so
 /// layout and animation timing can be developed before the deck is finished.
-class PptxActor extends PositionComponent {
-  PptxActor({
+class ShapeActor extends PositionComponent {
+  ShapeActor({
     required this.artPrefix,
     this.tint = Palette.brand,
     this.stepTime = 0.14,
@@ -48,7 +48,7 @@ class PptxActor extends PositionComponent {
 
   @override
   Future<void> onLoad() async {
-    final animation = await PptxArt.loadAnimation(
+    final animation = await ShapeArt.loadAnimation(
       artPrefix,
       stepTime: stepTime,
     );

@@ -1,15 +1,15 @@
 import 'package:flame/game.dart';
 import 'package:flutter/services.dart';
 import 'package:gamepads/gamepads.dart';
-import 'package:pptx_monsters/game/components/control_stick.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/pages/arena_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/routes.dart';
+import 'package:death_by_slides/game/components/control_stick.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/pages/arena_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/routes.dart';
 
 /// Opens a level's arena and returns its page, ready to be driven frame by
-/// frame. Defaults to slide 1, the AutoFit fight.
-Future<ArenaPage> openArena(PptxMonstersGame game, {int level = 1}) async {
+/// frame. Defaults to slide 1, the Shrink-to-Fit fight.
+Future<ArenaPage> openArena(DeathBySlidesGame game, {int level = 1}) async {
   await game.ready();
   game.router.pushNamed(Routes.slideShowFor(level));
   await game.ready();

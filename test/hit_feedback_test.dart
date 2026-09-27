@@ -2,15 +2,15 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/combat/autofit_boss.dart';
-import 'package:pptx_monsters/game/combat/impact.dart';
-import 'package:pptx_monsters/game/combat/projectiles.dart';
-import 'package:pptx_monsters/game/combat/smartart_boss.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/components/result_panel.dart';
-import 'package:pptx_monsters/game/pages/arena_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/slide/motion.dart';
+import 'package:death_by_slides/game/combat/shrink_to_fit_boss.dart';
+import 'package:death_by_slides/game/combat/impact.dart';
+import 'package:death_by_slides/game/combat/projectiles.dart';
+import 'package:death_by_slides/game/combat/diagram_wizard_boss.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/components/result_panel.dart';
+import 'package:death_by_slides/game/pages/arena_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/slide/motion.dart';
 
 import 'arena_harness.dart';
 
@@ -18,9 +18,9 @@ void main() {
   tearDown(() => Motion.reduced = false);
 
   group('invulnerability', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'two shots arriving together cost one size, not two',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         final full = arena.player.health.current;
@@ -52,9 +52,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'blinks while it lasts, no faster than three times a second',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         _shootAtPlayer(arena);
@@ -75,9 +75,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'a direct hit still lands, so fights can be driven from tests',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -88,9 +88,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'bosses get no such mercy: every bullet point counts',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         final before = arena.boss.remainingHits;
@@ -113,12 +113,12 @@ void main() {
   });
 
   group('damage numbers', () {
-    testWithGame<PptxMonstersGame>(
-      'report the cost in AutoFit\'s own units',
-      PptxMonstersGame.new,
+    testWithGame<DeathBySlidesGame>(
+      'report the cost in Shrink-to-Fit\'s own units',
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
-        final boss = arena.boss as AutoFitBoss;
+        final boss = arena.boss as ShrinkToFitBoss;
         final before = boss.pointSize;
 
         boss.takeHit();
@@ -129,23 +129,23 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
-      'report a broken SmartArt shape as a shape',
-      PptxMonstersGame.new,
+    testWithGame<DeathBySlidesGame>(
+      'report a broken Diagram Wizard shape as a shape',
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game, level: 2);
-        final boss = arena.boss as SmartArtBoss;
+        final boss = arena.boss as DiagramWizardBoss;
 
-        boss.takeHit(SmartArtBoss.hitsPerShape);
+        boss.takeHit(DiagramWizardBoss.hitsPerShape);
         await game.ready();
 
         expect(_numbers(arena), contains('−1 shape'));
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'report what the player lost, as the readout counts it',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -158,15 +158,15 @@ void main() {
   });
 
   group('reduce motion', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'turns off every flash and shake from one switch',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         Motion.reduced = true;
 
         arena.player.takeHit();
-        (arena.boss as AutoFitBoss).takeHit();
+        (arena.boss as ShrinkToFitBoss).takeHit();
         await game.ready();
 
         expect(
@@ -194,8 +194,8 @@ void main() {
       // the fights are as hard as they were. A boss firing faster than this
       // would be quietly halved by it.
       for (final interval in [
-        AutoFitBoss.fireInterval,
-        SmartArtBoss.fireInterval,
+        ShrinkToFitBoss.fireInterval,
+        DiagramWizardBoss.fireInterval,
       ]) {
         expect(interval, greaterThan(Player.invulnerableFor));
       }
@@ -203,9 +203,9 @@ void main() {
   });
 
   group('the player leaving the slide', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'plays an exit animation before the slide is lost',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -228,9 +228,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'does not let the boss steal the win on the way out',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 

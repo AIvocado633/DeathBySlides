@@ -1,10 +1,10 @@
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/components/player.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/save/save_data.dart';
-import 'package:pptx_monsters/game/save/save_file.dart';
-import 'package:pptx_monsters/game/save/save_store.dart';
+import 'package:death_by_slides/game/components/player.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/save/save_data.dart';
+import 'package:death_by_slides/game/save/save_file.dart';
+import 'package:death_by_slides/game/save/save_store.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
@@ -93,9 +93,9 @@ void main() {
     final returning = InMemorySaveStore(
       const SaveData(progress: Progress(beaten: {1})).encode(),
     );
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'picks up an earlier save when it starts',
-      () => PptxMonstersGame(saveStore: returning),
+      () => DeathBySlidesGame(saveStore: returning),
       (game) async {
         await game.ready();
 
@@ -104,9 +104,9 @@ void main() {
     );
 
     final winning = InMemorySaveStore();
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'saves a slide the moment it is won',
-      () => PptxMonstersGame(saveStore: winning),
+      () => DeathBySlidesGame(saveStore: winning),
       (game) async {
         final arena = await openArena(game);
 
@@ -122,9 +122,9 @@ void main() {
     );
 
     final losing = InMemorySaveStore();
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'saves nothing for a slide that is lost',
-      () => PptxMonstersGame(saveStore: losing),
+      () => DeathBySlidesGame(saveStore: losing),
       (game) async {
         final arena = await openArena(game);
 

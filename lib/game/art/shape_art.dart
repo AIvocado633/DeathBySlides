@@ -8,14 +8,14 @@ import 'package:flutter/services.dart';
 /// The whole art pipeline for this game is: build the character out of
 /// PowerPoint shapes, one pose per slide, then File > Export > PNG. That
 /// produces a numbered sequence which this class turns into a Flame
-/// [SpriteAnimation]. See `docs/powerpoint-art-pipeline.md`.
+/// [SpriteAnimation]. See `docs/art-pipeline.md`.
 ///
 /// Loaders return `null` rather than throwing when the art has not been
 /// exported yet, so the game stays runnable while the deck is still being drawn
 /// and callers can fall back to a placeholder. Availability is resolved against
 /// the asset manifest instead of by catching load failures, because a failed
 /// `Images.load` leaves a rejected future behind in Flame's cache.
-abstract final class PptxArt {
+abstract final class ShapeArt {
   static const String _imageFolder = 'assets/images/';
 
   static Set<String>? _manifestEntries;
@@ -42,7 +42,7 @@ abstract final class PptxArt {
     }
     if (sprites.isEmpty) {
       debugPrint(
-        'PptxArt: no frames named "${prefix}000.png" in $_imageFolder '
+        'ShapeArt: no frames named "${prefix}000.png" in $_imageFolder '
         '- falling back to placeholder art.',
       );
       return null;

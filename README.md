@@ -1,6 +1,6 @@
 # Death by Slides
 
-[![CI](https://github.com/AIvocado633/PPTXmonsters/actions/workflows/ci.yml/badge.svg)](https://github.com/AIvocado633/PPTXmonsters/actions/workflows/ci.yml)
+[![CI](https://github.com/AIvocado633/DeathBySlides/actions/workflows/ci.yml/badge.svg)](https://github.com/AIvocado633/DeathBySlides/actions/workflows/ci.yml)
 
 A 2D mobile game about defeating the presentation-software features that
 defeated you.
@@ -182,7 +182,7 @@ after the console window closes. For a hot-reload loop use `flutter run -d
 windows` instead.
 
 Progress is saved on the device as soon as a slide is won. On Windows it lives
-in `%APPDATA%\com.pptxmonsters\pptx_monsters\shared_preferences.json`; delete
+in `%APPDATA%\com.deathbyslides\Death by Slides\shared_preferences.json`; delete
 that file to start the deck over.
 
 To work on a boss without playing through the deck first, open every built
@@ -193,7 +193,7 @@ flutter run --dart-define=UNLOCK_ALL=true
 ```
 
 It changes what is open, never what is saved. Tests set the same switch
-through `PptxMonstersGame(unlockAll: true)`.
+through `DeathBySlidesGame(unlockAll: true)`.
 
 Android, iOS and Windows are configured.
 
@@ -233,7 +233,7 @@ To preview in a browser instead, add the web platform back with
 lib/
   main.dart                  App shell; sets landscape, hosts the GameWidget
   game/
-    pptx_monsters_game.dart  FlameGame + RouterComponent; one route per screen
+    death_by_slides_game.dart  FlameGame + RouterComponent; one route per screen
     routes.dart              Route names
     levels.dart              The six slides, and the boss each one builds
     combat/impact.dart       Hit flashes, shakes and damage numbers, in one place
@@ -247,7 +247,7 @@ lib/
     input/                   Controller state, and keys and buttons as menu actions
     pages/                   One file per screen
     components/              Toolbar, status bar, placeholders, buttons, actors
-    art/pptx_art.dart        Loads exported PNG frames
+    art/shape_art.dart        Loads exported PNG frames
     save/                    Progress and settings, kept as one JSON document
     theme/                   The made-up editor's colours and text styles
 assets/images/               Exported artwork (see docs/)
@@ -259,15 +259,11 @@ Two conventions carry most of the weight:
 1280×720 canvas and never sees device pixels; `SlidePage` handles the scaling
 and centring. `test/slide_layout_test.dart` holds pages to that canvas.
 
-**Artwork is optional.** `PptxActor` draws a procedural stand-in when its PNG
+**Artwork is optional.** `ShapeActor` draws a procedural stand-in when its PNG
 frames are missing, so the game runs before the art exists.
 
 ## Drawing the monsters
 
 Characters are built from plain autoshapes in any slide or vector editor and
 exported as PNG — see
-[docs/powerpoint-art-pipeline.md](docs/powerpoint-art-pipeline.md).
-
-Some internal names (`AutoFitBoss`, `SmartArtBoss`, `PptxArt`, the
-`pptx_monsters` package and `com.pptxmonsters` app id) still date from the
-game's first theme and will be renamed in a follow-up.
+[docs/art-pipeline.md](docs/art-pipeline.md).

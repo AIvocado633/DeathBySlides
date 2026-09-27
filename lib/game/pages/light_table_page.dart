@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
 import '../components/chip_button.dart';
-import '../components/ribbon_bar.dart';
+import '../components/toolbar.dart';
 import '../components/slide_painting.dart';
 import '../components/status_bar.dart';
 import '../deck.dart';
@@ -18,7 +18,7 @@ import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 
 /// Level select, dressed as the editor's light table: every slide at once.
-class SlideSorterPage extends SlidePage {
+class LightTablePage extends SlidePage {
   static const double _thumbWidth = 280;
   static const double _thumbHeight = 158;
   static const double _gapX = 40;
@@ -32,7 +32,7 @@ class SlideSorterPage extends SlidePage {
   @override
   Future<void> onLoad() async {
     await addAll([
-      RibbonBar(activeTab: 'Arrange'),
+      Toolbar(activeTab: 'Arrange'),
       StatusBar(slideLabel: 'Light table · ${kLevels.length} slides'),
       TextComponent(
         text: 'Light Table',
@@ -116,7 +116,7 @@ class SlideSorterPage extends SlidePage {
 ///    Unlike a lock, that does not suggest it could be earned.
 ///
 /// Every thumbnail can take focus, locked or not, the way any slide in the
-/// sorter can be selected; only playable ones open.
+/// light table can be selected; only playable ones open.
 class SlideThumbnail extends PositionComponent
     with TapCallbacks, HoverCallbacks, Focusable {
   SlideThumbnail({

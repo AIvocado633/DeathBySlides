@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gamepads/gamepads.dart';
 
-import 'game/pptx_monsters_game.dart';
+import 'game/death_by_slides_game.dart';
 import 'game/save/save_store.dart';
 import 'game/theme/palette.dart';
 
@@ -20,20 +20,20 @@ Future<void> main() async {
     await Flame.device.setLandscape();
     await Flame.device.fullScreen();
   }
-  runApp(const PptxMonstersApp());
+  runApp(const DeathBySlidesApp());
 }
 
-class PptxMonstersApp extends StatefulWidget {
-  const PptxMonstersApp({super.key});
+class DeathBySlidesApp extends StatefulWidget {
+  const DeathBySlidesApp({super.key});
 
   @override
-  State<PptxMonstersApp> createState() => _PptxMonstersAppState();
+  State<DeathBySlidesApp> createState() => _DeathBySlidesAppState();
 }
 
-class _PptxMonstersAppState extends State<PptxMonstersApp> {
+class _DeathBySlidesAppState extends State<DeathBySlidesApp> {
   /// Kept here rather than built by the `GameWidget`, so Android's back
   /// gesture can be handed to it.
-  late final PptxMonstersGame _game = PptxMonstersGame(
+  late final DeathBySlidesGame _game = DeathBySlidesGame(
     gamepadEvents: Gamepads.normalizedEvents,
     saveStore: SharedPreferencesSaveStore(),
   );

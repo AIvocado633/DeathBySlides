@@ -8,8 +8,8 @@ import 'package:flame/components.dart';
 const double kSlideWidth = 1280;
 const double kSlideHeight = 720;
 
-/// Height of the faux ribbon strip along the top of a slide.
-const double kRibbonHeight = 54;
+/// Height of the faux toolbar strip along the top of a slide.
+const double kToolbarHeight = 54;
 
 /// Height of the faux status bar along the bottom of a slide.
 const double kStatusBarHeight = 30;
@@ -17,8 +17,8 @@ const double kStatusBarHeight = 30;
 /// Standard left/right margin for slide content.
 const double kSlideMargin = 80;
 
-/// Vertical band available for actual content, between ribbon and status bar.
-const double kContentTop = kRibbonHeight;
+/// Vertical band available for actual content, between toolbar and status bar.
+const double kContentTop = kToolbarHeight;
 const double kContentBottom = kSlideHeight - kStatusBarHeight;
 
 Vector2 get slideSize => Vector2(kSlideWidth, kSlideHeight);

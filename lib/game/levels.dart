@@ -1,6 +1,6 @@
-import 'combat/autofit_boss.dart';
+import 'combat/shrink_to_fit_boss.dart';
 import 'combat/boss.dart';
-import 'combat/smartart_boss.dart';
+import 'combat/diagram_wizard_boss.dart';
 
 /// The deck the player has to get through.
 ///
@@ -50,7 +50,7 @@ const List<LevelDefinition> kLevels = [
     tagline: 'Shrinks your text on sight',
     winLine: 'Shrink-to-Fit shrank itself out of the deck. One feature down.',
     lossLine: 'Shrink-to-Fit shrank you until you no longer fit on the slide.',
-    buildBoss: AutoFitBoss.new,
+    buildBoss: ShrinkToFitBoss.new,
   ),
   LevelDefinition(
     number: 2,
@@ -58,7 +58,7 @@ const List<LevelDefinition> kLevels = [
     tagline: 'No diagram, no wizardry',
     winLine: 'The Diagram Wizard ran out of shapes to shuffle. Two down.',
     lossLine: 'The Diagram Wizard rearranged you right off the slide.',
-    buildBoss: SmartArtBoss.new,
+    buildBoss: DiagramWizardBoss.new,
   ),
   LevelDefinition(
     number: 3,

@@ -1,8 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pptx_monsters/game/combat/boss.dart';
-import 'package:pptx_monsters/game/levels.dart';
-import 'package:pptx_monsters/game/pages/arena_page.dart';
+import 'package:death_by_slides/game/combat/boss.dart';
+import 'package:death_by_slides/game/levels.dart';
+import 'package:death_by_slides/game/pages/arena_page.dart';
 
 /// Guards the deck as a whole, rather than any one fight.
 void main() {

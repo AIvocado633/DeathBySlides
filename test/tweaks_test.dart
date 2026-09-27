@@ -4,35 +4,35 @@ import 'package:flame/game.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gamepads/gamepads.dart';
-import 'package:pptx_monsters/game/components/autoshape_backdrop.dart';
-import 'package:pptx_monsters/game/components/pptx_actor.dart';
-import 'package:pptx_monsters/game/input/menu_input.dart';
-import 'package:pptx_monsters/game/pages/design_ideas_page.dart';
-import 'package:pptx_monsters/game/pptx_monsters_game.dart';
-import 'package:pptx_monsters/game/routes.dart';
-import 'package:pptx_monsters/game/save/save_data.dart';
-import 'package:pptx_monsters/game/save/save_file.dart';
-import 'package:pptx_monsters/game/save/save_store.dart';
-import 'package:pptx_monsters/game/slide/fly_in.dart';
-import 'package:pptx_monsters/game/slide/motion.dart';
-import 'package:pptx_monsters/game/slide/slide_metrics.dart';
+import 'package:death_by_slides/game/components/autoshape_backdrop.dart';
+import 'package:death_by_slides/game/components/shape_actor.dart';
+import 'package:death_by_slides/game/input/menu_input.dart';
+import 'package:death_by_slides/game/pages/tweaks_page.dart';
+import 'package:death_by_slides/game/death_by_slides_game.dart';
+import 'package:death_by_slides/game/routes.dart';
+import 'package:death_by_slides/game/save/save_data.dart';
+import 'package:death_by_slides/game/save/save_file.dart';
+import 'package:death_by_slides/game/save/save_store.dart';
+import 'package:death_by_slides/game/slide/fly_in.dart';
+import 'package:death_by_slides/game/slide/motion.dart';
+import 'package:death_by_slides/game/slide/slide_metrics.dart';
 
 import 'arena_harness.dart';
 
 /// A game whose save already holds [settings].
-PptxMonstersGame _gameWith(
+DeathBySlidesGame _gameWith(
   Settings settings, {
   bool Function()? deviceReducesMotion,
-}) => PptxMonstersGame(
+}) => DeathBySlidesGame(
   saveStore: InMemorySaveStore(SaveData(settings: settings).encode()),
   deviceReducesMotion: deviceReducesMotion,
 );
 
-Future<DesignIdeasPage> _openPane(PptxMonstersGame game) async {
+Future<TweaksPage> _openPane(DeathBySlidesGame game) async {
   await game.ready();
-  game.router.pushNamed(Routes.designIdeas);
+  game.router.pushNamed(Routes.tweaks);
   await game.ready();
-  return game.router.currentRoute.children.whereType<DesignIdeasPage>().single;
+  return game.router.currentRoute.children.whereType<TweaksPage>().single;
 }
 
 final InMemorySaveStore _sharedStore = InMemorySaveStore();
@@ -41,7 +41,7 @@ void main() {
   tearDown(() => Motion.reduced = false);
 
   group('swap sticks', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'moves with the right thumb and aims with the left',
       () => _gameWith(const Settings(swapSticks: true)),
       (game) async {
@@ -54,9 +54,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'leaves the sticks where they were when off',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
 
@@ -65,7 +65,7 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'sizes both sticks from the stick size setting',
       () => _gameWith(const Settings(stickSize: 1.2)),
       (game) async {
@@ -78,9 +78,9 @@ void main() {
   });
 
   group('dead zone', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'reaches the controller input from the slider',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final pane = await _openPane(game);
 
@@ -96,7 +96,7 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'is read from the save at start-up',
       () => _gameWith(const Settings(deadzone: 0.1)),
       (game) async {
@@ -106,9 +106,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'stops at the ends of its range',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final pane = await _openPane(game);
 
@@ -121,7 +121,7 @@ void main() {
   });
 
   group('reduce motion', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'puts a Fly In element at its destination at once',
       () => _gameWith(const Settings(reduceMotion: true)),
       (game) async {
@@ -135,7 +135,7 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'holds the title slide autoshapes still',
       () => _gameWith(const Settings(reduceMotion: true)),
       (game) async {
@@ -150,14 +150,14 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'stops the idle bob, and starts it again when turned off',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final arena = await openArena(game);
         advance(game, 0.1);
         await game.ready();
-        final boss = arena.boss.descendants().whereType<PptxActor>().first;
+        final boss = arena.boss.descendants().whereType<ShapeActor>().first;
         expect(boss.descendants().whereType<MoveEffect>(), isNotEmpty);
 
         game.changeSettings(game.settings.copyWith(reduceMotion: true));
@@ -172,9 +172,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       "follows the device's setting until the player chooses",
-      () => PptxMonstersGame(deviceReducesMotion: () => true),
+      () => DeathBySlidesGame(deviceReducesMotion: () => true),
       (game) async {
         final pane = await _openPane(game);
 
@@ -190,9 +190,9 @@ void main() {
   });
 
   group('the pane', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'no longer says the settings do nothing',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final pane = await _openPane(game);
 
@@ -201,9 +201,9 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'can be worked with keys or a controller alone',
-      PptxMonstersGame.new,
+      DeathBySlidesGame.new,
       (game) async {
         final pane = await _openPane(game);
 
@@ -233,7 +233,7 @@ void main() {
       },
     );
 
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'shows each setting as saved',
       () => _gameWith(
         const Settings(swapSticks: true, deadzone: 0.35, stickSize: 0.8),
@@ -258,16 +258,16 @@ void main() {
     testWidgets('jumps to a tap on the track, and steps on minus and plus', (
       tester,
     ) async {
-      final game = PptxMonstersGame();
+      final game = DeathBySlidesGame();
       await tester.pumpWidget(GameWidget(game: game));
       await tester.pump(const Duration(milliseconds: 100));
-      game.router.pushNamed(Routes.designIdeas);
+      game.router.pushNamed(Routes.tweaks);
       // Past the last fly-in, so the slider is where it is drawn.
       for (var i = 0; i < 20; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }
       final pane = game.router.currentRoute.children
-          .whereType<DesignIdeasPage>()
+          .whereType<TweaksPage>()
           .single;
       final slider = pane.deadzone;
       Offset at(double x) {
@@ -294,9 +294,9 @@ void main() {
   });
 
   group('saving', () {
-    testWithGame<PptxMonstersGame>(
+    testWithGame<DeathBySlidesGame>(
       'settings survive a new game instance',
-      () => PptxMonstersGame(saveStore: _sharedStore),
+      () => DeathBySlidesGame(saveStore: _sharedStore),
       (game) async {
         await game.ready();
         game.changeSettings(
@@ -312,7 +312,7 @@ void main() {
         Motion.reduced = false;
 
         final next = await initializeGame(
-          () => PptxMonstersGame(saveStore: _sharedStore),
+          () => DeathBySlidesGame(saveStore: _sharedStore),
         );
 
         final settings = next.settings;

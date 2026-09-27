@@ -58,7 +58,8 @@ MenuAction? menuActionForKey(
     LogicalKeyboardKey.numpadEnter ||
     LogicalKeyboardKey.space => MenuAction.activate,
     LogicalKeyboardKey.escape => MenuAction.back,
-    // Presenting software blanks the screen on B, and on the period key beside it.
+    // Presenting software blanks the screen on B, and on the period key beside
+    // it.
     LogicalKeyboardKey.keyB || LogicalKeyboardKey.period => MenuAction.pause,
     LogicalKeyboardKey.f5 =>
       keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||

@@ -8,7 +8,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
 import '../components/placeholder_frame.dart';
-import '../components/pptx_actor.dart';
+import '../components/shape_actor.dart';
 import '../theme/palette.dart';
 import '../theme/slide_text.dart';
 import 'boss.dart';
@@ -23,16 +23,16 @@ import 'projectiles.dart';
 /// and the
 /// boss is drawn smaller each time. Run it down to nothing and the feature has
 /// shrunk itself out of existence.
-class AutoFitBoss extends Boss {
+class ShrinkToFitBoss extends Boss {
   /// Stands centred near the top of the arena and patrols from there.
-  AutoFitBoss(super.context)
+  ShrinkToFitBoss(super.context)
     : super(
         position: Vector2(context.arenaSize.x / 2, 100),
         size: Vector2(220, 170),
       );
 
-  /// The point sizes Shrink-to-Fit steps through, longest-standing first. One step
-  /// per hit, so the ladder's length is the boss's hit points.
+  /// The point sizes Shrink-to-Fit steps through, longest-standing first. One
+  /// step per hit, so the ladder's length is the boss's hit points.
   static const List<int> pointLadder = [
     54,
     48,
@@ -78,7 +78,7 @@ class AutoFitBoss extends Boss {
   late final double _patrolOrigin = position.x;
 
   late final TextComponent _label;
-  late final PptxActor _actor;
+  late final ShapeActor _actor;
 
   @override
   Future<void> onLoad() async {
@@ -86,11 +86,11 @@ class AutoFitBoss extends Boss {
       PlaceholderFrame(
         position: Vector2.zero(),
         size: size.clone(),
-        strokeColor: Palette.autoFit,
+        strokeColor: Palette.shrinkToFit,
       ),
-      _actor = PptxActor(
-        artPrefix: 'autofit_idle_',
-        tint: Palette.autoFit,
+      _actor = ShapeActor(
+        artPrefix: 'shrink_to_fit_idle_',
+        tint: Palette.shrinkToFit,
         position: Vector2(width / 2, 68),
         size: Vector2.all(104),
         anchor: Anchor.center,
@@ -174,7 +174,8 @@ class AutoFitBoss extends Boss {
       ..text = '$pointSize pt'
       ..textRenderer = _labelRenderer(pointSize);
 
-    // What the hit cost, in Shrink-to-Fit's own units: point sizes off the ladder.
+    // What the hit cost, in Shrink-to-Fit's own units: point sizes off the
+    // ladder.
     Impact.hit(_actor);
     final floor = parent;
     if (floor != null && before > pointSize) {

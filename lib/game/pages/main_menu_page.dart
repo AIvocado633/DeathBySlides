@@ -5,8 +5,8 @@ import 'package:flame/components.dart';
 import '../components/autoshape_backdrop.dart';
 import '../components/menu_bullet_button.dart';
 import '../components/placeholder_frame.dart';
-import '../components/pptx_actor.dart';
-import '../components/ribbon_bar.dart';
+import '../components/shape_actor.dart';
+import '../components/toolbar.dart';
 import '../components/status_bar.dart';
 import '../input/menu_input.dart';
 import '../levels.dart';
@@ -33,7 +33,7 @@ class MainMenuPage extends SlidePage {
   Future<void> onLoad() async {
     await addAll([
       AutoshapeBackdrop(seed: 7),
-      RibbonBar(activeTab: 'Present'),
+      Toolbar(activeTab: 'Present'),
       _statusBar = _buildStatusBar(),
     ]);
 
@@ -123,12 +123,12 @@ class MainMenuPage extends SlidePage {
       (
         label: 'Light Table',
         hint: 'Levels',
-        route: Routes.slideSorter,
+        route: Routes.lightTable,
       ),
       (
         label: 'Tweaks',
         hint: 'Settings',
-        route: Routes.designIdeas,
+        route: Routes.tweaks,
       ),
     ];
 
@@ -183,7 +183,7 @@ class MainMenuPage extends SlidePage {
         position: Vector2(_panelWidth / 2, 34),
         anchor: Anchor.center,
       ),
-      PptxActor(
+      ShapeActor(
         artPrefix: 'hero_idle_',
         position: actorTopLeft,
         size: Vector2.all(actorSize),
