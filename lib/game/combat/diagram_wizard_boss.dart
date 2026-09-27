@@ -312,7 +312,8 @@ class DiagramWizardBoss extends Boss {
 }
 
 /// One shape in the diagram: a rounded rectangle with something living in it.
-class DiagramNode extends PositionComponent with CollisionCallbacks, HasAudio {
+class DiagramNode extends PositionComponent
+    with CollisionCallbacks, HasAudio, BulletTarget {
   DiagramNode({required Vector2 position, required this.onBroken})
     : super(
         position: position,
@@ -327,6 +328,9 @@ class DiagramNode extends PositionComponent with CollisionCallbacks, HasAudio {
 
   bool get isBroken => _broken;
   bool _broken = false;
+
+  @override
+  bool get isTargetable => !_broken;
 
   late final Paint _fillPaint = Paint()..color = Palette.diagramWizard;
   late final Paint _edgePaint = Paint()

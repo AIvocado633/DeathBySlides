@@ -108,6 +108,7 @@ class SettingSlider extends PositionComponent
     required this.format,
     required this.onChanged,
     this.mark,
+    this.trackWidth = 180,
     super.position,
     double width = 580,
   }) : assert(min < max && step > 0),
@@ -124,6 +125,10 @@ class SettingSlider extends PositionComponent
   /// Where to draw the notch the zoom slider has at 100%: here, the default.
   final double? mark;
 
+  /// How long the track is. Shorter in a narrow column, so the label keeps
+  /// clear of the minus.
+  final double trackWidth;
+
   /// How [value] reads beside the slider, e.g. `20%`.
   final String Function(double value) format;
 
@@ -136,7 +141,7 @@ class SettingSlider extends PositionComponent
 
   /// The track takes the right-hand part of the row, with room for the minus
   /// before it and the plus and readout after it.
-  double get _trackLeft => width - 290;
+  double get _trackLeft => _trackRight - trackWidth;
   double get _trackRight => width - 110;
   double get _minusX => _trackLeft - 24;
   double get _plusX => _trackRight + 24;

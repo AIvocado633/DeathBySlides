@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import '../combat/pep_talk.dart';
+
+export '../combat/pep_talk.dart' show PepTalk;
+
 /// Everything the game keeps between runs, as one versioned document.
 ///
 /// One JSON document rather than a scatter of keys, so the save is read and
@@ -88,6 +92,7 @@ class Settings {
     this.reduceMotion,
     this.musicVolume = defaultMusicVolume,
     this.effectsVolume = defaultEffectsVolume,
+    this.pepTalk = const PepTalk(),
   });
 
   /// Where the Sound sliders start. Music sits under the effects, so a shot
@@ -125,6 +130,9 @@ class Settings {
   final double musicVolume;
   final double effectsVolume;
 
+  /// The assists switched on. All off until the player picks some.
+  final PepTalk pepTalk;
+
   Settings copyWith({
     bool? swapSticks,
     double? deadzone,
@@ -132,6 +140,7 @@ class Settings {
     bool? reduceMotion,
     double? musicVolume,
     double? effectsVolume,
+    PepTalk? pepTalk,
   }) => Settings(
     swapSticks: swapSticks ?? this.swapSticks,
     deadzone: deadzone ?? this.deadzone,
@@ -139,6 +148,7 @@ class Settings {
     reduceMotion: reduceMotion ?? this.reduceMotion,
     musicVolume: musicVolume ?? this.musicVolume,
     effectsVolume: effectsVolume ?? this.effectsVolume,
+    pepTalk: pepTalk ?? this.pepTalk,
   );
 
   Map<String, Object?> toJson() => {
@@ -148,6 +158,7 @@ class Settings {
     'reduceMotion': ?reduceMotion,
     'musicVolume': musicVolume,
     'effectsVolume': effectsVolume,
+    'pepTalk': pepTalk.toJson(),
   };
 
   /// Reads what [toJson] wrote. A missing section, or a missing setting, is
@@ -184,6 +195,7 @@ class Settings {
       effectsVolume: (read<num>('effectsVolume') ?? defaultEffectsVolume)
           .toDouble()
           .clamp(0, 1),
+      pepTalk: PepTalk.fromJson(json['pepTalk']),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import '../audio/game_audio.dart';
 import '../combat/health.dart';
+import '../combat/pep_talk.dart';
 import '../combat/impact.dart';
 import '../combat/projectiles.dart';
 import '../input/gamepad_input.dart';
@@ -99,6 +100,11 @@ class Player extends PositionComponent
   /// that two shots arriving together cost one size rather than two.
   static const double invulnerableFor = 0.6;
 
+  /// The grace window this fight actually gives: [invulnerableFor], stretched
+  /// by Pep Talk's longer grace. Read here and nowhere else.
+  static double get graceWindow =>
+      invulnerableFor * PepTalk.current.graceScale;
+
   /// One blink is on then off, so this is 2.5 flashes a second -- inside the
   /// three-a-second photosensitivity guideline.
   static const double blinkPeriod = 0.4;
@@ -112,7 +118,12 @@ class Player extends PositionComponent
 
   static const double _fireCooldown = 0.32;
 
-  late final Health health = Health(max: 8, minScale: 0.4);
+  /// Pep Talk's more room to shrink gives more hit points, but the same
+  /// smallest size: each hit costs less, and size still maps to speed alike.
+  late final Health health = Health(
+    max: PepTalk.current.playerHits,
+    minScale: 0.4,
+  );
 
   /// Which way the player is facing: towards the aim while aiming, otherwise
   /// the way it last walked. Drives which artwork is drawn.
@@ -223,7 +234,7 @@ class Player extends PositionComponent
   }
 
   bool get _blinkedOut {
-    final elapsed = invulnerableFor - _invulnerable;
+    final elapsed = graceWindow - _invulnerable;
     return (elapsed / (blinkPeriod / 2)).floor().isOdd;
   }
 
@@ -313,7 +324,7 @@ class Player extends PositionComponent
       return;
     }
     takeHit(other.damage);
-    _invulnerable = invulnerableFor;
+    _invulnerable = graceWindow;
   }
 
   /// Shrinks the player by [amount] hit points.

@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 
 import '../audio/game_audio.dart';
 import '../combat/boss.dart';
+import '../combat/pep_talk.dart';
 import '../components/arena_floor.dart';
 import '../components/chip_button.dart';
 import '../components/control_stick.dart';
@@ -141,6 +142,14 @@ class ArenaPage extends SlidePage {
         position: Vector2(kSlideWidth / 2, 80),
         anchor: Anchor.center,
       )..flyIn(delay: 0.05),
+      // Said once, quietly: the fight is the same slide either way.
+      if (PepTalk.current.isOn)
+        TextComponent(
+          text: 'Pep Talk is on',
+          textRenderer: SlideText.showBody,
+          position: Vector2(kSlideWidth / 2, 124),
+          anchor: Anchor.center,
+        ),
       floor,
       moveStick,
       aimStick,

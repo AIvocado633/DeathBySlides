@@ -29,7 +29,8 @@ not built.
   below).
 - **Slide show** — two fights so far, Shrink-to-Fit and the Diagram Wizard,
   with twin-stick controls (see below).
-- **Tweaks** — settings for controls, motion and sound (see below).
+- **Tweaks** — settings for controls, motion and sound, and **Pep Talk**, the
+  optional assists (see below).
 - **Sound** — effects for every shot, hit and win, and music for menus and
   fights (see *Sound* below).
 
@@ -122,6 +123,29 @@ saved and applied the moment it is made.
 - **Music** and **Effects**, 0–100%, 50% and 80% by default. *Off* really is
   off: nothing of that side is loaded or played. The effects slider plays a
   shot at the new level, so it can be set by ear.
+
+### Pep Talk
+
+The fights are fast twin-stick dodging, which not everyone can do. Pep Talk,
+opened from Tweaks, is a handful of assists rather than one "easy mode", each
+switched on on its own:
+
+- **More room to shrink** — 12 hits instead of 8 before the slide is lost. The
+  smallest size is the same, so each hit costs less size, and size still maps
+  to speed the same way.
+- **Slower shots** — everything thrown at you flies at 70% speed.
+- **Longer grace** — twice as long untouchable after a hit.
+- **Aim assist** — bullet points bend gently (at most 90° a second) towards a
+  target within 30° of where they are heading. It rescues a near miss; it does
+  not aim for you.
+
+Nothing is held back: a slide won with Pep Talk counts like any other, and the
+fight just says *Pep Talk is on* under its title. Each assist is applied in one
+place — the player's health, the `EnemyShot` base class, the player's grace
+window and the bullet point's flight (`lib/game/combat/pep_talk.dart`) — so
+every boss gets them without doing anything. A new boss only marks what the
+player should hit with `BulletTarget`, so aim assist can find it. Tweaks cannot
+be opened mid-fight, so a change always applies from the next slide.
 
 ### Sound
 

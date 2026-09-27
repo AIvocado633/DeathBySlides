@@ -14,6 +14,7 @@ import 'input/gamepad_input.dart';
 import 'input/menu_input.dart';
 
 import 'pages/arena_page.dart';
+import 'pages/pep_talk_page.dart';
 import 'pages/tweaks_page.dart';
 import 'pages/main_menu_page.dart';
 import 'pages/light_table_page.dart';
@@ -95,6 +96,7 @@ class DeathBySlidesGame extends FlameGame
   void _applySettings() {
     gamepad.deadzone = settings.deadzone;
     Motion.reduced = reducesMotion;
+    PepTalk.current = settings.pepTalk;
     audio.setVolumes(
       music: settings.musicVolume,
       effects: settings.effectsVolume,
@@ -138,6 +140,7 @@ class DeathBySlidesGame extends FlameGame
           Routes.normalView: Route(MainMenuPage.new),
           Routes.lightTable: Route(LightTablePage.new),
           Routes.tweaks: Route(TweaksPage.new),
+          Routes.pepTalk: Route(PepTalkPage.new),
         },
       ),
     );
