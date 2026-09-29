@@ -56,6 +56,14 @@ abstract final class Palette {
   static const masterTemplate = Color(0xFFC77D1A);
   static const masterTemplateDark = Color(0xFF8F5610);
   static const masterTemplateLight = Color(0xFFF0B45C);
+  static const buildOrder = Color(0xFF3A6FD8);
+  static const buildOrderDark = Color(0xFF2A52A3);
+
+  /// The stars beside a build step: green for an entrance, yellow for an
+  /// emphasis, red for an exit.
+  static const entranceStar = Color(0xFF4CAF6A);
+  static const emphasisStar = Color(0xFFE8B53A);
+  static const exitStar = Color(0xFFD9534F);
 
   /// Accents.
   static const hyperlink = Color(0xFF2A6FDB);

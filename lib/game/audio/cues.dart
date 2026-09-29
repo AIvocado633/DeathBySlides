@@ -37,6 +37,21 @@ enum Cue {
   /// The Master Template closed for good.
   templateClosed('template_closed.wav', length: 1.1, maxVoices: 1),
 
+  /// A Build Order tag knocked.
+  buildTagHit('build_tag_hit.wav', length: 0.1, maxVoices: 3),
+
+  /// A step deleted from the Build Order.
+  buildStepDeleted('build_step_deleted.wav', length: 0.4),
+
+  /// The Build Order reordering itself.
+  buildReorder('build_reorder.wav', length: 0.6, maxVoices: 1),
+
+  /// A build step starting: its attack is coming.
+  buildStepStarted('build_step_started.wav', length: 0.3),
+
+  /// The Build Order emptied at last.
+  buildEmptied('build_emptied.wav', length: 1.2, maxVoices: 1),
+
   /// A page's fly-in entrances. Several things fly in at once, so it plays
   /// once per page rather than once per thing.
   whoosh('whoosh.wav', length: 0.42, maxVoices: 1),

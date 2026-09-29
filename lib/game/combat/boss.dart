@@ -4,6 +4,15 @@ import 'package:flame/components.dart';
 import '../audio/game_audio.dart';
 import 'projectiles.dart';
 
+/// How the player leaves a lost slide: the exit animation it plays.
+enum PlayerExit {
+  /// Spins away to nothing.
+  spinOut,
+
+  /// Flies up and off the slide.
+  flyOut,
+}
+
 /// Builds the feature a slide is fought against, from what the arena hands it.
 typedef BossBuilder = Boss Function(BossContext context);
 
@@ -72,6 +81,13 @@ abstract class Boss extends PositionComponent with CollisionCallbacks, HasAudio 
   /// Every effect this feature plays, so the arena can load them before the
   /// fight starts. Each boss brings sounds of its own.
   Iterable<Cue> get cues;
+
+  /// Called by the arena every time the player fires, for a feature that
+  /// reacts to shooting as such. Most do not.
+  void onPlayerFired() {}
+
+  /// How the player leaves the slide if this feature wins.
+  PlayerExit get playerExit => PlayerExit.spinOut;
 
   /// Applies [amount] hits. Exposed so a fight can be driven from tests
   /// without synthesising collisions.

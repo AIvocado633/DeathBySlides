@@ -279,6 +279,44 @@ def template_closed() -> np.ndarray:
     return mix(d, *parts)
 
 
+def build_tag_hit() -> np.ndarray:
+    """A tag knocked: a small glassy tick."""
+    d = 0.1
+    t = t_axis(d)
+    return (np.sin(2 * np.pi * 1760 * t) + 0.4 * np.sin(2 * np.pi * 2640 * t)) * env(d, 0.001, 0.06)
+
+
+def build_step_deleted() -> np.ndarray:
+    """A step deleted: a backspace-like double click and a falling blip."""
+    d = 0.4
+    tick = highpass(noise(0.03), 2000) * env(0.03, 0.0005, 0.02)
+    blip = np.sin(sweep(1400, 500, 0.2)) * env(0.2, 0.002, 0.18)
+    return mix(d, (0, tick), (0.06, tick * 0.7), (0.12, blip))
+
+
+def build_reorder() -> np.ndarray:
+    """The queue reordering itself: a quick run of shuffled notes."""
+    d = 0.6
+    notes = [hz(n, 5) for n in ["E", "C", "G", "D", "A", "F"]]
+    return mix(d, *[(i * 0.07, pluck(f, 0.2, 2.5) * 0.7) for i, f in enumerate(notes)])
+
+
+def build_step_started() -> np.ndarray:
+    """A step starting: a short upward sparkle."""
+    d = 0.3
+    return np.sin(sweep(700, 1600, d, 0.5)) * env(d, 0.004, 0.25) * 0.8
+
+
+def build_emptied() -> np.ndarray:
+    """The queue emptied: a last flourish, rising to a held chord."""
+    d = 1.2
+    run = [hz(n, 5) for n in ["C", "D", "E", "G"]]
+    parts = [(i * 0.08, pluck(f, 0.25, 2.0)) for i, f in enumerate(run)]
+    held = sum(pluck(f, 0.8, 1.2) for f in chord("C", "maj", 5)) / 4
+    parts.append((0.36, held * 1.2))
+    return mix(d, *parts)
+
+
 # --- Music -------------------------------------------------------------------
 
 NOTE = {n: i for i, n in enumerate("C C# D D# E F F# G G# A A# B".split())}
@@ -423,6 +461,11 @@ def main() -> None:
         "theme_warning.wav": theme_warning,
         "theme_applied.wav": theme_applied,
         "template_closed.wav": template_closed,
+        "build_tag_hit.wav": build_tag_hit,
+        "build_step_deleted.wav": build_step_deleted,
+        "build_reorder.wav": build_reorder,
+        "build_step_started.wav": build_step_started,
+        "build_emptied.wav": build_emptied,
     }
     for name, build in later.items():
         write(name, build())

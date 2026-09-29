@@ -8,6 +8,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/services.dart';
 
 import '../audio/game_audio.dart';
+import '../combat/boss.dart' show PlayerExit;
 import '../combat/health.dart';
 import '../combat/pep_talk.dart';
 import '../combat/impact.dart';
@@ -52,6 +53,7 @@ class Player extends PositionComponent
     this.aimStick,
     this.gamepad,
     this.onDefeated,
+    this.onFired,
   }) : super(position: position, size: Vector2.all(size), anchor: Anchor.center);
 
   /// Slide units per second at full tilt and full size.
@@ -71,6 +73,12 @@ class Player extends PositionComponent
 
   /// Called once the player has been shrunk out of the fight.
   final void Function()? onDefeated;
+
+  /// Called every time a bullet point is fired.
+  final void Function()? onFired;
+
+  /// How the player leaves a lost slide. The feature being fought chooses.
+  PlayerExit exit = PlayerExit.spinOut;
 
   /// How far the aim input has to be pushed, as a fraction of full tilt,
   /// before it counts as aiming -- and so as firing. Enough to ignore a thumb
@@ -287,6 +295,7 @@ class Player extends PositionComponent
   /// driven from tests without synthesising input.
   void fire() {
     audio.play(Cue.bulletPoint);
+    onFired?.call();
     parent?.add(
       BulletPoint(
         position: position.clone(),
@@ -356,17 +365,29 @@ class Player extends PositionComponent
     _art.die();
     // Something deflating: the sound of a slide lost.
     audio.play(Cue.playerLost);
-    addAll([
-      ScaleEffect.to(
-        Vector2.zero(),
-        EffectController(duration: exitDuration, curve: Curves.easeInBack),
-      ),
-      RotateEffect.by(
-        math.pi * 1.5,
-        EffectController(duration: exitDuration),
-        onComplete: () => onDefeated?.call(),
-      ),
-    ]);
+    switch (exit) {
+      case PlayerExit.spinOut:
+        addAll([
+          ScaleEffect.to(
+            Vector2.zero(),
+            EffectController(duration: exitDuration, curve: Curves.easeInBack),
+          ),
+          RotateEffect.by(
+            math.pi * 1.5,
+            EffectController(duration: exitDuration),
+            onComplete: () => onDefeated?.call(),
+          ),
+        ]);
+      case PlayerExit.flyOut:
+        // Up and off the top of the slide, gathering speed as it goes.
+        add(
+          MoveEffect.by(
+            Vector2(0, -(position.y + 400)),
+            EffectController(duration: exitDuration, curve: Curves.easeInCubic),
+            onComplete: () => onDefeated?.call(),
+          ),
+        );
+    }
   }
 
   void _face(Vector2 direction) {
