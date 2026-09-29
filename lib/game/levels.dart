@@ -1,5 +1,6 @@
 import 'combat/shrink_to_fit_boss.dart';
 import 'combat/boss.dart';
+import 'combat/build_order_boss.dart';
 import 'combat/diagram_wizard_boss.dart';
 import 'combat/master_template_boss.dart';
 
@@ -75,6 +76,7 @@ const List<LevelDefinition> kLevels = [
     tagline: 'Seventeen triggers, no order',
     winLine: 'The Build Order is finally empty.',
     lossLine: 'Your exit animation was set to On Click. Someone clicked.',
+    buildBoss: BuildOrderBoss.new,
   ),
   LevelDefinition(
     number: 5,

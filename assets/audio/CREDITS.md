@@ -36,6 +36,11 @@ to their makers and are not used here.
 | `theme_warning.wav` | *Applying theme…* | `tool/make_sounds.py` | CC0 1.0 |
 | `theme_applied.wav` | A new theme landing on everything | `tool/make_sounds.py` | CC0 1.0 |
 | `template_closed.wav` | The Master Template closing | `tool/make_sounds.py` | CC0 1.0 |
+| `build_tag_hit.wav` | A Build Order tag knocked | `tool/make_sounds.py` | CC0 1.0 |
+| `build_step_deleted.wav` | A step deleted from the Build Order | `tool/make_sounds.py` | CC0 1.0 |
+| `build_reorder.wav` | The Build Order reordering itself | `tool/make_sounds.py` | CC0 1.0 |
+| `build_step_started.wav` | A build step starting | `tool/make_sounds.py` | CC0 1.0 |
+| `build_emptied.wav` | The Build Order emptied | `tool/make_sounds.py` | CC0 1.0 |
 | `menu_loop.wav` | Menu music: hold music for a template | `tool/make_sounds.py` | CC0 1.0 |
 | `fight_loop.wav` | Fight music: the same template, at a deadline | `tool/make_sounds.py` | CC0 1.0 |
 

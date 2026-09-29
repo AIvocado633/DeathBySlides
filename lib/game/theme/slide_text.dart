@@ -148,6 +148,25 @@ abstract final class SlideText {
     style: _style(size: 16, color: Palette.inkFaint),
   );
 
+  /// The Build Order pane beside the arena: its title, each step's effect,
+  /// and the trigger under it.
+  static final paneTitle = TextPaint(
+    style: _style(size: 18, weight: FontWeight.w700, color: Palette.chromeInk),
+  );
+
+  static final paneStep = TextPaint(
+    style: _style(size: 18, weight: FontWeight.w700, color: Palette.chromeInk),
+  );
+
+  static final paneTrigger = TextPaint(
+    style: _style(size: 14, color: Palette.chromeInkSoft),
+  );
+
+  /// The number on a build step's tag in the arena.
+  static final tagNumber = TextPaint(
+    style: _style(size: 18, weight: FontWeight.w700, color: Palette.ink),
+  );
+
   /// Text drawn on top of the projector-black slide show background.
   static final showHeading = TextPaint(
     style: _style(size: 44, weight: FontWeight.w700, color: Palette.slide),

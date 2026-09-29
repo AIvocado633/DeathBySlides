@@ -122,6 +122,7 @@ class ArenaPage extends SlidePage {
       aimStick: aimStick,
       gamepad: game.gamepad,
       onDefeated: _onPlayerShrunkAway,
+      onFired: () => boss.onPlayerFired(),
     );
     boss = level.buildBoss!(
       BossContext(
@@ -131,6 +132,7 @@ class ArenaPage extends SlidePage {
         setPlayerShotRules: (rules) => player.shotRules = rules,
       ),
     );
+    player.exit = boss.playerExit;
     _shownHealth = player.health.current;
     _shownReadout = boss.readout;
 
@@ -339,7 +341,8 @@ class ArenaPage extends SlidePage {
     }
     // Only re-lay out a readout when the value it shows actually moves.
     if (_shownHealth != player.health.current) {
-      _shownHealth = player.health.current;
+      player.exit = boss.playerExit;
+    _shownHealth = player.health.current;
       _sizeReadout.text = _playerReadout;
     }
     if (_shownReadout != boss.readout) {

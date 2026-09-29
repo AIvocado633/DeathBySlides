@@ -20,15 +20,15 @@ Built with Flutter and the [Flame](https://flame-engine.org) engine.
 
 ## Status
 
-Slides 1 to 3 are playable end to end. The other three bosses are named but
+Slides 1 to 4 are playable end to end. The other two bosses are named but
 not built.
 
 - **Start menu** — a title slide in the editor's normal view, with toolbar,
   status bar, dashed placeholders and staggered fly-in entrances.
 - **Light Table** — level select, showing all six slides (see *Progression*
   below).
-- **Slide show** — three fights so far, Shrink-to-Fit, the Diagram Wizard and
-  the Master Template, with twin-stick controls (see below).
+- **Slide show** — four fights so far, Shrink-to-Fit, the Diagram Wizard, the
+  Master Template and the Build Order, with twin-stick controls (see below).
 - **Tweaks** — settings for controls, motion and sound, and **Pep Talk**, the
   optional assists (see below).
 - **Sound** — effects for every shot, hit and win, and music for menus and
@@ -221,11 +221,41 @@ The rules reach the player through `BossContext.setPlayerShotRules`, and shots
 in flight through `Projectile.applyRules`, so the boss never touches the player
 and no shot is ever respawned.
 
+### Slide 4 — Build Order
+
+A numbered list of effects, each with a trigger, and a play order nobody can
+predict. The Build Order docks beside the arena and lists the attacks to come,
+in order — `1 ★ Fly In · On Click`, `2 ★ Spin · With Last`, … — with the star
+coloured by kind: green for an entrance, yellow for an emphasis, red for an
+exit. Each step is an attack named after its effect: *Fly In* sweeps shots in
+from one edge, *Spin* is a spiral, *Pulse* an expanding ring with a gap,
+*Wipe* a wall with one way through, *Bounce* shots off the walls, and *Wobble*
+a curving stream.
+
+The triggers mean what they say:
+
+- **After Last** plays once everything before it has finished.
+- **With Last** plays alongside the step before it.
+- **On Click** plays when you click — and **every bullet point you fire is a
+  click**. Hold the aim down and you set off every On Click attack in the
+  queue.
+
+Its health is the list: 17 steps (`17 animations`), each with a numbered tag
+floating over the arena that shows where it stands in the queue. Two hits on a
+tag delete its step. Every three deletions the queue reorders itself, so the
+list you have been reading changes under you. Emptied, it is beaten; beaten
+by it, you fly out, off the top of the slide.
+
+The other fights reward shooting all the time. This one rewards reading the
+queue and choosing when. The queue and its triggers are plain data with a pure
+scheduler (`lib/game/combat/build_queue.dart`), and the arena tells any boss
+that wants to know when the player fires (`Boss.onPlayerFired`).
+
 ### How a hit feels
 
 A hit is never just a number going down. Whatever was hit flashes and squashes,
 the board shakes when the player takes one, and what the hit cost floats off it
-in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−13%`
+in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−1 animation` off the Build Order, `−13%`
 off the player. Health is never a bar in this game, so the numbers say what the
 readouts say.
 
