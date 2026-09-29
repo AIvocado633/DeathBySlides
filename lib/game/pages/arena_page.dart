@@ -130,6 +130,8 @@ class ArenaPage extends SlidePage {
         aimAt: () => player.position,
         onDefeated: _onBossFinished,
         setPlayerShotRules: (rules) => player.shotRules = rules,
+        setPlayerPositionFilter: (filter) => player.positionFilter = filter,
+        strikePlayer: () => player.strike(),
       ),
     );
     player.exit = boss.playerExit;

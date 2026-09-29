@@ -13,6 +13,10 @@ enum PlayerExit {
   flyOut,
 }
 
+/// Where a body of `bodySize` that means to be at `intended` is actually put:
+/// how a feature constrains the player's movement.
+typedef PositionFilter = Vector2 Function(Vector2 intended, Vector2 bodySize);
+
 /// Builds the feature a slide is fought against, from what the arena hands it.
 typedef BossBuilder = Boss Function(BossContext context);
 
@@ -26,6 +30,8 @@ class BossContext {
     required this.aimAt,
     required this.onDefeated,
     this.setPlayerShotRules = _keepPlayerShots,
+    this.setPlayerPositionFilter = _keepPlayerMoving,
+    this.strikePlayer = _missPlayer,
   });
 
   /// The size of the floor the fight happens on. Bosses work in arena-local
@@ -44,6 +50,18 @@ class BossContext {
   final void Function(ShotRules rules) setPlayerShotRules;
 
   static void _keepPlayerShots(ShotRules rules) {}
+
+  /// Constrains where the player is drawn and collides -- snapping to a
+  /// grid, say -- or frees it again with null.
+  final void Function(PositionFilter? filter) setPlayerPositionFilter;
+
+  static void _keepPlayerMoving(PositionFilter? filter) {}
+
+  /// Hits the player with something that is not a shot, respecting its grace
+  /// window like any shot would.
+  final void Function() strikePlayer;
+
+  static void _missPlayer() {}
 }
 
 /// A slide-editor feature, standing between the player and the end of the deck.

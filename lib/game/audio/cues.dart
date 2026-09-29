@@ -52,6 +52,21 @@ enum Cue {
   /// The Build Order emptied at last.
   buildEmptied('build_emptied.wav', length: 1.2, maxVoices: 1),
 
+  /// Alignment guides marked: a strike is coming along them.
+  guideWarning('guide_warning.wav', length: 0.35, maxVoices: 1),
+
+  /// Alignment guides striking.
+  guideStrike('guide_strike.wav', length: 0.3, maxVoices: 1),
+
+  /// Snap to Grid knocked.
+  snapHit('snap_hit.wav', length: 0.1, maxVoices: 3),
+
+  /// The grid getting finer.
+  gridFiner('grid_finer.wav', length: 0.5, maxVoices: 1),
+
+  /// Snapping switched off for good.
+  snapOff('snap_off.wav', length: 1, maxVoices: 1),
+
   /// A page's fly-in entrances. Several things fly in at once, so it plays
   /// once per page rather than once per thing.
   whoosh('whoosh.wav', length: 0.42, maxVoices: 1),

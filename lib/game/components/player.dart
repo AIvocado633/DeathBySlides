@@ -8,7 +8,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/services.dart';
 
 import '../audio/game_audio.dart';
-import '../combat/boss.dart' show PlayerExit;
+import '../combat/boss.dart' show PlayerExit, PositionFilter;
 import '../combat/health.dart';
 import '../combat/pep_talk.dart';
 import '../combat/impact.dart';
@@ -79,6 +79,26 @@ class Player extends PositionComponent
 
   /// How the player leaves a lost slide. The feature being fought chooses.
   PlayerExit exit = PlayerExit.spinOut;
+
+  /// Constrains where the player is drawn and collides, for a feature that
+  /// changes how moving works. Null for free movement.
+  ///
+  /// Input moves an *intended* position that stays continuous; only what is
+  /// drawn and what collides goes through the filter. Filtering the intended
+  /// position itself would make slow input feel stuck.
+  PositionFilter? get positionFilter => _positionFilter;
+  PositionFilter? _positionFilter;
+  set positionFilter(PositionFilter? filter) {
+    _intended.setFrom(position);
+    _positionFilter = filter;
+    if (filter != null) {
+      position.setFrom(filter(_intended, scaledSize));
+    }
+  }
+
+  /// Where the player means to be, before any [positionFilter].
+  Vector2 get intendedPosition => _intended.clone();
+  final Vector2 _intended = Vector2.zero();
 
   /// How far the aim input has to be pushed, as a fraction of full tilt,
   /// before it counts as aiming -- and so as firing. Enough to ignore a thumb
@@ -261,11 +281,19 @@ class Player extends PositionComponent
 
     // Shrinking is not all bad: what you lose in presence you gain in pace.
     final pace = speed * (2 - health.scale);
-    position += _direction * pace * dt;
-
+    final filter = _positionFilter;
     final floor = parent;
-    if (floor is ArenaFloor) {
-      floor.clampInside(position, scaledSize);
+    if (filter == null) {
+      position += _direction * pace * dt;
+      if (floor is ArenaFloor) {
+        floor.clampInside(position, scaledSize);
+      }
+    } else {
+      _intended.add(_direction * pace * dt);
+      if (floor is ArenaFloor) {
+        floor.clampInside(_intended, scaledSize);
+      }
+      position.setFrom(filter(_intended, scaledSize));
     }
 
     // Without an aim input, shots and facing follow the feet, as they did
@@ -314,12 +342,20 @@ class Player extends PositionComponent
       return;
     }
     other.removeFromParent();
-    // The window is opened here rather than in [takeHit], so a fight can still
-    // be driven hit by hit from a test.
-    if (isInvulnerable) {
+    strike(other.damage);
+  }
+
+  /// A hit from anything in the fight: shrinks the player unless it is in
+  /// its grace window, and opens the window. For attacks that are not shots,
+  /// such as a line struck across the arena.
+  ///
+  /// The window is opened here rather than in [takeHit], so a fight can still
+  /// be driven hit by hit from a test.
+  void strike([int amount = 1]) {
+    if (health.isDead || isInvulnerable) {
       return;
     }
-    takeHit(other.damage);
+    takeHit(amount);
     _invulnerable = graceWindow;
   }
 

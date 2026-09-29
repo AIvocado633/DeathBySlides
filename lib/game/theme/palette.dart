@@ -58,6 +58,8 @@ abstract final class Palette {
   static const masterTemplateLight = Color(0xFFF0B45C);
   static const buildOrder = Color(0xFF3A6FD8);
   static const buildOrderDark = Color(0xFF2A52A3);
+  static const snapToGrid = Color(0xFFD14FA8);
+  static const snapToGridDark = Color(0xFF9C3480);
 
   /// The stars beside a build step: green for an entrance, yellow for an
   /// emphasis, red for an exit.

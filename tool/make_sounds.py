@@ -317,6 +317,46 @@ def build_emptied() -> np.ndarray:
     return mix(d, *parts)
 
 
+def guide_warning() -> np.ndarray:
+    """Guides marked: two quick high ticks, like a ruler snapping into place."""
+    d = 0.35
+    tick = np.sin(2 * np.pi * 2200 * t_axis(0.04)) * env(0.04, 0.0005, 0.03)
+    return mix(d, (0, tick), (0.12, tick * 0.8))
+
+
+def guide_strike() -> np.ndarray:
+    """Guides striking: a bright zap down the line."""
+    d = 0.3
+    zap = np.sign(np.sin(sweep(1800, 300, d, 0.4))) * 0.5
+    return lowpass(zap, 3500) * env(d, 0.002, 0.25) + highpass(noise(d), 3000) * env(d, 0.001, 0.08) * 0.4
+
+
+def snap_hit() -> np.ndarray:
+    """The dialog knocked: a plasticky clack."""
+    d = 0.1
+    t = t_axis(d)
+    return (np.sin(2 * np.pi * 950 * t) + 0.6 * np.sin(2 * np.pi * 2300 * t)) * env(d, 0.0008, 0.05)
+
+
+def grid_finer() -> np.ndarray:
+    """The grid getting finer: a quick ratchet climbing up."""
+    d = 0.5
+    parts = [
+        (i * 0.05, np.sin(2 * np.pi * (600 + 120 * i) * t_axis(0.03)) * env(0.03, 0.0005, 0.025))
+        for i in range(8)
+    ]
+    return mix(d, *parts)
+
+
+def snap_off() -> np.ndarray:
+    """Snapping off: a switch clunk, then a long, relieved slide down."""
+    d = 1.0
+    click = lowpass(noise(0.06), 1500) * env(0.06, 0.001, 0.05)
+    thud = np.sin(sweep(300, 120, 0.1)) * env(0.1, 0.001, 0.09)
+    slide = np.sin(sweep(700, 200, 0.7, 0.8)) * env(0.7, 0.05, 0.65) * 0.6
+    return mix(d, (0, click), (0, thud), (0.12, slide))
+
+
 # --- Music -------------------------------------------------------------------
 
 NOTE = {n: i for i, n in enumerate("C C# D D# E F F# G G# A A# B".split())}
@@ -466,6 +506,11 @@ def main() -> None:
         "build_reorder.wav": build_reorder,
         "build_step_started.wav": build_step_started,
         "build_emptied.wav": build_emptied,
+        "guide_warning.wav": guide_warning,
+        "guide_strike.wav": guide_strike,
+        "snap_hit.wav": snap_hit,
+        "grid_finer.wav": grid_finer,
+        "snap_off.wav": snap_off,
     }
     for name, build in later.items():
         write(name, build())

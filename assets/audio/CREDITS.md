@@ -41,6 +41,11 @@ to their makers and are not used here.
 | `build_reorder.wav` | The Build Order reordering itself | `tool/make_sounds.py` | CC0 1.0 |
 | `build_step_started.wav` | A build step starting | `tool/make_sounds.py` | CC0 1.0 |
 | `build_emptied.wav` | The Build Order emptied | `tool/make_sounds.py` | CC0 1.0 |
+| `guide_warning.wav` | Alignment guides marked | `tool/make_sounds.py` | CC0 1.0 |
+| `guide_strike.wav` | Alignment guides striking | `tool/make_sounds.py` | CC0 1.0 |
+| `snap_hit.wav` | Snap to Grid knocked | `tool/make_sounds.py` | CC0 1.0 |
+| `grid_finer.wav` | The grid getting finer | `tool/make_sounds.py` | CC0 1.0 |
+| `snap_off.wav` | Snapping switched off | `tool/make_sounds.py` | CC0 1.0 |
 | `menu_loop.wav` | Menu music: hold music for a template | `tool/make_sounds.py` | CC0 1.0 |
 | `fight_loop.wav` | Fight music: the same template, at a deadline | `tool/make_sounds.py` | CC0 1.0 |
 

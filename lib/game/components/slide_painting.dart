@@ -24,6 +24,31 @@ void drawDashedRRect(
   }
 }
 
+/// A dashed straight line from [from] to [to]. [offset] slides the dashes
+/// along the line, so they can be made to march.
+void drawDashedLine(
+  Canvas canvas,
+  Offset from,
+  Offset to,
+  Paint paint, {
+  double dash = 12,
+  double gap = 8,
+  double offset = 0,
+}) {
+  final length = (to - from).distance;
+  if (length == 0) {
+    return;
+  }
+  final step = (to - from) / length;
+  for (var start = offset - dash - gap; start < length; start += dash + gap) {
+    final a = math.max(0.0, start);
+    final b = math.min(length, start + dash);
+    if (b > a) {
+      canvas.drawLine(from + step * a, from + step * b, paint);
+    }
+  }
+}
+
 /// A right-pointing triangle: the bullet glyph used throughout the menus.
 Path trianglePath(Offset centre, double size) {
   final half = size / 2;

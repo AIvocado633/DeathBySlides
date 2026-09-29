@@ -52,6 +52,7 @@ Which actors use which:
 | Shrink-to-Fit | `shrink_to_fit` | `idle`, `hit`, `die` |
 | Diagram Wizard — one shape, repeated for every node | `diagram_wizard` | `idle`, `hit`, `die` |
 | Master Template — the face on the master thumbnail | `master_template` | `idle`, `hit`, `die` |
+| Snap to Grid — the face in the grid dialog | `snap_to_grid` | `idle`, `hit`, `die` |
 
 ### Directions
 
