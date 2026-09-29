@@ -22,6 +22,21 @@ enum Cue {
   diagramReflow('diagram_reflow.wav', length: 0.4, maxVoices: 1),
   diagramDefeated('diagram_defeated.wav', length: 1, maxVoices: 1),
 
+  /// A layout knocked on the Master Template.
+  templateHit('template_hit.wav', length: 0.12, maxVoices: 3),
+
+  /// A layout stripped off the master.
+  templateLayoutOff('template_layout_off.wav', length: 0.45),
+
+  /// "Applying theme…": the warning before the rules change.
+  themeWarning('theme_warning.wav', length: 1.2, maxVoices: 1),
+
+  /// The new theme landing on everything at once.
+  themeApplied('theme_applied.wav', length: 0.8, maxVoices: 1),
+
+  /// The Master Template closed for good.
+  templateClosed('template_closed.wav', length: 1.1, maxVoices: 1),
+
   /// A page's fly-in entrances. Several things fly in at once, so it plays
   /// once per page rather than once per thing.
   whoosh('whoosh.wav', length: 0.42, maxVoices: 1),

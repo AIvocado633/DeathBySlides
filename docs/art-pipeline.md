@@ -51,6 +51,7 @@ Which actors use which:
 | The presenter (menu and fights) | `hero` | `idle`, `walk`, `hit`, `die` |
 | Shrink-to-Fit | `shrink_to_fit` | `idle`, `hit`, `die` |
 | Diagram Wizard — one shape, repeated for every node | `diagram_wizard` | `idle`, `hit`, `die` |
+| Master Template — the face on the master thumbnail | `master_template` | `idle`, `hit`, `die` |
 
 ### Directions
 

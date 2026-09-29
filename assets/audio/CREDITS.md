@@ -31,6 +31,11 @@ to their makers and are not used here.
 | `whoosh.wav` | A page flying in | `tool/make_sounds.py` | CC0 1.0 |
 | `drum_roll.wav` | Into a fight | `tool/make_sounds.py` | CC0 1.0 |
 | `applause.wav` | A slide won | `tool/make_sounds.py` | CC0 1.0 |
+| `template_hit.wav` | A Master Template layout knocked | `tool/make_sounds.py` | CC0 1.0 |
+| `template_layout_off.wav` | A layout stripped off the master | `tool/make_sounds.py` | CC0 1.0 |
+| `theme_warning.wav` | *Applying theme…* | `tool/make_sounds.py` | CC0 1.0 |
+| `theme_applied.wav` | A new theme landing on everything | `tool/make_sounds.py` | CC0 1.0 |
+| `template_closed.wav` | The Master Template closing | `tool/make_sounds.py` | CC0 1.0 |
 | `menu_loop.wav` | Menu music: hold music for a template | `tool/make_sounds.py` | CC0 1.0 |
 | `fight_loop.wav` | Fight music: the same template, at a deadline | `tool/make_sounds.py` | CC0 1.0 |
 

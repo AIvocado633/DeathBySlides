@@ -128,6 +128,7 @@ class ArenaPage extends SlidePage {
         arenaSize: floor.size.clone(),
         aimAt: () => player.position,
         onDefeated: _onBossFinished,
+        setPlayerShotRules: (rules) => player.shotRules = rules,
       ),
     );
     _shownHealth = player.health.current;

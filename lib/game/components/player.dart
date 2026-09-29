@@ -279,6 +279,10 @@ class Player extends PositionComponent
     fire();
   }
 
+  /// The rules new bullet points fly by. A feature can change them through
+  /// its `BossContext`; shots already in flight are its to convert.
+  ShotRules shotRules = ShotRules.standard;
+
   /// Sends a bullet point along [aimDirection]. Public so the fight can be
   /// driven from tests without synthesising input.
   void fire() {
@@ -287,7 +291,7 @@ class Player extends PositionComponent
       BulletPoint(
         position: position.clone(),
         velocity: _aim * BulletPoint.speed,
-      ),
+      )..applyRules(shotRules),
     );
   }
 
