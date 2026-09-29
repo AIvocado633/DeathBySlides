@@ -20,15 +20,15 @@ Built with Flutter and the [Flame](https://flame-engine.org) engine.
 
 ## Status
 
-Slides 1 to 4 are playable end to end. The other two bosses are named but
-not built.
+Slides 1 to 5 are playable end to end. The last boss is named but not built.
 
 - **Start menu** — a title slide in the editor's normal view, with toolbar,
   status bar, dashed placeholders and staggered fly-in entrances.
 - **Light Table** — level select, showing all six slides (see *Progression*
   below).
-- **Slide show** — four fights so far, Shrink-to-Fit, the Diagram Wizard, the
-  Master Template and the Build Order, with twin-stick controls (see below).
+- **Slide show** — five fights so far, Shrink-to-Fit, the Diagram Wizard, the
+  Master Template, the Build Order and Snap to Grid, with twin-stick controls
+  (see below).
 - **Tweaks** — settings for controls, motion and sound, and **Pep Talk**, the
   optional assists (see below).
 - **Sound** — effects for every shot, hit and win, and music for menus and
@@ -251,11 +251,35 @@ queue and choosing when. The queue and its triggers are plain data with a pure
 scheduler (`lib/game/combat/build_queue.dart`), and the arena tells any boss
 that wants to know when the player fires (`Boss.onPlayerFired`).
 
+### Slide 5 — Snap to Grid
+
+Drag a shape and Snap to Grid drops it on the nearest gridline: close to where
+you meant, never exactly there. In this fight the arena is the enemy.
+
+- **You snap.** While it is on, the player lands on the nearest grid crossing.
+  Input stays analogue — it moves where you *mean* to be, continuously — but
+  what is drawn and what gets hit is snapped, so movement becomes a series of
+  deliberate hops.
+- **It strikes along the lines.** The boss is a small grid dialog roaming the
+  arena, snapping as it goes. Every couple of seconds it marks rows and
+  columns with dashed alignment guides — always your own row or column among
+  them — and after a warning they strike. Snapped, you are always on a line,
+  so dodging means reaching a different line in time. Pep Talk's slower shots
+  give the guides longer to read.
+- **Its health is the grid spacing**, which the floor draws and you snap to
+  alike: `Spacing 2 cm`, then 1.5, 1.25, 1, 0.75, 0.5 and 0.25 cm, three hits
+  each. Coarse means few lanes and chunky hops; fine means more lanes to watch
+  but smoother movement. Run it out and snapping is `Off`.
+
+Nothing new to aim at: the challenge is moving in a new way. A feature can
+constrain movement through `BossContext.setPlayerPositionFilter`, and hit the
+player with something that is not a shot through `BossContext.strikePlayer`.
+
 ### How a hit feels
 
 A hit is never just a number going down. Whatever was hit flashes and squashes,
 the board shakes when the player takes one, and what the hit cost floats off it
-in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−1 animation` off the Build Order, `−13%`
+in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−1 animation` off the Build Order, `−0.25 cm` off Snap to Grid, `−13%`
 off the player. Health is never a bar in this game, so the numbers say what the
 readouts say.
 

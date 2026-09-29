@@ -162,6 +162,11 @@ abstract final class SlideText {
     style: _style(size: 14, color: Palette.chromeInkSoft),
   );
 
+  /// Text inside a dialog drawn in the arena, such as Snap to Grid's.
+  static final dialogText = TextPaint(
+    style: _style(size: 17, weight: FontWeight.w600, color: Palette.ink),
+  );
+
   /// The number on a build step's tag in the arena.
   static final tagNumber = TextPaint(
     style: _style(size: 18, weight: FontWeight.w700, color: Palette.ink),

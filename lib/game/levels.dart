@@ -3,6 +3,7 @@ import 'combat/boss.dart';
 import 'combat/build_order_boss.dart';
 import 'combat/diagram_wizard_boss.dart';
 import 'combat/master_template_boss.dart';
+import 'combat/snap_to_grid_boss.dart';
 
 /// The deck the player has to get through.
 ///
@@ -82,8 +83,9 @@ const List<LevelDefinition> kLevels = [
     number: 5,
     boss: 'Snap to Grid',
     tagline: 'Almost where you wanted it',
-    winLine: 'Snap to Grid has been switched off. Nothing lines up. It is fine.',
+    winLine: 'Snap to Grid is off. Nothing lines up. It is fine.',
     lossLine: 'You were snapped to the nearest gridline and left there.',
+    buildBoss: SnapToGridBoss.new,
   ),
   LevelDefinition(
     number: 6,
