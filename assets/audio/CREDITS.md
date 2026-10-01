@@ -46,6 +46,10 @@ to their makers and are not used here.
 | `snap_hit.wav` | Snap to Grid knocked | `tool/make_sounds.py` | CC0 1.0 |
 | `grid_finer.wav` | The grid getting finer | `tool/make_sounds.py` | CC0 1.0 |
 | `snap_off.wav` | Snapping switched off | `tool/make_sounds.py` | CC0 1.0 |
+| `legacy_hit.wav` | The Legacy Format knocked | `tool/make_sounds.py` | CC0 1.0 |
+| `format_upgraded.wav` | A phase converted one format forward | `tool/make_sounds.py` | CC0 1.0 |
+| `compatibility_checker.wav` | The Compatibility Checker coming up | `tool/make_sounds.py` | CC0 1.0 |
+| `legacy_converted.wav` | The deck converted at last | `tool/make_sounds.py` | CC0 1.0 |
 | `menu_loop.wav` | Menu music: hold music for a template | `tool/make_sounds.py` | CC0 1.0 |
 | `fight_loop.wav` | Fight music: the same template, at a deadline | `tool/make_sounds.py` | CC0 1.0 |
 

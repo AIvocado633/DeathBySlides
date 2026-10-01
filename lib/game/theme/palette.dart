@@ -61,6 +61,19 @@ abstract final class Palette {
   static const snapToGrid = Color(0xFFD14FA8);
   static const snapToGridDark = Color(0xFF9C3480);
 
+  /// The Legacy Format: a 2003-era window, in the few colours it can save.
+  /// Title bars fade from [legacyTitle] to [legacyTitleFade].
+  static const legacyTitle = Color(0xFF0A246A);
+  static const legacyTitleFade = Color(0xFFA6CAF0);
+  static const legacyFace = Color(0xFFD4D0C8);
+  static const legacyShadow = Color(0xFF808080);
+  static const legacyWindow = Color(0xFFFFFFFF);
+  static const legacyInk = Color(0xFF000000);
+
+  /// The old format's floor: a navy slide background with its grid.
+  static const legacyFloor = Color(0xFF0B1A5C);
+  static const legacyFloorGrid = Color(0xFF1F3388);
+
   /// The stars beside a build step: green for an entrance, yellow for an
   /// emphasis, red for an exit.
   static const entranceStar = Color(0xFF4CAF6A);

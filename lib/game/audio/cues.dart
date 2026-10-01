@@ -67,6 +67,18 @@ enum Cue {
   /// Snapping switched off for good.
   snapOff('snap_off.wav', length: 1, maxVoices: 1),
 
+  /// The Legacy Format knocked: a clack through a cheap speaker.
+  legacyHit('legacy_hit.wav', length: 0.12, maxVoices: 3),
+
+  /// A phase converted: the file saved one format forward.
+  formatUpgraded('format_upgraded.wav', length: 0.6, maxVoices: 1),
+
+  /// The Compatibility Checker coming up over the arena.
+  compatibilityChecker('compatibility_checker.wav', length: 0.7, maxVoices: 1),
+
+  /// The deck converted at last.
+  legacyConverted('legacy_converted.wav', length: 1.6, maxVoices: 1),
+
   /// A page's fly-in entrances. Several things fly in at once, so it plays
   /// once per page rather than once per thing.
   whoosh('whoosh.wav', length: 0.42, maxVoices: 1),

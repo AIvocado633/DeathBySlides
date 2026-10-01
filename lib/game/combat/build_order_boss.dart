@@ -38,7 +38,7 @@ Color _starColour(EffectKind kind) => switch (kind) {
 /// arena, and shooting a tag down deletes its step. Every few deletions the
 /// queue reorders itself, so the list being read changes underneath you.
 /// Emptied, it is beaten.
-class BuildOrderBoss extends Boss {
+class BuildOrderBoss extends Boss implements BuildStage {
   BuildOrderBoss(super.context, {int? seed, List<BuildStep>? steps})
     : _random = math.Random(seed),
       queue = BuildQueue(steps ?? BuildQueue.opening()),
@@ -220,21 +220,44 @@ class BuildOrderBoss extends Boss {
     );
   }
 
-  Component _attackFor(BuildEffect effect) => switch (effect) {
-    BuildEffect.flyIn => _FlyIn(_random),
-    BuildEffect.spin => _Spin(),
-    BuildEffect.pulse => _Pulse(_random),
-    BuildEffect.wipe => _Wipe(_random),
-    BuildEffect.bounce => _Bounce(),
-    BuildEffect.wobble => _Wobble(),
-  };
+  Component _attackFor(BuildEffect effect) =>
+      BuildAttack.of(effect, stage: this, random: _random);
 
-  /// Adds a shot in [effect]'s colour to the board.
-  void throwShot(Vector2 from, Vector2 velocity, EffectKind kind) {
+  /// It covers the arena exactly, so its own size is the arena's.
+  @override
+  Vector2 get arena => size;
+
+  @override
+  void throwShot(
+    Vector2 from,
+    Vector2 velocity,
+    EffectKind kind, {
+    ShotRules rules = ShotRules.standard,
+  }) {
     parent?.add(
-      BuildShot(position: from, velocity: velocity, kind: kind),
+      BuildShot(position: from, velocity: velocity, kind: kind)
+        ..applyRules(rules),
     );
   }
+}
+
+/// Where build steps play out: the arena an attack aims across, and how its
+/// shots reach the board. The Build Order is one stage; any fight that plays
+/// build effects is another.
+abstract interface class BuildStage {
+  /// The size of the arena, in the same arena-local units shots fly in.
+  Vector2 get arena;
+
+  /// The player's arena-local position.
+  Vector2 aimAt();
+
+  /// Adds a shot in the colour of an effect of [kind] to the board.
+  void throwShot(
+    Vector2 from,
+    Vector2 velocity,
+    EffectKind kind, {
+    ShotRules rules = ShotRules.standard,
+  });
 }
 
 /// The docked list of steps to come, with the one playing next on top.
@@ -447,17 +470,32 @@ class BuildShot extends EnemyShot {
   }
 }
 
-/// One step's attack, playing out over its effect's duration. A child of the
-/// boss, so it pauses with the fight and stops if the boss is beaten.
-abstract class _Attack extends Component with ParentIsA<BuildOrderBoss> {
-  _Attack(this.effect);
+/// One step's attack, playing out over its effect's duration. Added under
+/// the boss playing it, so it pauses with the fight and stops if the boss is
+/// beaten.
+abstract class BuildAttack extends Component {
+  BuildAttack(this.effect, this.stage);
+
+  /// The attack named after [effect], played on [stage].
+  factory BuildAttack.of(
+    BuildEffect effect, {
+    required BuildStage stage,
+    required math.Random random,
+  }) => switch (effect) {
+    BuildEffect.flyIn => _FlyIn(stage, random),
+    BuildEffect.spin => _Spin(stage),
+    BuildEffect.pulse => _Pulse(stage, random),
+    BuildEffect.wipe => _Wipe(stage, random),
+    BuildEffect.bounce => _Bounce(stage),
+    BuildEffect.wobble => _Wobble(stage),
+  };
 
   final BuildEffect effect;
+  final BuildStage stage;
   double _elapsed = 0;
 
-  BuildOrderBoss get boss => parent;
-  Vector2 get arena => boss.size;
-  Vector2 get player => boss.aimAt();
+  Vector2 get arena => stage.arena;
+  Vector2 get player => stage.aimAt();
 
   @override
   void update(double dt) {
@@ -476,15 +514,18 @@ abstract class _Attack extends Component with ParentIsA<BuildOrderBoss> {
   /// Whether a moment [at] seconds in fell inside this frame.
   static bool due(double at, double from, double to) => from <= at && at < to;
 
-  void shoot(Vector2 from, Vector2 velocity) =>
-      boss.throwShot(from, velocity, effect.kind);
+  void shoot(
+    Vector2 from,
+    Vector2 velocity, {
+    ShotRules rules = ShotRules.standard,
+  }) => stage.throwShot(from, velocity, effect.kind, rules: rules);
 }
 
 /// Shots sweep in from one edge, in two waves.
-class _FlyIn extends _Attack {
-  _FlyIn(math.Random random)
+class _FlyIn extends BuildAttack {
+  _FlyIn(BuildStage stage, math.Random random)
     : _edge = random.nextInt(3),
-      super(BuildEffect.flyIn);
+      super(BuildEffect.flyIn, stage);
 
   final int _edge;
   static const double _speed = 260;
@@ -492,7 +533,7 @@ class _FlyIn extends _Attack {
   @override
   void play(double from, double to) {
     for (final wave in [0.0, 0.6]) {
-      if (!_Attack.due(wave, from, to)) {
+      if (!BuildAttack.due(wave, from, to)) {
         continue;
       }
       for (var i = 0; i < 6; i++) {
@@ -511,8 +552,8 @@ class _FlyIn extends _Attack {
 }
 
 /// A rotating spiral from the top middle of the arena.
-class _Spin extends _Attack {
-  _Spin() : super(BuildEffect.spin);
+class _Spin extends BuildAttack {
+  _Spin(BuildStage stage) : super(BuildEffect.spin, stage);
 
   static const double _every = 0.1;
   static const double _speed = 210;
@@ -531,8 +572,8 @@ class _Spin extends _Attack {
 
 /// A ring of shots expanding from above the player, with a gap to slip out
 /// through.
-class _Pulse extends _Attack {
-  _Pulse(this._random) : super(BuildEffect.pulse);
+class _Pulse extends BuildAttack {
+  _Pulse(BuildStage stage, this._random) : super(BuildEffect.pulse, stage);
 
   final math.Random _random;
   static const int _count = 18;
@@ -540,7 +581,7 @@ class _Pulse extends _Attack {
 
   @override
   void play(double from, double to) {
-    if (!_Attack.due(0, from, to)) {
+    if (!BuildAttack.due(0, from, to)) {
       return;
     }
     final centre = Vector2(player.x, math.max(60, player.y - 170));
@@ -556,15 +597,15 @@ class _Pulse extends _Attack {
 }
 
 /// A wall of shots crossing the arena from the left, with one way through.
-class _Wipe extends _Attack {
-  _Wipe(this._random) : super(BuildEffect.wipe);
+class _Wipe extends BuildAttack {
+  _Wipe(BuildStage stage, this._random) : super(BuildEffect.wipe, stage);
 
   final math.Random _random;
   static const double _spacing = 32;
 
   @override
   void play(double from, double to) {
-    if (!_Attack.due(0, from, to)) {
+    if (!BuildAttack.due(0, from, to)) {
       return;
     }
     final slots = (arena.y / _spacing).floor();
@@ -579,14 +620,14 @@ class _Wipe extends _Attack {
 }
 
 /// Three shots at the player that bounce off the walls twice.
-class _Bounce extends _Attack {
-  _Bounce() : super(BuildEffect.bounce);
+class _Bounce extends BuildAttack {
+  _Bounce(BuildStage stage) : super(BuildEffect.bounce, stage);
 
   static const _rules = ShotRules(bounces: 2);
 
   @override
   void play(double from, double to) {
-    if (!_Attack.due(0, from, to)) {
+    if (!BuildAttack.due(0, from, to)) {
       return;
     }
     final from0 = Vector2(arena.x / 2, 40);
@@ -598,17 +639,14 @@ class _Bounce extends _Attack {
       final velocity = aim.normalized()
         ..rotate(spread)
         ..scale(250);
-      boss.parent?.add(
-        BuildShot(position: from0.clone(), velocity: velocity, kind: effect.kind)
-          ..applyRules(_rules),
-      );
+      shoot(from0.clone(), velocity, rules: _rules);
     }
   }
 }
 
 /// A stream aimed at the player that wobbles as it comes.
-class _Wobble extends _Attack {
-  _Wobble() : super(BuildEffect.wobble);
+class _Wobble extends BuildAttack {
+  _Wobble(BuildStage stage) : super(BuildEffect.wobble, stage);
 
   static const double _every = 0.22;
   static const _rules = ShotRules(curve: 1.4);
@@ -621,13 +659,7 @@ class _Wobble extends _Attack {
       if (aim.isZero()) {
         continue;
       }
-      boss.parent?.add(
-        BuildShot(
-          position: origin,
-          velocity: aim.normalized()..scale(240),
-          kind: effect.kind,
-        )..applyRules(_rules),
-      );
+      shoot(origin, aim.normalized()..scale(240), rules: _rules);
     }
   }
 }

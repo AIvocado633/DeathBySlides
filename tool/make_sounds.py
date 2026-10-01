@@ -357,6 +357,50 @@ def snap_off() -> np.ndarray:
     return mix(d, (0, click), (0, thud), (0.12, slide))
 
 
+def crush(x: np.ndarray, levels: int = 12, hold: int = 4) -> np.ndarray:
+    """Old-format audio: fewer levels and a lower sample rate, held."""
+    x = x / max(np.max(np.abs(x)), 1e-9)
+    x = np.round(x * levels) / levels
+    return np.repeat(x[::hold], hold)[: len(x)]
+
+
+def legacy_hit() -> np.ndarray:
+    """The old format knocked: a clack through a cheap speaker."""
+    d = 0.12
+    t = t_axis(d)
+    clack = (np.sin(2 * np.pi * 620 * t) + 0.5 * np.sin(2 * np.pi * 1550 * t)) * env(d, 0.0008, 0.07)
+    return crush(clack, 6, 3)
+
+
+def format_upgraded() -> np.ndarray:
+    """A phase converted: three square-wave steps up, a save made forward."""
+    d = 0.6
+    steps = [hz(n, 5) for n in ["C", "E", "G"]]
+    parts = [
+        (i * 0.12, np.sign(np.sin(2 * np.pi * f * t_axis(0.16))) * 0.4 * env(0.16, 0.002, 0.14))
+        for i, f in enumerate(steps)
+    ]
+    return lowpass(mix(d, *parts), 4000)
+
+
+def compatibility_checker() -> np.ndarray:
+    """The Compatibility Checker: an old dialog's two-note ding."""
+    d = 0.7
+    ding = sum(pluck(f, 0.5, 1.5) for f in [hz("E", 5), hz("B", 5)]) / 2
+    dong = sum(pluck(f, 0.5, 1.5) for f in [hz("C", 5), hz("G", 5)]) / 2
+    return crush(mix(d, (0, ding), (0.14, dong)), 16, 2)
+
+
+def legacy_converted() -> np.ndarray:
+    """The deck converted: a startup chord swelling up out of the old format."""
+    d = 1.6
+    t = t_axis(1.4)
+    swell = np.clip(t / 0.5, 0, 1) * np.exp(-1.6 * np.clip(t - 0.5, 0, None))
+    pad = sum(np.sin(2 * np.pi * f * t) for f in chord("F", "maj", 4) + [hz("C", 6)]) / 4 * swell
+    sparkle = [(0.25 + i * 0.09, pluck(f, 0.3, 2.5) * 0.5) for i, f in enumerate([hz(n, 6) for n in ["F", "A", "C"]])]
+    return mix(d, (0, crush(pad, 10, 3) * 0.4), (0.4, pad), *sparkle)
+
+
 # --- Music -------------------------------------------------------------------
 
 NOTE = {n: i for i, n in enumerate("C C# D D# E F F# G G# A A# B".split())}
@@ -511,6 +555,10 @@ def main() -> None:
         "snap_hit.wav": snap_hit,
         "grid_finer.wav": grid_finer,
         "snap_off.wav": snap_off,
+        "legacy_hit.wav": legacy_hit,
+        "format_upgraded.wav": format_upgraded,
+        "compatibility_checker.wav": compatibility_checker,
+        "legacy_converted.wav": legacy_converted,
     }
     for name, build in later.items():
         write(name, build())

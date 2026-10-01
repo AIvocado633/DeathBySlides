@@ -13,6 +13,21 @@ enum PlayerExit {
   flyOut,
 }
 
+/// Something the player can do that a feature may switch off for a while.
+enum PlayerFeature {
+  /// Aiming apart from walking. Off, every shot goes the way the player
+  /// walks, as shooting worked before aiming existed.
+  independentAim('Independent aiming'),
+
+  /// Walking diagonally. Off, the player walks in four directions only.
+  diagonalMovement('Diagonal movement');
+
+  const PlayerFeature(this.label);
+
+  /// What a dialog calls it.
+  final String label;
+}
+
 /// Where a body of `bodySize` that means to be at `intended` is actually put:
 /// how a feature constrains the player's movement.
 typedef PositionFilter = Vector2 Function(Vector2 intended, Vector2 bodySize);
@@ -32,6 +47,7 @@ class BossContext {
     this.setPlayerShotRules = _keepPlayerShots,
     this.setPlayerPositionFilter = _keepPlayerMoving,
     this.strikePlayer = _missPlayer,
+    this.setPlayerFeature = _keepPlayerFeature,
   });
 
   /// The size of the floor the fight happens on. Bosses work in arena-local
@@ -62,6 +78,13 @@ class BossContext {
   final void Function() strikePlayer;
 
   static void _missPlayer() {}
+
+  /// Switches one of the player's features off, or back on, for a feature
+  /// that takes things away from the player.
+  final void Function(PlayerFeature feature, {required bool on})
+  setPlayerFeature;
+
+  static void _keepPlayerFeature(PlayerFeature feature, {required bool on}) {}
 }
 
 /// A slide-editor feature, standing between the player and the end of the deck.

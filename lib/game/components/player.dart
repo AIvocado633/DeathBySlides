@@ -8,7 +8,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/services.dart';
 
 import '../audio/game_audio.dart';
-import '../combat/boss.dart' show PlayerExit, PositionFilter;
+import '../combat/boss.dart' show PlayerExit, PlayerFeature, PositionFilter;
 import '../combat/health.dart';
 import '../combat/pep_talk.dart';
 import '../combat/impact.dart';
@@ -95,6 +95,24 @@ class Player extends PositionComponent
       position.setFrom(filter(_intended, scaledSize));
     }
   }
+
+  /// Whether [feature] is on. Every feature is, unless a fight has switched
+  /// it off for now.
+  bool has(PlayerFeature feature) => !_switchedOff.contains(feature);
+  final Set<PlayerFeature> _switchedOff = {};
+
+  /// Switches [feature] off, or back on.
+  void setFeature(PlayerFeature feature, {required bool on}) {
+    if (on) {
+      _switchedOff.remove(feature);
+    } else {
+      _switchedOff.add(feature);
+    }
+  }
+
+  /// Whether the aim input steers shots this frame, rather than only firing
+  /// them the way the player walks.
+  bool get _aimSteers => _aiming && has(PlayerFeature.independentAim);
 
   /// Where the player means to be, before any [positionFilter].
   Vector2 get intendedPosition => _intended.clone();
@@ -255,7 +273,9 @@ class Player extends PositionComponent
       ..add(aimStick?.relativeDelta ?? Vector2.zero())
       ..add(gamepad?.aim ?? Vector2.zero());
     _aiming = _aimInput.length2 >= aimThreshold * aimThreshold;
-    if (_aiming) {
+    // Without independent aiming the aim input still fires, so touch can
+    // shoot at all, but the shots follow the feet.
+    if (_aimSteers) {
       _aim
         ..setFrom(_aimInput)
         ..normalize();
@@ -273,6 +293,14 @@ class Player extends PositionComponent
     // diagonally is not faster than walking straight.
     if (_direction.length2 > 1) {
       _direction.normalize();
+    }
+    // Four ways only: whichever axis is pushed harder wins.
+    if (!has(PlayerFeature.diagonalMovement)) {
+      if (_direction.x.abs() >= _direction.y.abs()) {
+        _direction.y = 0;
+      } else {
+        _direction.x = 0;
+      }
     }
 
     if (_direction.isZero()) {
@@ -298,7 +326,7 @@ class Player extends PositionComponent
 
     // Without an aim input, shots and facing follow the feet, as they did
     // before aiming existed.
-    if (!_aiming) {
+    if (!_aimSteers) {
       _aim
         ..setFrom(_direction)
         ..normalize();
