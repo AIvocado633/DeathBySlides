@@ -430,10 +430,12 @@ lib/
     art/shape_art.dart        Loads exported PNG frames
     save/                    Progress and settings, kept as one JSON document
     theme/                   The made-up editor's colours and text styles
-assets/images/               Exported artwork (see docs/)
+art/                         The cast, drawn from autoshapes: one deck per actor and state
+assets/images/               Frames exported from art/ (see docs/art-pipeline.md)
 assets/fonts/                Atkinson Hyperlegible, bundled, with its licence
 assets/audio/                Synthesised effects and music (see CREDITS.md)
 tool/make_sounds.py          Rebuilds every file in assets/audio/
+tool/export_art.py           Re-exports every frame and launcher icon from art/
 ```
 
 Two conventions carry most of the weight:
@@ -442,8 +444,11 @@ Two conventions carry most of the weight:
 1280×720 canvas and never sees device pixels; `SlidePage` handles the scaling
 and centring. `test/slide_layout_test.dart` holds pages to that canvas.
 
-**Artwork is optional.** `ShapeActor` draws a procedural stand-in when its PNG
-frames are missing, so the game runs before the art exists.
+**Artwork is optional.** Every character is drawn from autoshapes in a deck
+under `art/` and exported to PNG frames with one command (see
+[`docs/art-pipeline.md`](docs/art-pipeline.md)). `ShapeActor` draws a
+procedural stand-in for any actor whose frames are missing, so a new one can
+go into the game before it is drawn.
 
 ## Drawing the monsters
 

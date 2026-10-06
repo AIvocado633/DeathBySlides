@@ -11,12 +11,16 @@ sprites were drawn in; the game itself is not tied to any one editor.
 
 This document is the contract between the deck and the code.
 
+![The cast: the presenter, Shrink-to-Fit, the Diagram Wizard, the Master
+Template and Snap to Grid, idle, blinking, hit and beaten](images/cast.png)
+
 ## Where things live
 
 | What | Where |
 | --- | --- |
-| Source decks | `art/*.pptx` (not created yet — add them as you draw) |
+| Source decks | `art/<actor>_<state>.pptx`, and `art/launcher_icon.pptx` |
 | Exported frames | `assets/images/` |
+| Export | [`tool/export_art.py`](../tool/export_art.py), or [`tool/export-art.ps1`](../tool/export-art.ps1) through PowerPoint |
 | Loader | [`lib/game/art/shape_art.dart`](../lib/game/art/shape_art.dart) |
 | Component that draws an actor | [`lib/game/components/shape_actor.dart`](../lib/game/components/shape_actor.dart) |
 
@@ -93,45 +97,74 @@ are shared, so switching state never touches the disk.
 - **Draw at roughly 512×512.** Sprites are scaled down in game, so exporting
   larger than you need costs nothing but a few KB and keeps them crisp on
   high-DPI phones.
+- **Draw on a square slide, 512 × 512 px** (5.33 in). The decks under `art/`
+  already are.
 - **Group each pose** (select everything on the slide, <kbd>Ctrl</kbd>+<kbd>G</kbd>).
   Export needs one shape per slide, and grouping also stops you nudging a leg
-  out of place by accident.
+  out of place by accident. The export refuses a slide with anything else on
+  it.
+- **Keep the invisible frame in the group.** Every pose in `art/` holds a
+  square with no fill and no line, named *Frame*, covering the whole slide.
+  *Save as Picture* writes a group's bounds, so without it a raised arm would
+  make that frame bigger and the animation would jump. Copy a slide to start
+  a new pose, and the frame comes with it.
 
-## Exporting with a transparent background
+## Exporting
 
-This is the step that goes wrong. *File ▸ Export ▸ PNG* exports whole slides,
-background included, which gives you a white box around every monster.
+One command regenerates every PNG from the decks:
 
-Instead, export the shape:
-
-1. Select the grouped pose on the slide.
-2. Right-click ▸ **Save as Picture…**
-3. Choose **PNG**, name it `hero_idle_000.png`, save into `assets/images/`.
-
-PowerPoint writes the shape's own bounds with a transparent background.
-
-### Doing it in bulk
-
-For anything longer than a few frames, a macro beats clicking. Open the deck,
-press <kbd>Alt</kbd>+<kbd>F11</kbd>, insert a module and adapt:
-
-```vb
-' Assumes exactly one (grouped) shape per slide.
-Sub ExportFrames()
-    Const Prefix As String = "hero_idle_"
-    Const Folder As String = "C:\path\to\DeathBySlides\assets\images\"
-    Dim sld As Slide
-    For Each sld In ActivePresentation.Slides
-        sld.Shapes(1).Export _
-            Folder & Prefix & Format(sld.SlideIndex - 1, "000") & ".png", _
-            ppShapeFormatPNG, 512, 512
-    Next sld
-End Sub
+```bash
+python tool/export_art.py                       # every deck
+python tool/export_art.py art/hero_walk.pptx    # just one
 ```
 
-Treat this as a starting point rather than a tested script — check the first
-few files it writes before trusting a whole run, and note that the deck must be
-saved as `.pptm` for the macro to persist.
+It needs Python with `python-pptx`, `numpy` and `Pillow`, LibreOffice and
+poppler (`pdftocairo`), all free and the same on every desktop. For each
+`art/<actor>_<state>.pptx` it:
+
+1. checks every deck against the drawing rules above, and stops with the deck
+   and slide that breaks one before writing anything;
+2. deletes that sequence's old frames, so a slide removed from the deck does
+   not leave a stale `…_007.png` behind;
+3. writes one `<actor>_<state>_NNN.png` per slide, 512 × 512, on a
+   transparent background.
+
+LibreOffice paints every page white when it exports, so each deck is
+rendered twice, on white and on black. How far the two differ at each pixel
+is how transparent it is, which recovers soft edges exactly.
+
+`art/launcher_icon.pptx` becomes the app's launcher icons: Android's
+mipmaps, the iOS app icon set and the Windows `.ico`, all from one 1024 px
+render. App icons are opaque, so draw its background in.
+
+### Through PowerPoint
+
+On Windows with PowerPoint installed, the same export for the actor decks
+can go through PowerPoint itself, with nothing else to install:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tool\export-art.ps1
+powershell -ExecutionPolicy Bypass -File tool\export-art.ps1 art\hero_walk.pptx
+```
+
+It applies the same checks, deletes stale frames the same way, and exports
+each slide's group with PowerPoint's own *Save as Picture*. It was written
+without PowerPoint to hand: check the first few files it writes before
+trusting a whole run. The launcher icon still goes through
+`tool/export_art.py`.
+
+### By hand
+
+For a frame or two: select the group, right-click ▸ **Save as Picture…**,
+choose **PNG**, and save it as `assets/images/<actor>_<state>_NNN.png`.
+PowerPoint writes the shape's own bounds with a transparent background.
+
+### Where the decks came from
+
+The first decks were drawn by [`tool/draw_cast.py`](../tool/draw_cast.py),
+which builds every pose out of autoshapes. The decks are the source now: edit
+them in a slide editor and re-export. Running `draw_cast.py` again starts
+over, and overwrites them.
 
 ## Using the art in game
 
@@ -150,11 +183,13 @@ ShapeActor(
 The actor picks its frames itself from what it is doing: set `walking` and
 `facing`, and call `hit()` and `die()`.
 
-### Until the art exists
+### Without art
 
 `ShapeActor` falls back to a procedural stand-in — a monster made of the same
-autoshapes the real art will be made of — so pages stay laid out and animated
-while the deck is still being drawn. It acts out the states too: a waddle to
+autoshapes the real art is made of — so a new actor can be put into the game
+before its deck is drawn. The tests see it too: they run without Flutter's
+test binding, so the asset bundle looks empty to them, except in
+`test/art_test.dart`, which checks the shipped art itself. It acts out the states too: a waddle to
 walk, a squash with screwed-shut eyes when hit, and crossed-out eyes when it
 dies. You will see one line per missing actor in
 the console:
@@ -167,9 +202,11 @@ That message disappears on its own once the frames are in place.
 
 ## Adding a new monster
 
-1. Draw it in a new deck, one pose per slide, one deck per state.
-2. Export as `<actor>_idle_000.png`, … into `assets/images/`, and the same for
-   any of `walk`, `hit` and `die` it has.
+1. Draw it in a new deck, one pose per slide, one deck per state: copy an
+   existing deck under `art/` and rename it `<actor>_<state>.pptx`, so the
+   slide size and the invisible frame come with it.
+2. Run `python tool/export_art.py`, and add the actor to the cast in
+   `test/art_test.dart`.
 3. Add a `ShapeActor(actor: '<actor>')` where you want it, and call `hit()` and
    `die()` on it where the boss takes a hit and is beaten.
 4. If it is a boss, set its slide's `buildBoss` in `kLevels`, in
