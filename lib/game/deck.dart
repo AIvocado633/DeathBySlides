@@ -89,6 +89,12 @@ class Deck {
   int get currentSlide =>
       resumeSlide ?? levels.lastWhere((level) => level.isBuilt).number;
 
+  /// Whether [slide] is the deck's last: winning it ends the slide show.
+  bool endsTheShow(int slide) => slide == levels.last.number;
+
+  /// Whether every slide has been won: the deck has been presented.
+  bool get isFinished => featuresLeft == 0;
+
   /// How many features still stand between the player and the end of the
   /// deck, built or not.
   int get featuresLeft =>

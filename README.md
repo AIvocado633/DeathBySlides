@@ -47,8 +47,14 @@ device. Any slide you have opened can be replayed.
   when it is locked, and a faded *hidden slide*, number struck through, when
   its boss has not been built yet.
 - **Winning** a slide offers **Next Slide** first, then Retry Slide and Walk
-  Off. Beating the last slide ends on the same dialog without Next Slide, for
-  now: the deck has no ending of its own yet.
+  Off.
+- **Winning the last slide** ends the show the way every slide show ends: a
+  black screen reading *End of slide show, click to exit.*, with the credits
+  in its speaker notes. Any tap, key or button goes back to the title slide,
+  which now knows the deck is done — the status bar reads *Slide 6 of 6 ·
+  Presented*, nothing stands between you and the end of the deck, and the
+  presenter is, for once, pleased with itself. Being done is just every slide
+  won, so it is saved with the wins, and every slide can still be replayed.
 - **Start menu** — *Start Presenting* (F5) on a fresh deck. Once you have won
   something it becomes *Carry On* (Shift+F5) and opens the first
   slide you have not won yet, which is also the slide the status bar shows.

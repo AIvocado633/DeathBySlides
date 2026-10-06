@@ -162,6 +162,11 @@ abstract final class SlideText {
     style: _style(size: 14, color: Palette.chromeInkSoft),
   );
 
+  /// The speaker notes under the end of the show.
+  static final notes = TextPaint(
+    style: _style(size: 18, color: Palette.chromeInk),
+  );
+
   /// Text inside a dialog drawn in the arena, such as Snap to Grid's.
   static final dialogText = TextPaint(
     style: _style(size: 17, weight: FontWeight.w600, color: Palette.ink),

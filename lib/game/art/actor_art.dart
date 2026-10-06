@@ -48,7 +48,11 @@ enum ActorState {
 
   /// Going down: plays once and holds its last frame, so exit effects can run
   /// on top of it.
-  die;
+  die,
+
+  /// Pleased with itself: loops, for the hero on a deck that has been
+  /// presented.
+  cheer;
 
   /// Whether the state plays once rather than looping.
   bool get isOneShot => this == hit || this == die;

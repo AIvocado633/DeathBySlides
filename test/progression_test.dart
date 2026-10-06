@@ -190,15 +190,16 @@ void main() {
     );
 
     testWithGame<DeathBySlidesGame>(
-      'beating the last built slide shows the normal win panel',
-      () => DeathBySlidesGame(saveStore: _saved({1})),
+      'beating the slide before the last still offers Next Slide',
+      () => DeathBySlidesGame(saveStore: _saved({1, 2, 3, 4})),
       (game) async {
-        final last = kLevels.lastWhere((level) => level.isBuilt).number;
-        await _win(game, await openArena(game, level: last));
+        final last = kLevels.last.number;
+        await _win(game, await openArena(game, level: last - 1));
 
-        final panel = _panel(game);
-        expect(panel.won, isTrue);
-        expect(_labels(panel), ['Retry Slide', 'Walk Off']);
+        expect(_labels(_panel(game)).first, 'Next Slide');
+        _button(_panel(game), 'Next Slide').onSelected();
+        await game.ready();
+        expect(_arena(game).level.number, last);
       },
     );
   });

@@ -32,6 +32,7 @@ void main() {
     Routes.lightTable,
     Routes.tweaks,
     Routes.pepTalk,
+    Routes.endOfShow,
     // Every playable level, so a new boss cannot quietly overflow a slide.
     for (final level in kLevels.where((level) => level.isBuilt))
       Routes.slideShowFor(level.number),

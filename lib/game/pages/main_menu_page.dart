@@ -28,6 +28,8 @@ class MainMenuPage extends SlidePage {
   late StatusBar _statusBar;
   late MenuBulletButton _startButton;
   late TextComponent _footer;
+  late ShapeActor _hero;
+  late TextComponent _heroCaption;
 
   @override
   Future<void> onLoad() async {
@@ -56,6 +58,8 @@ class MainMenuPage extends SlidePage {
       _startButton = _buildStartButton(),
       _footer = _buildFooter(),
     ]);
+    _hero.cheering = game.deck.isFinished;
+    _heroCaption.text = _heroCaptionText;
   }
 
   /// The usual presenting shortcuts: F5 shows from the beginning, Shift+F5
@@ -77,9 +81,17 @@ class MainMenuPage extends SlidePage {
   @override
   void onBack() {}
 
-  StatusBar _buildStatusBar() => StatusBar(
-    slideLabel: 'Slide ${game.deck.currentSlide} of ${kLevels.length}',
-  );
+  /// Where the deck stands: the slide to carry on from, or the whole deck
+  /// presented.
+  StatusBar _buildStatusBar() {
+    final deck = game.deck;
+    final where = 'Slide ${deck.currentSlide} of ${kLevels.length}';
+    return StatusBar(slideLabel: deck.isFinished ? '$where · Presented' : where);
+  }
+
+  String get _heroCaptionText => game.deck.isFinished
+      ? 'Shape 1 · presented the whole deck'
+      : 'Shape 1 · rectangles and hope';
 
   PositionComponent _buildTitle() {
     final frame = PlaceholderFrame(
@@ -183,11 +195,12 @@ class MainMenuPage extends SlidePage {
         position: Vector2(_panelWidth / 2, 34),
         anchor: Anchor.center,
       ),
-      ShapeActor(
+      // Pleased with itself, for once, when the deck has been presented.
+      _hero = ShapeActor(
         actor: 'hero',
         position: actorTopLeft,
         size: Vector2.all(actorSize),
-      ),
+      )..cheering = game.deck.isFinished,
       SelectionHandles(
         position: actorTopLeft - Vector2.all(10),
         size: Vector2.all(actorSize + 20),
@@ -198,8 +211,8 @@ class MainMenuPage extends SlidePage {
         position: Vector2(_panelWidth / 2, 384),
         anchor: Anchor.center,
       ),
-      TextComponent(
-        text: 'Shape 1 · rectangles and hope',
+      _heroCaption = TextComponent(
+        text: _heroCaptionText,
         textRenderer: SlideText.caption,
         position: Vector2(_panelWidth / 2, 420),
         anchor: Anchor.center,

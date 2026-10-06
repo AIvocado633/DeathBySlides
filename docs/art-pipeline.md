@@ -43,12 +43,13 @@ The prefix is `<actor>_<state>_`, and every state is optional except `idle`:
 | `walk` | loops | moving |
 | `hit` | once, then back to `idle` or `walk` | taking a hit |
 | `die` | once, holding the last frame | beaten; the exit effects run on top |
+| `cheer` | loops | pleased with itself: the presenter on the title slide once the deck is done |
 
 Which actors use which:
 
 | Actor | Prefix | States it plays |
 | --- | --- | --- |
-| The presenter (menu and fights) | `hero` | `idle`, `walk`, `hit`, `die` |
+| The presenter (menu and fights) | `hero` | `idle`, `walk`, `hit`, `die`, `cheer` |
 | Shrink-to-Fit | `shrink_to_fit` | `idle`, `hit`, `die` |
 | Diagram Wizard — one shape, repeated for every node | `diagram_wizard` | `idle`, `hit`, `die` |
 | Master Template — the face on the master thumbnail | `master_template` | `idle`, `hit`, `die` |
