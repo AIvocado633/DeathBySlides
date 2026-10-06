@@ -8,7 +8,6 @@ import 'package:death_by_slides/game/combat/master_template_boss.dart';
 import 'package:death_by_slides/game/combat/projectiles.dart';
 import 'package:death_by_slides/game/combat/snap_to_grid_boss.dart';
 import 'package:death_by_slides/game/components/arena_floor.dart';
-import 'package:death_by_slides/game/components/chip_button.dart';
 import 'package:death_by_slides/game/components/result_panel.dart';
 import 'package:death_by_slides/game/death_by_slides_game.dart';
 import 'package:death_by_slides/game/pages/arena_page.dart';
@@ -303,12 +302,10 @@ void main() {
         advance(game, 0.6);
         await game.ready();
         expect(arena.isResolved, isTrue);
-        final panel = arena.children.whereType<ResultPanel>().single;
-        expect(panel.won, isTrue);
         expect(
-          panel.children.whereType<ChipButton>().map((b) => b.label),
-          isNot(contains('Next Slide')),
-          reason: 'the last slide of the deck',
+          arena.children.whereType<ResultPanel>(),
+          isEmpty,
+          reason: 'the last slide ends the show instead',
         );
       },
     );

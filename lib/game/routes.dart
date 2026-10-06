@@ -18,6 +18,10 @@ abstract final class Routes {
   /// The route for a particular level, e.g. `slide-show/2`.
   static String slideShowFor(int levelNumber) => '$slideShow/$levelNumber';
 
+  /// The black slide after the last one: the end of the show, and the
+  /// credits.
+  static const endOfShow = 'end-of-show';
+
   /// Settings, presented as the "Tweaks" side panel.
   static const tweaks = 'tweaks';
 

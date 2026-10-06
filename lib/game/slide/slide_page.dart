@@ -75,6 +75,11 @@ abstract class SlidePage extends PositionComponent
     _progressShown = progress;
   }
 
+  /// Called for every key or controller button pressed while this page is
+  /// on top, whether or not it means anything to a menu -- for a page any
+  /// press moves on from. Menu actions still arrive as well.
+  void onAnyPress() {}
+
   /// Whether arrows move focus across the slide by position, as on a grid,
   /// rather than back and forth through the page in reading order.
   bool get spatialFocus => false;

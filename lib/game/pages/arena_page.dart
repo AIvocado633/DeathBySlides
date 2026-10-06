@@ -207,6 +207,13 @@ class ArenaPage extends SlidePage {
 
   String get _bossReadoutText => '${level.boss}: ${boss.readout}';
 
+  /// How long the frozen board stays up after the deck's last slide is won,
+  /// before the show ends.
+  static const double endOfShowDelay = 1;
+
+  /// Seconds until the show ends, once the last slide has been won.
+  double? _endingIn;
+
   /// How long the result dialog ignores Enter, Space and A, so a player still
   /// hammering fire as the boss goes down does not press a button unseen.
   static const double resultInputDelay = 0.5;
@@ -292,6 +299,10 @@ class ArenaPage extends SlidePage {
 
   @override
   void onMenuAction(MenuAction action) {
+    // The show is ending: nothing to choose, nowhere to go back to.
+    if (_endingIn != null) {
+      return;
+    }
     if (isPaused) {
       switch (action) {
         // B and Start pick the fight back up, the way B unblanks a slide show.
@@ -330,6 +341,14 @@ class ArenaPage extends SlidePage {
   @override
   void update(double dt) {
     super.update(dt);
+    final endingIn = _endingIn;
+    if (endingIn != null) {
+      _endingIn = endingIn - dt;
+      if (endingIn - dt <= 0 && endingIn > 0) {
+        game.router.pop();
+        game.router.pushNamed(Routes.endOfShow);
+      }
+    }
     final panel = _panel;
     if (panel != null) {
       _resolvedFor += dt;
@@ -397,6 +416,12 @@ class ArenaPage extends SlidePage {
     _endShowChip.removeFromParent();
     // The hint would otherwise outlive the controls it describes.
     _controlsHint.removeFromParent();
+
+    // The deck's last slide ends the show rather than offering another.
+    if (won && game.deck.endsTheShow(level.number)) {
+      _endingIn = endOfShowDelay;
+      return;
+    }
 
     add(
       _panel = ResultPanel(

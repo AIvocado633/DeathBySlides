@@ -14,6 +14,7 @@ import 'input/gamepad_input.dart';
 import 'input/menu_input.dart';
 
 import 'pages/arena_page.dart';
+import 'pages/end_of_show_page.dart';
 import 'pages/pep_talk_page.dart';
 import 'pages/tweaks_page.dart';
 import 'pages/main_menu_page.dart';
@@ -139,6 +140,7 @@ class DeathBySlidesGame extends FlameGame
         routes: {
           Routes.normalView: Route(MainMenuPage.new),
           Routes.lightTable: Route(LightTablePage.new),
+          Routes.endOfShow: Route(EndOfShowPage.new),
           Routes.tweaks: Route(TweaksPage.new),
           Routes.pepTalk: Route(PepTalkPage.new),
         },
@@ -174,6 +176,9 @@ class DeathBySlidesGame extends FlameGame
   ) {
     // Components first: the player reads WASD and the arrows mid-fight.
     final result = super.onKeyEvent(event, keysPressed);
+    if (event is KeyDownEvent) {
+      currentPage?.onAnyPress();
+    }
     final action = menuActionForKey(event, keysPressed);
     if (action == null) {
       return result;
@@ -193,6 +198,7 @@ class DeathBySlidesGame extends FlameGame
     // its music back without the page having to know it was covered.
     audio.track = currentPage?.music;
     for (final button in gamepad.takePresses()) {
+      currentPage?.onAnyPress();
       final action = menuActionForButton(button);
       if (action != null) {
         handleMenuAction(action);

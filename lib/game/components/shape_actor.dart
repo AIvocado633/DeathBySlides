@@ -76,6 +76,18 @@ class ShapeActor extends PositionComponent {
     _show();
   }
 
+  /// Whether the actor is pleased with itself. Like [walking], a state to
+  /// rest in, which a hit plays over.
+  bool get cheering => _base == ActorState.cheer;
+  set cheering(bool cheering) {
+    final base = cheering ? ActorState.cheer : ActorState.idle;
+    if (base == _base) {
+      return;
+    }
+    _base = base;
+    _show();
+  }
+
   /// Which way the actor faces. Westward facings are drawn mirrored.
   Facing get facing => _facing;
   Facing _facing = Facing.south;
@@ -177,8 +189,8 @@ class ShapeActor extends PositionComponent {
     _updateBob();
   }
 
-  /// The idle bob runs while standing or flinching, not while walking or
-  /// dying, and never with [Motion.reduced].
+  /// The idle bob runs while standing, cheering or flinching, not while
+  /// walking or dying, and never with [Motion.reduced].
   void _updateBob() {
     final view = _view;
     if (view == null) {
@@ -187,7 +199,9 @@ class ShapeActor extends PositionComponent {
     final wanted =
         bobbing &&
         !Motion.reduced &&
-        (state == ActorState.idle || state == ActorState.hit);
+        (state == ActorState.idle ||
+            state == ActorState.cheer ||
+            state == ActorState.hit);
     final bob = _bob;
     if (!wanted && bob != null) {
       bob.removeFromParent();
@@ -218,8 +232,8 @@ Color _darken(Color colour, [double amount = 0.16]) {
 /// eyes and a bullet point for an antenna.
 ///
 /// It acts out every state, so they can be seen before any art exists:
-/// a waddle to walk, a squash and screwed-up eyes when hit, and crossed-out
-/// eyes when it dies.
+/// a waddle to walk, a squash and screwed-up eyes when hit, crossed-out
+/// eyes when it dies, and a grin with eyes smiling shut when it cheers.
 class _PlaceholderCreature extends PositionComponent {
   _PlaceholderCreature({required Vector2 size, required this.tint})
     : super(size: size);
@@ -335,6 +349,15 @@ class _PlaceholderCreature extends PositionComponent {
             eye.translate(6 * unit, 0),
             _crossPaint,
           );
+        case ActorState.cheer:
+          // Smiling shut: an upturned arc.
+          canvas.drawArc(
+            Rect.fromCenter(center: eye.translate(0, 3 * unit), width: 12 * unit, height: 10 * unit),
+            math.pi,
+            math.pi,
+            false,
+            _crossPaint,
+          );
         case ActorState.idle || ActorState.walk:
           canvas.drawCircle(
             Offset(eye.dx + 2 * unit, eye.dy + 1 * unit),
@@ -344,8 +367,21 @@ class _PlaceholderCreature extends PositionComponent {
       }
     }
 
-    // A flat, unimpressed mouth; a small open one when it hurts.
-    if (state == ActorState.hit || state == ActorState.die) {
+    // A flat, unimpressed mouth; a small open one when it hurts; a grin,
+    // for once, when it cheers.
+    if (state == ActorState.cheer) {
+      canvas.drawArc(
+        Rect.fromCenter(
+          center: Offset(centre.dx, centre.dy + 10 * unit),
+          width: 30 * unit,
+          height: 18 * unit,
+        ),
+        0,
+        math.pi,
+        false,
+        _mouthPaint,
+      );
+    } else if (state == ActorState.hit || state == ActorState.die) {
       canvas.drawCircle(
         Offset(centre.dx, centre.dy + 17 * unit),
         5 * unit,
