@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The grey desk the slide sits on (Palette.workspace), so starting the
+         game goes straight from the launcher to the desk, with no white
+         flash before the first slide. -->
+    <color name="workspace">#FF121826</color>
+    <!-- The launcher icon's background layer: the editor's navy chrome
+         (Palette.toolbar). -->
+    <color name="ic_launcher_background">#FF1E2638</color>
+</resources>

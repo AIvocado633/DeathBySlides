@@ -420,6 +420,12 @@ Windows — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml). The
 workflow pins the Flutter version, so bump it together with `.metadata` when
 upgrading the SDK.
 
+To put a signed build on testers' phones through Google Play's internal
+testing track — the upload key, the version number, `flutter build
+appbundle` and the Play Console steps — see
+[`docs/releasing.md`](docs/releasing.md). The game collects nothing; its
+privacy policy is [`docs/privacy.md`](docs/privacy.md).
+
 To preview in a browser instead, add the web platform back with
 `flutter create --platforms=web .`.
 

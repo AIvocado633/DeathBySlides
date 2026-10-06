@@ -410,6 +410,13 @@ def launcher_icon():
     return [rect(256, 256, 512, 512, NAVY)] + stretched(moved(hero("idle", 0), 0, -22), (256, 256), 0.86, 0.86)
 
 
+def launcher_foreground():
+    """The adaptive icon's foreground layer: the presenter alone, small enough
+    to stay inside the safe zone -- the middle 66 of 108 -- that every
+    launcher's mask leaves alone. The navy is the background layer."""
+    return stretched(moved(hero("idle", 0), 0, -22), (256, 256), 0.56, 0.56)
+
+
 # --- Writing decks -------------------------------------------------------------
 
 
@@ -475,7 +482,7 @@ def main() -> None:
         for state in states:
             poses = [draw(state, frame) for frame in range(FRAMES[state])]
             write_deck(ART / f"{actor}_{state}.pptx", poses, f"{actor} {state}")
-    write_deck(ART / "launcher_icon.pptx", [launcher_icon()], "launcher icon")
+    write_deck(ART / "launcher_icon.pptx", [launcher_icon(), launcher_foreground()], "launcher icon")
 
 
 if __name__ == "__main__":

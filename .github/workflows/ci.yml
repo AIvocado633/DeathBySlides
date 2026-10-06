@@ -59,6 +59,19 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter build apk --debug
+      # The release path, signed with a throwaway key made on the spot: proves
+      # android/key.properties is read and the bundle is not debug-signed.
+      # The real upload key never comes near CI (docs/releasing.md).
+      - name: Signed release bundle
+        run: |
+          keytool -genkeypair -noprompt -keystore "$RUNNER_TEMP/ci.jks" \
+            -alias upload -keyalg RSA -keysize 2048 -validity 1 \
+            -storepass ci-only -keypass ci-only -dname "CN=CI throwaway"
+          printf 'storeFile=%s\nstorePassword=ci-only\nkeyAlias=upload\nkeyPassword=ci-only\n' \
+            "$RUNNER_TEMP/ci.jks" > android/key.properties
+          flutter build appbundle
+          keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab | tee "$RUNNER_TEMP/cert.txt"
+          grep -q "CN=CI throwaway" "$RUNNER_TEMP/cert.txt"
 
   windows:
     # Windows is the everyday target through run-windows.bat, and the gamepads
