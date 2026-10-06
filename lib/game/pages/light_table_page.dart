@@ -9,6 +9,7 @@ import '../components/slide_painting.dart';
 import '../components/status_bar.dart';
 import '../deck.dart';
 import '../levels.dart';
+import '../save/save_data.dart' show SlideTime;
 import '../routes.dart';
 import '../slide/fly_in.dart';
 import '../slide/focusable.dart';
@@ -59,6 +60,7 @@ class LightTablePage extends SlidePage {
         SlideThumbnail(
           level: level,
           state: deck.stateOf(level.number),
+          bestTime: deck.progress.bestTimeOf(level.number),
           position: Vector2(
             originX + column * (_thumbWidth + _gapX),
             _gridTop + row * (_thumbHeight + _gapY),
@@ -101,7 +103,9 @@ class LightTablePage extends SlidePage {
   void onProgressChanged() {
     final deck = game.deck;
     for (final thumbnail in children.whereType<SlideThumbnail>()) {
-      thumbnail.state = deck.stateOf(thumbnail.level.number);
+      thumbnail
+        ..state = deck.stateOf(thumbnail.level.number)
+        ..bestTime = deck.progress.bestTimeOf(thumbnail.level.number);
     }
   }
 }
@@ -109,7 +113,9 @@ class LightTablePage extends SlidePage {
 /// One slide thumbnail on the light table, marked the way slide overviews
 /// mark slides:
 ///
-///  * beaten: a small star, as editors put by slides that have animations;
+///  * beaten: a small star, as editors put by slides that have animations,
+///    and its best time across from the number, where an editor's slide
+///    sorter shows a slide's rehearsed timing;
 ///  * unlocked: a plain slide;
 ///  * locked: greyed out, with a bolt;
 ///  * not built yet: a hidden slide, faded, with its number struck through.
@@ -122,10 +128,12 @@ class SlideThumbnail extends PositionComponent
   SlideThumbnail({
     required this.level,
     required SlideState state,
+    SlideTime? bestTime,
     required this.onSelected,
     required Vector2 position,
     required Vector2 size,
   }) : _state = state,
+       _bestTime = bestTime,
        super(position: position, size: size);
 
   final LevelDefinition level;
@@ -137,8 +145,26 @@ class SlideThumbnail extends PositionComponent
     _state = value;
     if (isLoaded) {
       _title.textRenderer = _titleRenderer;
+      _time.text = _timeText;
     }
   }
+
+  /// The slide's best time, shown only once it is beaten.
+  SlideTime? get bestTime => _bestTime;
+  SlideTime? _bestTime;
+  set bestTime(SlideTime? value) {
+    _bestTime = value;
+    if (isLoaded) {
+      _time.text = _timeText;
+    }
+  }
+
+  /// What the time label reads: nothing until the slide is beaten.
+  String get timeText => _timeText;
+  String get _timeText =>
+      _state == SlideState.beaten ? (_bestTime?.label ?? '') : '';
+
+  late final TextComponent _time;
 
   bool get isPlayable =>
       _state == SlideState.beaten || _state == SlideState.unlocked;
@@ -176,6 +202,12 @@ class SlideThumbnail extends PositionComponent
         textRenderer: SlideText.thumbnailNumber,
         position: Vector2(0, -10),
         anchor: Anchor.bottomLeft,
+      ),
+      _time = TextComponent(
+        text: _timeText,
+        textRenderer: SlideText.timing,
+        position: Vector2(width, -10),
+        anchor: Anchor.bottomRight,
       ),
       _title = TextComponent(
         text: level.boss,

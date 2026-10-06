@@ -5,11 +5,14 @@ import 'package:flame/events.dart';
 
 import '../audio/game_audio.dart';
 import '../input/menu_input.dart';
+import '../levels.dart';
+import '../save/save_data.dart';
 import '../routes.dart';
 import '../slide/slide_metrics.dart';
 import '../slide/slide_page.dart';
 import '../theme/palette.dart';
 import '../theme/slide_text.dart';
+import 'arena_page.dart';
 
 /// The black slide every slide show ends on: *End of slide show, click to
 /// exit.* Reached by winning the deck's last slide.
@@ -51,8 +54,23 @@ class EndOfShowPage extends SlidePage with TapCallbacks {
   /// Whether a press would leave now.
   bool get acceptsInput => _shownFor >= inputDelay;
 
+  /// The rehearsed timing of the whole deck: every slide's best added up,
+  /// once every slide has one. Marked when any of them had Pep Talk on.
+  static SlideTime? deckTime(Progress progress) {
+    final times = [for (final level in kLevels) progress.bestTimeOf(level.number)];
+    if (times.any((time) => time == null)) {
+      return null;
+    }
+    return SlideTime(
+      times.fold(0, (sum, time) => sum + time!.seconds),
+      pepTalk: times.any((time) => time!.pepTalk),
+    );
+  }
+
   @override
   Future<void> onLoad() async {
+    final run = game.lastRun;
+    final total = deckTime(game.save.data.progress);
     await addAll([
       TextComponent(
         text: 'End of slide show, click to exit.',
@@ -60,6 +78,21 @@ class EndOfShowPage extends SlidePage with TapCallbacks {
         position: Vector2(kSlideWidth / 2, 180),
         anchor: Anchor.center,
       ),
+      // The last slide's time, which had no dialog to be reported on.
+      if (run != null)
+        TextComponent(
+          text: 'Slide ${run.slide} · ${ArenaPage.timingLine(run.time, run.best)}',
+          textRenderer: SlideText.showBody,
+          position: Vector2(kSlideWidth / 2, 250),
+          anchor: Anchor.center,
+        ),
+      if (total != null)
+        TextComponent(
+          text: 'Whole deck rehearsed in ${total.label}',
+          textRenderer: SlideText.showBody,
+          position: Vector2(kSlideWidth / 2, 296),
+          anchor: Anchor.center,
+        ),
       _SpeakerNotes(
         position: Vector2(kSlideMargin, _notesTop),
         size: Vector2(kSlideWidth - kSlideMargin * 2, _notesHeight),

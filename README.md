@@ -60,6 +60,23 @@ device. Any slide you have opened can be replayed.
   slide you have not won yet, which is also the slide the status bar shows.
   The footer counts down the features still in the way.
 
+### Best times
+
+Every fight is timed the way a rehearsal times a slide: from the moment the
+fight starts to the moment the feature goes down, leaving out its exit and
+any time spent paused.
+
+- **Winning** reports it on the dialog, `Slide time 00:42 · Best 00:37`, or
+  calls out a new best. A slower run never replaces a best.
+- **The light table** shows each beaten slide's best across from its number,
+  where a slide sorter shows a slide's rehearsed timing.
+- **The end of the show** gives the last slide's time, and the whole deck's
+  once every slide has one.
+- A run with any **Pep Talk** assist on counts like any other, and is marked
+  `(Pep Talk)` wherever it shows.
+
+Best times are saved with the wins.
+
 ### Controls
 
 Twin-stick: one input moves, the other aims, and pushing the aim in any

@@ -60,26 +60,109 @@ class SaveData {
 
 /// How far through the deck the player has got.
 class Progress {
-  const Progress({this.beaten = const <int>{}});
+  const Progress({
+    this.beaten = const <int>{},
+    this.bestTimes = const <int, SlideTime>{},
+  });
 
   /// The numbers of the slides the player has won.
   final Set<int> beaten;
 
+  /// The fastest win of each slide that has one, as Rehearse Timings keeps
+  /// a time for every slide.
+  final Map<int, SlideTime> bestTimes;
+
   bool hasBeaten(int slide) => beaten.contains(slide);
 
-  Progress withBeaten(int slide) =>
-      Progress(beaten: Set.unmodifiable({...beaten, slide}));
+  SlideTime? bestTimeOf(int slide) => bestTimes[slide];
 
-  Map<String, Object?> toJson() => {'beaten': beaten.toList()..sort()};
+  Progress withBeaten(int slide) => Progress(
+    beaten: Set.unmodifiable({...beaten, slide}),
+    bestTimes: bestTimes,
+  );
+
+  /// Keeps [time] as [slide]'s best, unless the best is already faster.
+  Progress withTime(int slide, SlideTime time) {
+    final best = bestTimes[slide];
+    if (best != null && !time.beats(best)) {
+      return this;
+    }
+    return Progress(
+      beaten: beaten,
+      bestTimes: Map.unmodifiable({...bestTimes, slide: time}),
+    );
+  }
+
+  Map<String, Object?> toJson() => {
+    'beaten': beaten.toList()..sort(),
+    if (bestTimes.isNotEmpty)
+      'bestTimes': {
+        for (final slide in bestTimes.keys.toList()..sort())
+          '$slide': bestTimes[slide]!.toJson(),
+      },
+  };
 
   /// Reads what [toJson] wrote. A missing section is a fresh start; anything
-  /// else unexpected is a [FormatException].
+  /// else unexpected is a [FormatException] -- except a time that cannot be
+  /// read, which is dropped: losing one time is better than losing the save.
   factory Progress.fromJson(Object? json) => switch (json) {
     null => const Progress(),
-    {'beaten': final List<Object?> beaten}
+    {'beaten': final List<Object?> beaten} && final Map<Object?, Object?> all
         when beaten.every((slide) => slide is int) =>
-      Progress(beaten: Set.unmodifiable(beaten.cast<int>())),
+      Progress(
+        beaten: Set.unmodifiable(beaten.cast<int>()),
+        bestTimes: Map.unmodifiable(_readTimes(all['bestTimes'])),
+      ),
     _ => throw FormatException('Unreadable progress: ${jsonEncode(json)}'),
+  };
+
+  static Map<int, SlideTime> _readTimes(Object? json) {
+    if (json is! Map<String, Object?>) {
+      return const {};
+    }
+    return {
+      for (final MapEntry(:key, :value) in json.entries)
+        if ((int.tryParse(key), SlideTime.tryFromJson(value))
+            case (final int slide, final SlideTime time))
+          slide: time,
+    };
+  }
+}
+
+/// How long a slide took to win, as Rehearse Timings would record it.
+class SlideTime {
+  const SlideTime(this.seconds, {this.pepTalk = false});
+
+  final double seconds;
+
+  /// Whether any Pep Talk assist was on. Such a time counts like any other,
+  /// and is marked as such rather than hidden.
+  final bool pepTalk;
+
+  /// Whether this run was faster than [other].
+  bool beats(SlideTime other) => seconds < other.seconds;
+
+  /// The time as a rehearsal shows it: `00:42`, whole seconds.
+  String get clock => formatClock(seconds);
+
+  /// [clock], marked when Pep Talk was on: `00:42 (Pep Talk)`.
+  String get label => pepTalk ? '$clock (Pep Talk)' : clock;
+
+  /// `mm:ss`, whole seconds, rounded down.
+  static String formatClock(double seconds) {
+    final whole = seconds.floor();
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(whole ~/ 60)}:${two(whole % 60)}';
+  }
+
+  Map<String, Object?> toJson() => {'seconds': seconds, 'pepTalk': pepTalk};
+
+  /// Reads what [toJson] wrote, or null for anything else.
+  static SlideTime? tryFromJson(Object? json) => switch (json) {
+    {'seconds': final num seconds} && final Map<Object?, Object?> all
+        when seconds.isFinite && seconds > 0 =>
+      SlideTime(seconds.toDouble(), pepTalk: all['pepTalk'] == true),
+    _ => null,
   };
 }
 

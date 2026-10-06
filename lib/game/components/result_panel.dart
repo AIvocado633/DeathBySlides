@@ -16,6 +16,7 @@ class ResultPanel extends PositionComponent {
     required this.onLeave,
     this.onNext,
     this.won = true,
+    this.timing,
   }) : super(position: position, size: Vector2(580, 260), anchor: Anchor.center);
 
   final String title;
@@ -27,6 +28,10 @@ class ResultPanel extends PositionComponent {
   /// primary action; when null, Retry Slide takes its place.
   final void Function()? onNext;
   final bool won;
+
+  /// How long the slide took, the way a rehearsal reports it --
+  /// `Slide time 00:42 · Best 00:37` -- or null for no line at all.
+  final String? timing;
 
   static const double _headerHeight = 58;
 
@@ -49,9 +54,16 @@ class ResultPanel extends PositionComponent {
       TextComponent(
         text: message,
         textRenderer: SlideText.caption,
-        position: Vector2(width / 2, 118),
+        position: Vector2(width / 2, timing == null ? 118 : 104),
         anchor: Anchor.center,
       ),
+      if (timing case final timing?)
+        TextComponent(
+          text: timing,
+          textRenderer: SlideText.timing,
+          position: Vector2(width / 2, 140),
+          anchor: Anchor.center,
+        ),
     ]);
 
     final next = onNext;

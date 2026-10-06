@@ -162,6 +162,12 @@ abstract final class SlideText {
     style: _style(size: 14, color: Palette.chromeInkSoft),
   );
 
+  /// A slide's rehearsed timing: on the win dialog, and under a beaten
+  /// thumbnail.
+  static final timing = TextPaint(
+    style: _style(size: 18, weight: FontWeight.w700, color: Palette.brand),
+  );
+
   /// The speaker notes under the end of the show.
   static final notes = TextPaint(
     style: _style(size: 18, color: Palette.chromeInk),

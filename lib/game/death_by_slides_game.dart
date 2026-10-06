@@ -104,6 +104,10 @@ class DeathBySlidesGame extends FlameGame
     );
   }
 
+  /// The latest win, with the best it was up against: for the end of the
+  /// show, which comes after the last win instead of a dialog.
+  ({int slide, SlideTime time, SlideTime? best})? lastRun;
+
   /// Which slides can be opened, as of the latest save.
   Deck get deck => Deck(progress: save.data.progress, unlockAll: unlockAll);
 

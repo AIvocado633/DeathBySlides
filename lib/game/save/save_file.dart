@@ -35,12 +35,19 @@ class SaveFile {
 
   Future<void> _writes = Future<void>.value();
 
-  /// Records that [slide] has been won, and saves.
-  Future<void> recordWin(int slide) {
-    if (_data.progress.hasBeaten(slide)) {
+  /// Records that [slide] has been won, in [time] if it was timed, and
+  /// saves. A time slower than the slide's best is not kept.
+  Future<void> recordWin(int slide, {SlideTime? time}) {
+    var progress = _data.progress.withBeaten(slide);
+    if (time != null) {
+      progress = progress.withTime(slide, time);
+    }
+    final before = _data.progress;
+    if (progress.beaten.length == before.beaten.length &&
+        identical(progress.bestTimes, before.bestTimes)) {
       return _writes;
     }
-    return _save(_data.copyWith(progress: _data.progress.withBeaten(slide)));
+    return _save(_data.copyWith(progress: progress));
   }
 
   /// Replaces the settings with [settings], and saves.

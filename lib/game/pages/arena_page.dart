@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import '../audio/game_audio.dart';
 import '../combat/boss.dart';
 import '../combat/pep_talk.dart';
+import '../save/save_data.dart' show SlideTime;
 import '../components/arena_floor.dart';
 import '../components/chip_button.dart';
 import '../components/control_stick.dart';
@@ -90,6 +91,9 @@ class ArenaPage extends SlidePage {
   late final Player player;
   late final Boss boss;
 
+  /// The rehearsal clock: how long the fight has run, paused or not.
+  late final FightClock clock;
+
   /// True once the slide has been won or lost.
   bool get isResolved => _resolved;
   bool _resolved = false;
@@ -140,7 +144,7 @@ class ArenaPage extends SlidePage {
     _shownHealth = player.health.current;
     _shownReadout = boss.readout;
 
-    floor.addAll([boss, player]);
+    floor.addAll([boss, player, clock = FightClock()]);
 
     await addAll([
       TextComponent(
@@ -362,6 +366,11 @@ class ArenaPage extends SlidePage {
         }
       }
     }
+    // The clock stops the moment the feature is beaten: its exit is not the
+    // player's time.
+    if (boss.isDefeated) {
+      clock.stop();
+    }
     // Only re-lay out a readout when the value it shows actually moves.
     if (_shownHealth != player.health.current) {
       player.exit = boss.playerExit;
@@ -397,9 +406,15 @@ class ArenaPage extends SlidePage {
       return;
     }
     _resolved = true;
+    clock.stop();
+    String? timing;
     if (won) {
+      final time = SlideTime(clock.elapsed, pepTalk: PepTalk.current.isOn);
+      final best = game.save.data.progress.bestTimeOf(level.number);
+      game.lastRun = (slide: level.number, time: time, best: best);
+      timing = timingLine(time, best);
       // Saved the moment it is won, so leaving from the dialog keeps it.
-      unawaited(game.save.recordWin(level.number));
+      unawaited(game.save.recordWin(level.number, time: time));
       game.audio.play(Cue.applause);
     }
     // Only after a win, and only onto a slide that has been built: beating
@@ -432,8 +447,19 @@ class ArenaPage extends SlidePage {
         onRetry: () => _replaceWith(level.number),
         onLeave: _leave,
         onNext: next == null ? null : () => _replaceWith(next),
+        timing: timing,
       ),
     );
+  }
+
+  /// How a rehearsal reports a slide: `Slide time 00:42 · Best 00:37`, or a
+  /// new best called out as one.
+  static String timingLine(SlideTime time, SlideTime? best) {
+    final now = 'Slide time ${time.label}';
+    if (best == null || time.beats(best)) {
+      return '$now · New best';
+    }
+    return '$now · Best ${best.label}';
   }
 
   /// The route does not maintain state, so popping drops this page and pushing
@@ -444,4 +470,28 @@ class ArenaPage extends SlidePage {
   }
 
   void _leave() => game.router.pop();
+}
+
+/// The rehearsal clock for one fight.
+///
+/// It lives on the arena floor, so it runs on the fight's own time: frozen
+/// while the fight is paused, like everything else on the board. It starts
+/// with the fight, when the player first has control, and stops once.
+class FightClock extends Component {
+  /// Seconds the fight has run.
+  double get elapsed => _elapsed;
+  double _elapsed = 0;
+
+  bool get isRunning => _running;
+  bool _running = true;
+
+  void stop() => _running = false;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (_running) {
+      _elapsed += dt;
+    }
+  }
 }
