@@ -2,6 +2,7 @@ import 'combat/shrink_to_fit_boss.dart';
 import 'combat/boss.dart';
 import 'combat/build_order_boss.dart';
 import 'combat/diagram_wizard_boss.dart';
+import 'combat/legacy_format_boss.dart';
 import 'combat/master_template_boss.dart';
 import 'combat/snap_to_grid_boss.dart';
 
@@ -93,5 +94,6 @@ const List<LevelDefinition> kLevels = [
     tagline: 'Last saved in 2003',
     winLine: 'Saved in a format from this century at last.',
     lossLine: 'The old file format could not keep you. Nothing personal.',
+    buildBoss: LegacyFormatBoss.new,
   ),
 ];

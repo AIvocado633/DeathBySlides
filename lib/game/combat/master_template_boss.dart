@@ -92,6 +92,19 @@ enum SlideTheme {
   final Color accent;
 
   SlideTheme get next => values[(index + 1) % values.length];
+
+  /// Puts this theme on the whole slide at once: the [floor], every shot
+  /// already in the air on both sides, and the player's next shots, through
+  /// [context].
+  void applyTo(ArenaFloor? floor, BossContext context) {
+    if (floor != null) {
+      floor.look = this.floor;
+      for (final shot in floor.children.whereType<Projectile>()) {
+        shot.applyRules(shot is BulletPoint ? player : enemy);
+      }
+    }
+    context.setPlayerShotRules(player);
+  }
 }
 
 /// The third boss: the template every slide is built on, which changes
@@ -242,13 +255,7 @@ class MasterTemplateBoss extends Boss {
       thumb.accent = theme.accent;
     }
     final floor = parent;
-    if (floor is ArenaFloor) {
-      floor.look = theme.floor;
-      for (final shot in floor.children.whereType<Projectile>()) {
-        shot.applyRules(shot is BulletPoint ? theme.player : theme.enemy);
-      }
-    }
-    context.setPlayerShotRules(theme.player);
+    theme.applyTo(floor is ArenaFloor ? floor : null, context);
     if (!_defeated) {
       audio.play(Cue.themeApplied);
     }

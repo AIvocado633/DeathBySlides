@@ -167,6 +167,19 @@ abstract final class SlideText {
     style: _style(size: 17, weight: FontWeight.w600, color: Palette.ink),
   );
 
+  /// A 2003-era window's title bar, and the text in its body.
+  static final legacyTitle = TextPaint(
+    style: _style(size: 15, weight: FontWeight.w700, color: Palette.slide),
+  );
+
+  static final legacyText = TextPaint(
+    style: _style(size: 15, color: Palette.legacyInk),
+  );
+
+  static final legacyTextBold = TextPaint(
+    style: _style(size: 15, weight: FontWeight.w700, color: Palette.legacyInk),
+  );
+
   /// The number on a build step's tag in the arena.
   static final tagNumber = TextPaint(
     style: _style(size: 18, weight: FontWeight.w700, color: Palette.ink),

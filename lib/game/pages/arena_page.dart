@@ -132,6 +132,8 @@ class ArenaPage extends SlidePage {
         setPlayerShotRules: (rules) => player.shotRules = rules,
         setPlayerPositionFilter: (filter) => player.positionFilter = filter,
         strikePlayer: () => player.strike(),
+        setPlayerFeature: (feature, {required on}) =>
+            player.setFeature(feature, on: on),
       ),
     );
     player.exit = boss.playerExit;

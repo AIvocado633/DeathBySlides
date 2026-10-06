@@ -6,7 +6,8 @@ A 2D mobile game about defeating the presentation-software features that
 defeated you.
 
 Each level is a slide. Each boss is a feature — Shrink-to-Fit, the Diagram
-Wizard, the Master Template, the Build Order. You fight them from a top-down
+Wizard, the Master Template, the Build Order, Snap to Grid, and finally the
+Legacy Format. You fight them from a top-down
 view inside the slide, with a character built out of autoshapes.
 
 The game takes place inside a made-up slide editor with a look of its own —
@@ -20,15 +21,15 @@ Built with Flutter and the [Flame](https://flame-engine.org) engine.
 
 ## Status
 
-Slides 1 to 5 are playable end to end. The last boss is named but not built.
+All six slides are playable end to end.
 
 - **Start menu** — a title slide in the editor's normal view, with toolbar,
   status bar, dashed placeholders and staggered fly-in entrances.
 - **Light Table** — level select, showing all six slides (see *Progression*
   below).
-- **Slide show** — five fights so far, Shrink-to-Fit, the Diagram Wizard, the
-  Master Template, the Build Order and Snap to Grid, with twin-stick controls
-  (see below).
+- **Slide show** — six fights: Shrink-to-Fit, the Diagram Wizard, the Master
+  Template, the Build Order, Snap to Grid and the Legacy Format, with
+  twin-stick controls (see below).
 - **Tweaks** — settings for controls, motion and sound, and **Pep Talk**, the
   optional assists (see below).
 - **Sound** — effects for every shot, hit and win, and music for menus and
@@ -46,8 +47,8 @@ device. Any slide you have opened can be replayed.
   when it is locked, and a faded *hidden slide*, number struck through, when
   its boss has not been built yet.
 - **Winning** a slide offers **Next Slide** first, then Retry Slide and Walk
-  Off. Beating the last slide that has been built ends on the same dialog
-  without Next Slide, until the rest of the deck exists.
+  Off. Beating the last slide ends on the same dialog without Next Slide, for
+  now: the deck has no ending of its own yet.
 - **Start menu** — *Start Presenting* (F5) on a fresh deck. Once you have won
   something it becomes *Carry On* (Shift+F5) and opens the first
   slide you have not won yet, which is also the slide the status bar shows.
@@ -275,11 +276,50 @@ Nothing new to aim at: the challenge is moving in a new way. A feature can
 constrain movement through `BossContext.setPlayerPositionFilter`, and hit the
 player with something that is not a shot through `BossContext.strikePlayer`.
 
+### Slide 6 — Legacy Format
+
+The last slide was saved in 2003, so the whole deck is fought again in the old
+file format: the final exam. Each earlier feature comes back as the old format
+saves it, one stage at a time, in a 2003-era window with a gradient title bar,
+drawn at half the resolution, its name across the arena in WordArt.
+
+| Stage | Saved down to |
+| --- | --- |
+| **Shrink-to-Fit** | six point sizes, and it throws in eight directions only |
+| **Diagram Wizard** | it did not exist in 2003, so it arrives *converted to a picture*: one flat target that cannot be edited and never rearranges |
+| **Master Template** | one master, no layouts, and only Plain, Rebound and Chunky: nothing curves in this format |
+| **Build Order** | four steps, every one After Last |
+| **Snap to Grid** | its guides still strike, but the grid has one spacing and nobody snaps to it |
+| **Convert** | *File · Info · Convert*: rings of resize handles, and the final blow |
+
+**Your features switch off too.** Between stages the Compatibility Checker
+comes up over the arena, names one of *your* features the old format does not
+support, and switches it off for nine seconds once you have had time to read
+it, while a note in the corner counts down:
+
+- **Independent aiming** — you fire the way you walk, as before aiming
+  existed. Aiming still fires, so touch can still shoot.
+- **Diagonal movement** — four ways only.
+
+Its health is the conversion: the readout is the format the file is stuck in,
+from `97-2003` through `2007`, `2010`, `2013`, `2016` and `2019`, and each
+stage beaten saves it a format forward. Convert, and everything you lost comes
+back as the slide is saved in a format from this century.
+
+Pep Talk is never switched off: the assists are there because someone needs
+them, and a boss taking them away would only lock that player out of the last
+slide.
+
+The stages borrow the earlier bosses' own attacks: the Build Order's effects
+are `BuildAttack`s any `BuildStage` can play, and a theme puts itself on the
+board with `SlideTheme.applyTo`. A feature switches the player's own features
+off through `BossContext.setPlayerFeature`.
+
 ### How a hit feels
 
 A hit is never just a number going down. Whatever was hit flashes and squashes,
 the board shakes when the player takes one, and what the hit cost floats off it
-in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−1 animation` off the Build Order, `−0.25 cm` off Snap to Grid, `−13%`
+in that side's own units — `−6 pt` off Shrink-to-Fit, `−1 shape` off the Diagram Wizard, `−1 layout` off the Master Template, `−1 animation` off the Build Order, `−0.25 cm` off Snap to Grid, `Saved as 2007` off the Legacy Format, `−13%`
 off the player. Health is never a bar in this game, so the numbers say what the
 readouts say.
 
