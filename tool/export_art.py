@@ -13,7 +13,8 @@ PowerPoint itself instead.
   one 512 x 512 frame per slide on a transparent background. A sequence's old
   frames are deleted first, so a removed slide leaves no stale frame behind.
 * art/launcher_icon.pptx becomes every launcher icon the platforms ask for:
-  Android's mipmaps, the iOS app icon set and the Windows .ico.
+  Android's mipmaps, the iOS app icon set and the Windows .ico from its
+  first slide, and Android's adaptive-icon foreground from its second.
 
 The drawing rules in docs/art-pipeline.md are checked before anything is
 written: a slide that is not exactly one grouped shape fails the run.
@@ -151,8 +152,11 @@ def export_frames(deck: pathlib.Path, work: pathlib.Path) -> None:
 
 
 def export_icon(deck: pathlib.Path, work: pathlib.Path) -> None:
+    slides = _render(deck, work, ICON_SIZE)
+    if len(slides) != 2:
+        raise ArtError(f"{deck.name}: expected two slides, the icon and its adaptive foreground")
     # App icons are opaque: iOS refuses one with an alpha channel.
-    icon = _render(deck, work, ICON_SIZE)[0]
+    icon, foreground = slides
     flat = Image.new("RGB", icon.size, "white")
     flat.paste(icon, mask=icon.getchannel("A"))
     written = []
@@ -162,8 +166,13 @@ def export_icon(deck: pathlib.Path, work: pathlib.Path) -> None:
         written.append(path)
 
     res = ROOT / "android" / "app" / "src" / "main" / "res"
-    for density, size in [("mdpi", 48), ("hdpi", 72), ("xhdpi", 96), ("xxhdpi", 144), ("xxxhdpi", 192)]:
-        save(res / f"mipmap-{density}" / "ic_launcher.png", size)
+    for density, scale in [("mdpi", 1), ("hdpi", 1.5), ("xhdpi", 2), ("xxhdpi", 3), ("xxxhdpi", 4)]:
+        save(res / f"mipmap-{density}" / "ic_launcher.png", round(48 * scale))
+        # The adaptive layer is 108 dp a side, of which launchers show 72.
+        layer = res / f"mipmap-{density}" / "ic_launcher_foreground.png"
+        size = round(108 * scale)
+        foreground.resize((size, size), Image.LANCZOS).save(layer, optimize=True)
+        written.append(layer)
     icon_set = ROOT / "ios" / "Runner" / "Assets.xcassets" / "AppIcon.appiconset"
     for path in sorted(icon_set.glob("Icon-App-*.png")):
         match = re.fullmatch(r"Icon-App-([\d.]+)x[\d.]+@(\d)x\.png", path.name)
