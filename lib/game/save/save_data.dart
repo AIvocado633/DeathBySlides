@@ -13,6 +13,7 @@ class SaveData {
   const SaveData({
     this.progress = const Progress(),
     this.settings = const Settings(),
+    this.introSeen = false,
   });
 
   /// The shape [encode] writes and [SaveData.decode] reads.
@@ -25,15 +26,24 @@ class SaveData {
   final Progress progress;
   final Settings settings;
 
-  SaveData copyWith({Progress? progress, Settings? settings}) => SaveData(
+  /// Whether the intro has played through or been skipped, so it plays once.
+  final bool introSeen;
+
+  SaveData copyWith({
+    Progress? progress,
+    Settings? settings,
+    bool? introSeen,
+  }) => SaveData(
     progress: progress ?? this.progress,
     settings: settings ?? this.settings,
+    introSeen: introSeen ?? this.introSeen,
   );
 
   String encode() => jsonEncode({
     'version': currentVersion,
     'progress': progress.toJson(),
     'settings': settings.toJson(),
+    if (introSeen) 'introSeen': true,
   });
 
   /// Reads a document written by [encode].
@@ -54,6 +64,7 @@ class SaveData {
     return SaveData(
       progress: Progress.fromJson(json['progress']),
       settings: Settings.fromJson(json['settings']),
+      introSeen: json['introSeen'] == true,
     );
   }
 }

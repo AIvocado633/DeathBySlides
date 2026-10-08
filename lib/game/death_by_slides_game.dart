@@ -15,6 +15,7 @@ import 'input/menu_input.dart';
 
 import 'pages/arena_page.dart';
 import 'pages/end_of_show_page.dart';
+import 'pages/intro_page.dart';
 import 'pages/pep_talk_page.dart';
 import 'pages/tweaks_page.dart';
 import 'pages/main_menu_page.dart';
@@ -44,6 +45,7 @@ class DeathBySlidesGame extends FlameGame
     SaveStore? saveStore,
     AudioBackend? audioBackend,
     this.unlockAll = kUnlockAll,
+    this.showIntro = false,
     bool Function()? deviceReducesMotion,
   }) : _gamepadEvents = gamepadEvents,
        _saveStore = saveStore ?? InMemorySaveStore(),
@@ -57,6 +59,11 @@ class DeathBySlidesGame extends FlameGame
 
   /// Opens every built slide, whatever has been won. See [kUnlockAll].
   final bool unlockAll;
+
+  /// Plays the intro on a first launch. The app asks for it; tests leave it
+  /// off, so a game starts on the title slide unless a test is about the
+  /// intro.
+  final bool showIntro;
 
   /// Controller events to follow. The app passes the real platform stream;
   /// tests leave it null, so building a game never touches a platform channel.
@@ -145,11 +152,18 @@ class DeathBySlidesGame extends FlameGame
           Routes.normalView: Route(MainMenuPage.new),
           Routes.lightTable: Route(LightTablePage.new),
           Routes.endOfShow: Route(EndOfShowPage.new),
+          // Not kept alive: every viewing starts from the first scene.
+          Routes.intro: Route(IntroPage.new, maintainState: false),
           Routes.tweaks: Route(TweaksPage.new),
           Routes.pepTalk: Route(PepTalkPage.new),
         },
       ),
     );
+    // The story plays once, over the title slide it hands over to -- which
+    // only exists once the router is mounted.
+    if (showIntro && !save.data.introSeen) {
+      unawaited(router.mounted.then((_) => router.pushNamed(Routes.intro)));
+    }
   }
 
   final StickRepeat _stickRepeat = StickRepeat();

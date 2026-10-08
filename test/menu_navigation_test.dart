@@ -142,14 +142,17 @@ void main() {
         game.handleMenuAction(MenuAction.down);
         expect(_label(page.focused), 'Light Table');
         game.handleMenuAction(MenuAction.down);
+        expect(_label(page.focused), 'Tweaks');
+        // The intro's replay, under the presenter, comes last.
+        game.handleMenuAction(MenuAction.down);
         game.handleMenuAction(MenuAction.down);
         expect(
           _label(page.focused),
-          'Tweaks',
+          'The Night Before',
           reason: 'stops at the end',
         );
         game.handleMenuAction(MenuAction.up);
-        expect(_label(page.focused), 'Light Table');
+        expect(_label(page.focused), 'Tweaks');
       },
     );
 

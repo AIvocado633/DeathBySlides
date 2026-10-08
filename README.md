@@ -35,6 +35,17 @@ All six slides are playable end to end.
 - **Sound** — effects for every shot, hit and win, and music for menus and
   fights (see *Sound* below).
 
+### The intro
+
+The first launch opens on the night before: twenty seconds, five scenes. A
+blank slide at 11:58 PM with a presentation at 9; Shrink-to-Fit, the Diagram
+Wizard and the Master Template each wrecking it in turn; the news that the
+deck was last saved in 2003; and the view zooming into the slide, presenter
+and all, before the title card. It plays once — *Skip*, or any tap, key or
+button after its first second, ends it — and *The Night Before*, under the
+presenter on the title slide, plays it again. With Reduce Motion the scenes
+keep their timing but nothing moves.
+
 ### Progression
 
 The deck is played in order. Slide 1 is always open; every other slide opens

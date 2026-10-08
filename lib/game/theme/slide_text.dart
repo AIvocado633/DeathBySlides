@@ -52,6 +52,16 @@ abstract final class SlideText {
     ),
   );
 
+  /// The title's second word on a black slide show, where ink would vanish.
+  static final showTitle = TextPaint(
+    style: _style(
+      size: 72,
+      weight: FontWeight.w800,
+      color: Palette.slide,
+      letterSpacing: 1,
+    ),
+  );
+
   static final subtitle = TextPaint(
     style: _style(
       size: 24,
