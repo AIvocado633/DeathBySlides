@@ -72,6 +72,17 @@ jobs:
           flutter build appbundle
           keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab | tee "$RUNNER_TEMP/cert.txt"
           grep -q "CN=CI throwaway" "$RUNNER_TEMP/cert.txt"
+      # The same release build as an APK, for installing straight onto a phone
+      # (Play takes the bundle; a phone takes an APK). Signed with the
+      # throwaway key above, which changes every run: uninstall the previous
+      # copy before installing a new one.
+      - name: Installable release APK
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: death-by-slides-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
 
   windows:
     # Windows is the everyday target through run-windows.bat, and the gamepads
