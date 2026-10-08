@@ -40,7 +40,9 @@ class ArenaPage extends SlidePage {
   static const double _arenaWidth = 900;
   static const double _arenaHeight = 420;
   static const double _arenaTop = 150;
-  static const double _playerSize = 120;
+  /// How big the player is at full size: the width every attack must leave
+  /// a way through for.
+  static const double playerSize = 120;
 
   final LevelDefinition level;
 
@@ -121,7 +123,7 @@ class ArenaPage extends SlidePage {
     )..scale = Vector2.all(settings.stickSize);
     player = Player(
       position: Vector2(_arenaWidth / 2, _arenaHeight - 90),
-      size: _playerSize,
+      size: playerSize,
       moveStick: moveStick,
       aimStick: aimStick,
       gamepad: game.gamepad,

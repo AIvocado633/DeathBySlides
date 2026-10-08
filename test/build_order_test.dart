@@ -112,8 +112,7 @@ void main() {
     });
 
     test('reordering shuffles the steps and reads from the top', () {
-      final queue = _queue(BuildQueue.opening())
-        ..update(0.1, clicked: true);
+      final queue = _queue(BuildQueue.opening())..update(0.1, clicked: true);
       final before = _ids(queue.steps);
 
       queue.reorder(math.Random(1));
@@ -136,10 +135,9 @@ void main() {
 
         expect(boss.readout, '17 animations');
         expect(boss.tags, hasLength(17));
-        expect(
-          boss.tags.map((tag) => tag.number).toSet(),
-          {for (var i = 1; i <= 17; i++) i},
-        );
+        expect(boss.tags.map((tag) => tag.number).toSet(), {
+          for (var i = 1; i <= 17; i++) i,
+        });
         expect(arena.player.exit, PlayerExit.flyOut);
       },
     );
@@ -257,4 +255,144 @@ void main() {
       },
     );
   });
+
+  group('every attack can be dodged', () {
+    final arena = Vector2(900, 420);
+    // A full-size player, which is the hardest to fit through anything.
+    const player = ArenaPage.playerSize;
+    final shot = BuildShot(
+      position: Vector2.zero(),
+      velocity: Vector2(1, 0),
+      kind: EffectKind.entrance,
+    ).size.x;
+
+    test('the lane every attack leaves fits a full-size player and a shot', () {
+      expect(BuildAttack.lane, greaterThanOrEqualTo(player + shot));
+    });
+
+    /// Plays [effect] to the end on a stage of [arena]'s size with the player
+    /// at [at], and returns every shot it threw, with when it was thrown.
+    List<({double at, Vector2 from, Vector2 velocity})> play(
+      BuildEffect effect, {
+      required int seed,
+      Vector2? at,
+    }) {
+      final stage = _RecordingStage(arena, at ?? Vector2(450, 330));
+      final attack = BuildAttack.of(
+        effect,
+        stage: stage,
+        random: math.Random(seed),
+      );
+      for (var t = 0.0; t < effect.duration + 0.1; t += 1 / 60) {
+        stage.now = t;
+        attack.update(1 / 60);
+      }
+      return stage.shots;
+    }
+
+    /// The widest clear stretch a wall of shots at [positions] leaves along
+    /// an edge [extent] long, and where its middle is.
+    ({double width, double middle}) widestLane(
+      Iterable<double> positions,
+      double extent,
+    ) {
+      final edges = [
+        -shot / 2,
+        ...positions.toList()..sort(),
+        extent + shot / 2,
+      ];
+      var best = (width: 0.0, middle: 0.0);
+      for (var i = 1; i < edges.length; i++) {
+        final width = edges[i] - edges[i - 1] - shot;
+        if (width > best.width) {
+          best = (width: width, middle: (edges[i] + edges[i - 1]) / 2);
+        }
+      }
+      return best;
+    }
+
+    test('Wipe always leaves a lane a full-size player fits through', () {
+      for (var seed = 0; seed < 60; seed++) {
+        final shots = play(BuildEffect.wipe, seed: seed);
+        final lane = widestLane(shots.map((s) => s.from.y), arena.y);
+        expect(lane.width, greaterThan(player + 20), reason: 'seed $seed');
+      }
+    });
+
+    test('Fly In leaves a lane in both walls, the second within reach', () {
+      // How far a full-size player walks between the two walls.
+      const reach = 320 * 0.6;
+      for (var seed = 0; seed < 60; seed++) {
+        final shots = play(BuildEffect.flyIn, seed: seed);
+        final fromTop = shots.first.velocity.y > 0;
+        final extent = fromTop ? arena.x : arena.y;
+        double along(Vector2 from) => fromTop ? from.x : from.y;
+        final first = shots.where((s) => s.at < 0.3).map((s) => along(s.from));
+        final second = shots
+            .where((s) => s.at >= 0.3)
+            .map((s) => along(s.from));
+        final a = widestLane(first, extent);
+        final b = widestLane(second, extent);
+        expect(a.width, greaterThan(player + 20), reason: 'seed $seed, wall 1');
+        expect(b.width, greaterThan(player + 20), reason: 'seed $seed, wall 2');
+        expect(
+          (a.middle - b.middle).abs(),
+          lessThanOrEqualTo(reach),
+          reason: 'seed $seed: the second lane is out of reach',
+        );
+      }
+    });
+
+    test('Pulse opens its gap towards the player, wherever they stand', () {
+      for (final at in [
+        Vector2(450, 330),
+        Vector2(100, 40),
+        Vector2(800, 400),
+      ]) {
+        for (var seed = 0; seed < 30; seed++) {
+          final shots = play(BuildEffect.pulse, seed: seed, at: at);
+          final centre = shots.first.from;
+          expect((at - centre).length, closeTo(170, 1e-6));
+          final facing = math.atan2(at.y - centre.y, at.x - centre.x);
+          for (final s in shots) {
+            final off = math.atan2(s.velocity.y, s.velocity.x) - facing;
+            final angle = math.atan2(math.sin(off), math.cos(off)).abs();
+            if (angle >= math.pi / 2) {
+              continue;
+            }
+            // How far the shot passes from the player's centre.
+            final miss = 170 * math.sin(angle) - shot / 2;
+            expect(
+              miss,
+              greaterThan(player / 2),
+              reason: 'player at $at, seed $seed',
+            );
+          }
+        }
+      }
+    });
+  });
+}
+
+/// A stage that only records what an attack throws.
+class _RecordingStage implements BuildStage {
+  _RecordingStage(this.arena, this.player);
+
+  @override
+  final Vector2 arena;
+  final Vector2 player;
+
+  double now = 0;
+  final shots = <({double at, Vector2 from, Vector2 velocity})>[];
+
+  @override
+  Vector2 aimAt() => player.clone();
+
+  @override
+  void throwShot(
+    Vector2 from,
+    Vector2 velocity,
+    EffectKind kind, {
+    ShotRules rules = ShotRules.standard,
+  }) => shots.add((at: now, from: from.clone(), velocity: velocity.clone()));
 }
