@@ -494,6 +494,11 @@ abstract class BuildAttack extends Component {
   final BuildStage stage;
   double _elapsed = 0;
 
+  /// The narrowest way through any attack: a full-size player (120 across),
+  /// one shot, and room to steer. An attack that leaves less is a hit
+  /// nobody can dodge.
+  static const double lane = 170;
+
   Vector2 get arena => stage.arena;
   Vector2 get player => stage.aimAt();
 
@@ -521,30 +526,51 @@ abstract class BuildAttack extends Component {
   }) => stage.throwShot(from, velocity, effect.kind, rules: rules);
 }
 
-/// Shots sweep in from one edge, in two waves.
+/// Two walls of shots sweep in from one edge, each with a lane through it.
+/// The second wall's lane is a short step from the first's, close enough to
+/// reach in the time between them.
 class _FlyIn extends BuildAttack {
   _FlyIn(BuildStage stage, math.Random random)
-    : _edge = random.nextInt(3),
+    : _random = random,
+      _edge = random.nextInt(3),
       super(BuildEffect.flyIn, stage);
 
+  final math.Random _random;
   final int _edge;
   static const double _speed = 260;
+  static const double _spacing = 50;
+
+  /// Slots left empty: with the shots either side, a lane of
+  /// (3 + 1) x 50 - 22 = 178.
+  static const int _laneSlots = 3;
+  static const double _between = 0.6;
+
+  int _lane = 0;
 
   @override
   void play(double from, double to) {
-    for (final wave in [0.0, 0.6]) {
+    for (final (index, wave) in [0.0, _between].indexed) {
       if (!BuildAttack.due(wave, from, to)) {
         continue;
       }
-      for (var i = 0; i < 6; i++) {
-        final t = (i + 0.5 + (wave > 0 ? 0.5 : 0)) / 6.5;
+      final extent = _edge == 2 ? arena.x : arena.y;
+      final slots = (extent / _spacing).floor();
+      final last = slots - _laneSlots;
+      _lane = index == 0
+          ? _random.nextInt(last + 1)
+          : (_lane + (_random.nextBool() ? 2 : -2)).clamp(0, last);
+      for (var i = 0; i < slots; i++) {
+        if (i >= _lane && i < _lane + _laneSlots) {
+          continue;
+        }
+        final along = (i + 0.5) * _spacing;
         switch (_edge) {
           case 0:
-            shoot(Vector2(4, arena.y * t), Vector2(_speed, 0));
+            shoot(Vector2(4, along), Vector2(_speed, 0));
           case 1:
-            shoot(Vector2(arena.x - 4, arena.y * t), Vector2(-_speed, 0));
+            shoot(Vector2(arena.x - 4, along), Vector2(-_speed, 0));
           default:
-            shoot(Vector2(arena.x * t, 4), Vector2(0, _speed));
+            shoot(Vector2(along, 4), Vector2(0, _speed));
         }
       }
     }
@@ -555,7 +581,9 @@ class _FlyIn extends BuildAttack {
 class _Spin extends BuildAttack {
   _Spin(BuildStage stage) : super(BuildEffect.spin, stage);
 
-  static const double _every = 0.1;
+  /// Far enough apart that the arms of the spiral have room between them
+  /// where the player stands.
+  static const double _every = 0.14;
   static const double _speed = 210;
 
   @override
@@ -570,22 +598,31 @@ class _Spin extends BuildAttack {
   }
 }
 
-/// A ring of shots expanding from above the player, with a gap to slip out
+/// A ring of shots expanding from a fixed distance above the player (below,
+/// near the top of the arena), with a gap facing the player to slip out
 /// through.
 class _Pulse extends BuildAttack {
   _Pulse(BuildStage stage, this._random) : super(BuildEffect.pulse, stage);
 
   final math.Random _random;
   static const int _count = 18;
-  static const int _gap = 3;
+  static const int _gap = 4;
+
+  /// How far from the player the ring starts. The gap is measured here.
+  static const double reach = 170;
 
   @override
   void play(double from, double to) {
     if (!BuildAttack.due(0, from, to)) {
       return;
     }
-    final centre = Vector2(player.x, math.max(60, player.y - 170));
-    final gapStart = _random.nextInt(_count);
+    final above = player.y - reach >= 30;
+    final centre = Vector2(player.x, player.y + (above ? -reach : reach));
+    // The gap opens towards the player, with the player at least two shots
+    // from either side of it.
+    final facing = math.atan2(player.y - centre.y, player.x - centre.x);
+    final slot = (facing / (math.pi * 2 / _count)).round();
+    final gapStart = slot - 1 - _random.nextInt(_gap - 2);
     for (var i = 0; i < _count; i++) {
       if ((i - gapStart) % _count < _gap) {
         continue;
@@ -603,15 +640,19 @@ class _Wipe extends BuildAttack {
   final math.Random _random;
   static const double _spacing = 32;
 
+  /// Slots left empty: with the shots either side, a lane of
+  /// (6 + 1) x 32 - 22 = 202.
+  static const int _laneSlots = 6;
+
   @override
   void play(double from, double to) {
     if (!BuildAttack.due(0, from, to)) {
       return;
     }
     final slots = (arena.y / _spacing).floor();
-    final gap = 1 + _random.nextInt(slots - 4);
+    final gap = _random.nextInt(slots - _laneSlots + 1);
     for (var i = 0; i < slots; i++) {
-      if (i >= gap && i < gap + 3) {
+      if (i >= gap && i < gap + _laneSlots) {
         continue;
       }
       shoot(Vector2(6, (i + 0.5) * _spacing), Vector2(230, 0));
