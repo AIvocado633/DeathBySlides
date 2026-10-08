@@ -46,6 +46,22 @@ button after its first second, ends it — and *The Night Before*, under the
 presenter on the title slide, plays it again. With Reduce Motion the scenes
 keep their timing but nothing moves.
 
+### Between slides
+
+The night goes on between the slides. After each win, on the way into the next
+slide, a scene of about eight seconds plays. The clock moves on, the beaten
+feature is gone, and the next one turns up: the Design Ideas dialog with only
+one button, a theme applied to every slide, one animation that came with
+sixteen friends, a box that won't stay put, and a save dialog from 2003. The
+last win leads into 8:59 AM, with the presenter walking on stage, before the
+end of the show.
+
+Each scene plays once, whether you go on with *Next Slide* or from the light
+table. Retrying a slide never plays one. *Skip* works as it does in the intro.
+*The Night Before* replays the intro and then every scene seen so far.
+
+![The six scenes between slides](docs/images/story.png)
+
 ### Progression
 
 The deck is played in order. Slide 1 is always open; every other slide opens

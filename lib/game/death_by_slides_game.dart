@@ -19,6 +19,7 @@ import 'pages/intro_page.dart';
 import 'pages/pep_talk_page.dart';
 import 'pages/tweaks_page.dart';
 import 'pages/main_menu_page.dart';
+import 'pages/story_page.dart';
 import 'pages/light_table_page.dart';
 import 'levels.dart';
 import 'routes.dart';
@@ -45,7 +46,7 @@ class DeathBySlidesGame extends FlameGame
     SaveStore? saveStore,
     AudioBackend? audioBackend,
     this.unlockAll = kUnlockAll,
-    this.showIntro = false,
+    this.tellStory = false,
     bool Function()? deviceReducesMotion,
   }) : _gamepadEvents = gamepadEvents,
        _saveStore = saveStore ?? InMemorySaveStore(),
@@ -60,10 +61,11 @@ class DeathBySlidesGame extends FlameGame
   /// Opens every built slide, whatever has been won. See [kUnlockAll].
   final bool unlockAll;
 
-  /// Plays the intro on a first launch. The app asks for it; tests leave it
-  /// off, so a game starts on the title slide unless a test is about the
-  /// intro.
-  final bool showIntro;
+  /// Tells the story: the intro on a first launch, and the scene between
+  /// slides the first time each next slide is reached. The app asks for it;
+  /// tests leave it off, so a game goes straight to its slides unless a test
+  /// is about the story.
+  final bool tellStory;
 
   /// Controller events to follow. The app passes the real platform stream;
   /// tests leave it null, so building a game never touches a platform channel.
@@ -147,6 +149,10 @@ class DeathBySlidesGame extends FlameGame
             () => ArenaPage(level: levelNumbered(int.parse(levelNumber))),
             maintainState: false,
           ),
+          Routes.story: (slide) => Route(
+            () => StoryPage(after: int.parse(slide)),
+            maintainState: false,
+          ),
         },
         routes: {
           Routes.normalView: Route(MainMenuPage.new),
@@ -161,8 +167,61 @@ class DeathBySlidesGame extends FlameGame
     );
     // The story plays once, over the title slide it hands over to -- which
     // only exists once the router is mounted.
-    if (showIntro && !save.data.introSeen) {
+    if (tellStory && !save.data.introSeen) {
       unawaited(router.mounted.then((_) => router.pushNamed(Routes.intro)));
+    }
+  }
+
+  /// What follows the scene of the story on top: the fight it leads into,
+  /// the end of the show, or the next scene of a replay.
+  final List<String> _afterStory = [];
+
+  /// Opens [slide], first playing the scene that leads into it if the story
+  /// is told and that scene has not been seen.
+  void presentSlide(int slide) =>
+      _playThen(slide - 1, Routes.slideShowFor(slide));
+
+  /// The end of the show, after the last slide is won: the morning of the
+  /// presentation first, the first time.
+  void presentEnding() => _playThen(kLevels.last.number, Routes.endOfShow);
+
+  void _playThen(int storyAfter, String next) {
+    final story = save.data.storiesSeen;
+    if (tellStory &&
+        StoryPage.scenes.containsKey(storyAfter) &&
+        save.data.progress.hasBeaten(storyAfter) &&
+        !story.contains(storyAfter)) {
+      _afterStory
+        ..clear()
+        ..add(next);
+      router.pushNamed(Routes.storyAfter(storyAfter));
+    } else {
+      router.pushNamed(next);
+    }
+  }
+
+  /// The story so far, from the title slide: the intro, then every scene
+  /// between slides seen already.
+  void watchStory() {
+    _afterStory
+      ..clear()
+      ..addAll([
+        for (final slide in save.data.storiesSeen.toList()..sort())
+          Routes.storyAfter(slide),
+      ]);
+    router.pushNamed(Routes.intro);
+  }
+
+  /// Called by a scene that has ended: on to what was queued after it, or
+  /// back to the page beneath. [skipping] skips any further scenes queued.
+  void continueStory({bool skipping = false}) {
+    if (skipping) {
+      _afterStory.removeWhere(Routes.isCutscene);
+    }
+    if (_afterStory.isEmpty) {
+      router.pop();
+    } else {
+      router.pushReplacementNamed(_afterStory.removeAt(0));
     }
   }
 

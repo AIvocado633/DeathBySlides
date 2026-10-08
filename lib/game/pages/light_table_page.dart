@@ -10,7 +10,6 @@ import '../components/status_bar.dart';
 import '../deck.dart';
 import '../levels.dart';
 import '../save/save_data.dart' show SlideTime;
-import '../routes.dart';
 import '../slide/fly_in.dart';
 import '../slide/focusable.dart';
 import '../slide/slide_metrics.dart';
@@ -67,7 +66,7 @@ class LightTablePage extends SlidePage {
           ),
           size: Vector2(_thumbWidth, _thumbHeight),
           onSelected: () =>
-              game.router.pushNamed(Routes.slideShowFor(level.number)),
+              game.presentSlide(level.number),
         )..flyIn(delay: 0.16 + index * 0.05),
       );
     }

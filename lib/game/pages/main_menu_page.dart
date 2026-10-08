@@ -69,9 +69,9 @@ class MainMenuPage extends SlidePage {
   void onMenuAction(MenuAction action) {
     switch (action) {
       case MenuAction.startFromBeginning:
-        game.router.pushNamed(Routes.slideShowFor(kLevels.first.number));
+        game.presentSlide(kLevels.first.number);
       case MenuAction.startFromCurrent:
-        game.router.pushNamed(Routes.slideShowFor(game.deck.currentSlide));
+        game.presentSlide(game.deck.currentSlide);
       default:
         super.onMenuAction(action);
     }
@@ -175,7 +175,7 @@ class MainMenuPage extends SlidePage {
       label: entry.label,
       hint: entry.hint,
       position: _menuEntryPosition(0),
-      onSelected: () => game.router.pushNamed(Routes.slideShowFor(entry.slide)),
+      onSelected: () => game.presentSlide(entry.slide),
     );
   }
 
@@ -218,14 +218,14 @@ class MainMenuPage extends SlidePage {
         position: Vector2(_panelWidth / 2, 420),
         anchor: Anchor.center,
       ),
-      // The presenter's story: the intro, again.
+      // The presenter's story so far: the intro, and every scene seen since.
       ChipButton(
         label: 'The Night Before',
         position: Vector2(_panelWidth / 2, 476),
         anchor: Anchor.center,
         width: 240,
         height: 44,
-        onSelected: () => game.router.pushNamed(Routes.intro),
+        onSelected: game.watchStory,
       ),
     ]);
 

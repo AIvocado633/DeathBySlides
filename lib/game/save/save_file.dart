@@ -58,6 +58,18 @@ class SaveFile {
     return _save(_data.copyWith(introSeen: true));
   }
 
+  /// Records that the scene after [slide] has been seen, and saves.
+  Future<void> markStorySeen(int slide) {
+    if (_data.storiesSeen.contains(slide)) {
+      return _writes;
+    }
+    return _save(
+      _data.copyWith(
+        storiesSeen: Set.unmodifiable({..._data.storiesSeen, slide}),
+      ),
+    );
+  }
+
   /// Replaces the settings with [settings], and saves.
   Future<void> updateSettings(Settings settings) =>
       _save(_data.copyWith(settings: settings));
