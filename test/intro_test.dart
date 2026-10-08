@@ -15,7 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'arena_harness.dart';
 
 DeathBySlidesGame _launch([InMemorySaveStore? store]) =>
-    DeathBySlidesGame(showIntro: true, saveStore: store);
+    DeathBySlidesGame(tellStory: true, saveStore: store);
 
 Future<IntroPage> _intro(DeathBySlidesGame game) async {
   await game.ready();
@@ -66,7 +66,7 @@ void main() {
         final intro = await _intro(game);
         final scenes = <int>{};
         final captions = <String>{};
-        for (var t = 0.0; t < IntroPage.length - 0.5; t += 0.5) {
+        for (var t = 0.0; t < IntroPage.totalLength - 0.5; t += 0.5) {
           await _play(game, 0.5);
           scenes.add(intro.scene);
           captions.add(intro.caption);
@@ -174,7 +174,7 @@ void main() {
             .onSelected();
         final intro = await _intro(game);
         expect(intro.scene, 0);
-        await _play(game, IntroPage.length + 0.5);
+        await _play(game, IntroPage.totalLength + 0.5);
         await _onTitleSlide(game);
       },
     );
@@ -191,7 +191,7 @@ void main() {
       },
       (game) async {
         final intro = await _intro(game);
-        for (var t = 0.0; t < IntroPage.length - 0.5; t += 0.5) {
+        for (var t = 0.0; t < IntroPage.totalLength - 0.5; t += 0.5) {
           await _play(game, 0.5);
           final moving = intro.descendants().whereType<Effect>().where(
             (effect) =>

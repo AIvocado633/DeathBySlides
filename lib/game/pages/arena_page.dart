@@ -15,7 +15,6 @@ import '../components/player.dart';
 import '../components/result_panel.dart';
 import '../input/menu_input.dart';
 import '../levels.dart';
-import '../routes.dart';
 import '../slide/fly_in.dart';
 import '../slide/focusable.dart';
 import '../slide/slide_metrics.dart';
@@ -352,7 +351,7 @@ class ArenaPage extends SlidePage {
       _endingIn = endingIn - dt;
       if (endingIn - dt <= 0 && endingIn > 0) {
         game.router.pop();
-        game.router.pushNamed(Routes.endOfShow);
+        game.presentEnding();
       }
     }
     final panel = _panel;
@@ -465,10 +464,11 @@ class ArenaPage extends SlidePage {
   }
 
   /// The route does not maintain state, so popping drops this page and pushing
-  /// builds a brand new fight -- the same slide again, or the next one.
+  /// builds a brand new fight -- the same slide again, or the next one, with
+  /// the scene that leads into it the first time.
   void _replaceWith(int slide) {
     game.router.pop();
-    game.router.pushNamed(Routes.slideShowFor(slide));
+    game.presentSlide(slide);
   }
 
   void _leave() => game.router.pop();

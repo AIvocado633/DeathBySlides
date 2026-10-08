@@ -14,6 +14,7 @@ class SaveData {
     this.progress = const Progress(),
     this.settings = const Settings(),
     this.introSeen = false,
+    this.storiesSeen = const <int>{},
   });
 
   /// The shape [encode] writes and [SaveData.decode] reads.
@@ -29,14 +30,19 @@ class SaveData {
   /// Whether the intro has played through or been skipped, so it plays once.
   final bool introSeen;
 
+  /// The scenes between slides already seen, by the slide each follows.
+  final Set<int> storiesSeen;
+
   SaveData copyWith({
     Progress? progress,
     Settings? settings,
     bool? introSeen,
+    Set<int>? storiesSeen,
   }) => SaveData(
     progress: progress ?? this.progress,
     settings: settings ?? this.settings,
     introSeen: introSeen ?? this.introSeen,
+    storiesSeen: storiesSeen ?? this.storiesSeen,
   );
 
   String encode() => jsonEncode({
@@ -44,6 +50,7 @@ class SaveData {
     'progress': progress.toJson(),
     'settings': settings.toJson(),
     if (introSeen) 'introSeen': true,
+    if (storiesSeen.isNotEmpty) 'storiesSeen': storiesSeen.toList()..sort(),
   });
 
   /// Reads a document written by [encode].
@@ -65,6 +72,11 @@ class SaveData {
       progress: Progress.fromJson(json['progress']),
       settings: Settings.fromJson(json['settings']),
       introSeen: json['introSeen'] == true,
+      // Anything unreadable is a scene shown again, never a lost save.
+      storiesSeen: switch (json['storiesSeen']) {
+        final List<Object?> seen => Set.unmodifiable(seen.whereType<int>()),
+        _ => const <int>{},
+      },
     );
   }
 }

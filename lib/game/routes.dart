@@ -21,6 +21,17 @@ abstract final class Routes {
   /// The story before the deck: the night before the presentation.
   static const intro = 'intro';
 
+  /// The scenes between slides. A route factory, like [slideShow]: use
+  /// [storyAfter] to name a concrete one.
+  static const story = 'story';
+
+  /// The scene that follows slide [slide], e.g. `story/2`.
+  static String storyAfter(int slide) => '$story/$slide';
+
+  /// Whether [route] is a scene of the story rather than something to play.
+  static bool isCutscene(String route) =>
+      route == intro || route.startsWith('$story/');
+
   /// The black slide after the last one: the end of the show, and the
   /// credits.
   static const endOfShow = 'end-of-show';

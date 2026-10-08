@@ -44,7 +44,7 @@ class _DeathBySlidesAppState extends State<DeathBySlidesApp> {
     gamepadEvents: Gamepads.normalizedEvents,
     saveStore: SharedPreferencesSaveStore(),
     audioBackend: FlameAudioBackend(),
-    showIntro: true,
+    tellStory: true,
   );
 
   @override
