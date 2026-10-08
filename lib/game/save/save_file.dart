@@ -50,6 +50,14 @@ class SaveFile {
     return _save(_data.copyWith(progress: progress));
   }
 
+  /// Records that the intro has been seen, and saves.
+  Future<void> markIntroSeen() {
+    if (_data.introSeen) {
+      return _writes;
+    }
+    return _save(_data.copyWith(introSeen: true));
+  }
+
   /// Replaces the settings with [settings], and saves.
   Future<void> updateSettings(Settings settings) =>
       _save(_data.copyWith(settings: settings));

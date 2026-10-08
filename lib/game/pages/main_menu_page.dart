@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 
 import '../components/autoshape_backdrop.dart';
+import '../components/chip_button.dart';
 import '../components/menu_bullet_button.dart';
 import '../components/placeholder_frame.dart';
 import '../components/shape_actor.dart';
@@ -181,7 +182,7 @@ class MainMenuPage extends SlidePage {
   PositionComponent _buildOnStagePanel() {
     final panel = PlaceholderFrame(
       position: Vector2(_panelLeft, _titleTop),
-      size: Vector2(_panelWidth, 470),
+      size: Vector2(_panelWidth, 520),
       fillColor: Palette.card,
     );
 
@@ -216,6 +217,15 @@ class MainMenuPage extends SlidePage {
         textRenderer: SlideText.caption,
         position: Vector2(_panelWidth / 2, 420),
         anchor: Anchor.center,
+      ),
+      // The presenter's story: the intro, again.
+      ChipButton(
+        label: 'The Night Before',
+        position: Vector2(_panelWidth / 2, 476),
+        anchor: Anchor.center,
+        width: 240,
+        height: 44,
+        onSelected: () => game.router.pushNamed(Routes.intro),
       ),
     ]);
 
