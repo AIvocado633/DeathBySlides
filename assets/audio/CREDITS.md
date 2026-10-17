@@ -50,6 +50,7 @@ to their makers and are not used here.
 | `format_upgraded.wav` | A phase converted one format forward | `tool/make_sounds.py` | CC0 1.0 |
 | `compatibility_checker.wav` | The Compatibility Checker coming up | `tool/make_sounds.py` | CC0 1.0 |
 | `legacy_converted.wav` | The deck converted at last | `tool/make_sounds.py` | CC0 1.0 |
+| `key_click.wav` | A story caption typing itself out | `tool/make_sounds.py` | CC0 1.0 |
 | `menu_loop.wav` | Menu music: hold music for a template | `tool/make_sounds.py` | CC0 1.0 |
 | `fight_loop.wav` | Fight music: the same template, at a deadline | `tool/make_sounds.py` | CC0 1.0 |
 

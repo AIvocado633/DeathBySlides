@@ -1,3 +1,4 @@
+import 'package:death_by_slides/game/audio/cues.dart';
 import 'package:death_by_slides/game/components/chip_button.dart';
 import 'package:death_by_slides/game/death_by_slides_game.dart';
 import 'package:death_by_slides/game/input/menu_input.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'arena_harness.dart';
+import 'fake_audio.dart';
 
 DeathBySlidesGame _launch([InMemorySaveStore? store]) =>
     DeathBySlidesGame(tellStory: true, saveStore: store);
@@ -49,6 +51,68 @@ void main() {
       expect(intro.scene, 0);
       expect(intro.caption, contains('11:58 PM'));
     });
+
+    testWithGame<DeathBySlidesGame>(
+      'types each line out, a letter at a time',
+      _launch,
+      (game) async {
+        final intro = await _intro(game);
+        expect(intro.typedCaption, isEmpty);
+
+        advance(game, 0.25);
+        await game.ready();
+        expect(intro.typedCaption, isNotEmpty);
+        expect(intro.caption, startsWith(intro.typedCaption));
+        expect(intro.typedCaption.length, lessThan(intro.caption.length));
+
+        await _play(game, 2);
+        expect(intro.typedCaption, intro.caption);
+      },
+    );
+
+    final keys = RecordingAudioBackend();
+    testWithGame<DeathBySlidesGame>(
+      'clicks softly as a line types, and falls quiet once it is typed',
+      () => DeathBySlidesGame(tellStory: true, audioBackend: keys),
+      (game) async {
+        final intro = await _intro(game);
+        keys.clear();
+        while (intro.typedCaption != intro.caption) {
+          advance(game, 1 / 60);
+          await game.ready();
+        }
+        final words = intro.caption.split(' ').length;
+        expect(keys.played(Cue.keyClick), greaterThanOrEqualTo(words));
+        expect(
+          keys.played(Cue.keyClick),
+          lessThan(intro.caption.length),
+          reason: 'not a click for every letter: that would buzz',
+        );
+
+        keys.clear();
+        await _play(game, 1);
+        expect(keys.played(Cue.keyClick), 0);
+      },
+    );
+
+    testWithGame<DeathBySlidesGame>(
+      'finishes typing every line before the next one comes',
+      _launch,
+      (game) async {
+        final intro = await _intro(game);
+        var line = intro.caption;
+        var typed = intro.typedCaption;
+        while (!intro.isFinished && intro.caption.isNotEmpty) {
+          advance(game, 1 / 60);
+          await game.ready();
+          if (intro.caption != line) {
+            expect(typed, line, reason: 'cut off at ${intro.elapsed}s');
+            line = intro.caption;
+          }
+          typed = intro.typedCaption;
+        }
+      },
+    );
 
     testWithGame<DeathBySlidesGame>(
       'is left out unless the app asks for it, as in every other test',
@@ -179,18 +243,26 @@ void main() {
       },
     );
 
+    final stillKeys = RecordingAudioBackend();
     testWithGame<DeathBySlidesGame>(
       'with Reduce Motion, keeps time but nothing moves',
       () {
         Motion.reduced = true;
-        return _launch(
-          InMemorySaveStore(
+        return DeathBySlidesGame(
+          tellStory: true,
+          audioBackend: stillKeys,
+          saveStore: InMemorySaveStore(
             SaveData(settings: const Settings(reduceMotion: true)).encode(),
           ),
         );
       },
       (game) async {
         final intro = await _intro(game);
+        expect(
+          intro.typedCaption,
+          intro.caption,
+          reason: 'each line shows whole, without typing out',
+        );
         for (var t = 0.0; t < IntroPage.totalLength - 0.5; t += 0.5) {
           await _play(game, 0.5);
           final moving = intro.descendants().whereType<Effect>().where(
@@ -201,6 +273,11 @@ void main() {
           );
           expect(moving, isEmpty, reason: 'at ${intro.elapsed}s');
         }
+        expect(
+          stillKeys.played(Cue.keyClick),
+          0,
+          reason: 'nothing types out, so nothing clicks',
+        );
         await _play(game, 1);
         await _onTitleSlide(game);
       },
