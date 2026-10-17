@@ -225,6 +225,27 @@ void main() {
       );
 
       testWithGame<DeathBySlidesGame>(
+        'after slide $after types every line out before the next one comes',
+        () => _game(beaten: {for (var s = 1; s <= after; s++) s}),
+        (game) async {
+          game.router.pushNamed(Routes.storyAfter(after));
+          await _settle(game);
+          final scene = _page<StoryPage>(game);
+          var line = scene.caption;
+          var typed = scene.typedCaption;
+          while (!scene.isFinished) {
+            advance(game, 1 / 60);
+            await game.ready();
+            if (scene.caption != line) {
+              expect(typed, line, reason: 'cut off at ${scene.elapsed}s');
+              line = scene.caption;
+            }
+            typed = scene.typedCaption;
+          }
+        },
+      );
+
+      testWithGame<DeathBySlidesGame>(
         'after slide $after, with Reduce Motion, nothing moves',
         () => _game(
           beaten: {for (var s = 1; s <= after; s++) s},

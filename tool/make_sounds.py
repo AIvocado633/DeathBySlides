@@ -115,6 +115,15 @@ def click() -> np.ndarray:
     return body * 0.6 + snap
 
 
+def key_click() -> np.ndarray:
+    """A caption typing itself: a key under a finger, softer and duller than
+    a bullet's click, since it ticks through every line of the story."""
+    d = 0.035
+    body = np.sin(sweep(1500, 700, d, 0.5)) * env(d, 0.001, 0.018)
+    tap = lowpass(highpass(noise(d), 1200), 4500) * env(d, 0.0005, 0.01)
+    return body * 0.5 + tap
+
+
 def player_hit() -> np.ndarray:
     """The presenter shrinking a size: a quick downward boing."""
     d = 0.22
@@ -562,6 +571,9 @@ def main() -> None:
     }
     for name, build in later.items():
         write(name, build())
+
+    # Quieter than the rest: it plays under the narration all story long.
+    write("key_click.wav", key_click(), peak=0.35)
 
 
 if __name__ == "__main__":

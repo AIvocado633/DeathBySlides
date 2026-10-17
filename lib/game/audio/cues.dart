@@ -8,6 +8,9 @@ enum Cue {
   /// several times a second, so it is the one most tightly capped.
   bulletPoint('click.wav', length: 0.05, maxVoices: 3),
 
+  /// A story caption typing itself out: a soft key, every few letters.
+  keyClick('key_click.wav', length: 0.035, maxVoices: 1),
+
   /// The presenter shrinking a size.
   playerHit('player_hit.wav', length: 0.22),
 

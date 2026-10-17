@@ -5,6 +5,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/animation.dart';
 
+import '../audio/game_audio.dart';
 import '../combat/legacy_format_boss.dart' show paintLegacyWindow;
 import '../components/chip_button.dart';
 import '../components/placeholder_frame.dart';
@@ -41,8 +42,11 @@ abstract class CutscenePage extends SlidePage with TapCallbacks {
   double get elapsed => _elapsed;
   double _elapsed = 0;
 
-  /// The narration showing now.
+  /// The narration line showing now, whole, however much is typed yet.
   String get caption => _caption.text;
+
+  /// As much of [caption] as has typed out so far.
+  String get typedCaption => _caption.typed;
 
   bool get isFinished => _finished;
   bool _finished = false;
@@ -55,6 +59,9 @@ abstract class CutscenePage extends SlidePage with TapCallbacks {
 
   /// Black over everything but the caption, for scenes off the slide.
   late final RectangleComponent blackout;
+
+  @override
+  Iterable<Cue> get cues => [...super.cues, Cue.keyClick];
 
   /// Builds the scenery the first beats need.
   Future<void> build();
@@ -375,46 +382,117 @@ class LegacyDialog extends PositionComponent {
 }
 
 /// The narration strip along the bottom of the slide.
-class _Caption extends PositionComponent {
+///
+/// Each line types itself out, a letter at a time behind a blinking caret
+/// and over a soft key-click, so the eye is drawn down to it as it starts.
+/// The line is laid out whole first, so the letters stay where they land.
+/// With [Motion.reduced] it shows whole, straight away, without a sound.
+class _Caption extends PositionComponent with HasAudio {
   _Caption({super.priority})
     : super(
         position: Vector2(kSlideWidth / 2, 630),
-        size: Vector2(980, 56),
+        size: Vector2(1040, 76),
         anchor: Anchor.center,
       );
 
-  late final TextComponent _text = TextComponent(
-    textRenderer: SlideText.showBody,
-    position: size / 2,
-    anchor: Anchor.center,
-  );
+  /// How fast a line types out.
+  static const double lettersPerSecond = 40;
 
+  /// How long the caret is on, then off, once a line is typed.
+  static const double blink = 0.5;
+
+  /// The least time between two key-clicks: a click a letter would buzz.
+  static const double clickGap = 0.07;
+
+  String _line = '';
+  double _age = 0;
   bool _visible = false;
 
-  String get text => _text.text;
+  /// How many letters have had their chance to click.
+  int _clicked = 0;
+  double _lastClick = double.negativeInfinity;
 
-  final Paint _paint = Paint()..color = const Color(0xE60B0F18);
+  /// The whole line, typed or not.
+  String get text => _line;
 
-  @override
-  Future<void> onLoad() async => add(_text);
+  /// As much of the line as has been typed.
+  String get typed => _line.substring(0, _typedLength);
+
+  int get _typedLength => Motion.reduced
+      ? _line.length
+      : (_age * lettersPerSecond).floor().clamp(0, _line.length);
+
+  bool get _typing => _typedLength < _line.length;
+
+  final Paint _strip = Paint()..color = const Color(0xF20B0F18);
+  final Paint _accent = Paint()..color = Palette.highlight;
 
   void show(String line) {
-    _text.text = line;
+    _line = line;
+    _age = 0;
     _visible = true;
+    _clicked = 0;
+    _lastClick = double.negativeInfinity;
   }
 
   void hide() {
-    _text.text = '';
+    _line = '';
     _visible = false;
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+    _age += dt;
+    final typedLength = _typedLength;
+    if (typedLength <= _clicked) {
+      return;
+    }
+    final letters = _line.substring(_clicked, typedLength);
+    _clicked = typedLength;
+    if (Motion.reduced ||
+        letters.trim().isEmpty ||
+        _age - _lastClick < clickGap) {
+      return;
+    }
+    _lastClick = _age;
+    audio.play(Cue.keyClick);
+  }
+
+  @override
   void render(Canvas canvas) {
-    if (_visible) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(size.toRect(), const Radius.circular(10)),
-        _paint,
+    if (!_visible) {
+      return;
+    }
+    canvas
+      ..drawRRect(
+        RRect.fromRectAndRadius(size.toRect(), const Radius.circular(12)),
+        _strip,
+      )
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, 8, height),
+          const Radius.circular(4),
+        ),
+        _accent,
       );
+    final text = SlideText.narration;
+    final left = (width - text.getLineMetrics(_line).width) / 2;
+    final typed = this.typed;
+    text.render(
+      canvas,
+      typed,
+      Vector2(left, height / 2),
+      anchor: Anchor.centerLeft,
+    );
+
+    // The caret: solid while typing, then blinking. Reduce Motion has none.
+    final typedFor = _age - _line.length / lettersPerSecond;
+    final caretOn =
+        !Motion.reduced && (_typing || (typedFor / blink).floor().isEven);
+    if (caretOn) {
+      final x = left + text.getLineMetrics(typed).width + 4;
+      canvas.drawRect(Rect.fromLTWH(x, height / 2 - 17, 4, 34), _accent);
     }
   }
 }

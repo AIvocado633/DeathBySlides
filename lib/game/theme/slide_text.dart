@@ -215,6 +215,12 @@ abstract final class SlideText {
     style: _style(size: 22, color: Color(0xFFB8C0D0)),
   );
 
+  /// The story's narration, typed out in the strip along the bottom of a
+  /// cutscene: big and bright, since it is what the player reads.
+  static final narration = TextPaint(
+    style: _style(size: 32, weight: FontWeight.w700, color: Palette.slide),
+  );
+
   /// What a hit cost, floating off whatever was hit. Takes its colour from
   /// the side of the fight that paid it.
   static TextPaint damage(Color colour) =>
